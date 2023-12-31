@@ -1,0 +1,106 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/dtree.css">
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/font/dtreefont.css">
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>权限配置</legend>
+    </fieldset>
+    <div class="layui-field-box auth layui-form" style="padding-bottom: 100px;">
+        <input type="hidden" id="group_id" name="id" value="{$id}">
+        <ul id="demoTree1" class="dtree" data-id="0"></ul>
+        <div class="btable-paged">
+            <div class="layui-main">
+                <div class="formbtngroup">
+                    <button class="layui-btn layui-btn-sm" id="auth-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+
+    layui.extend({
+        dtree: '/plugins/layui/layui_ext/dtree/dtree'   // {/}的意思即代表采用自有路径，即不跟随 base 路径
+    }).use(['form', 'dtree'], function () {
+        var form = layui.form
+            , dtree = layui.dtree
+            , jq = layui.jquery;
+
+
+        dtree.render({
+            elem: "#demoTree1",  //绑定元素
+            url: "{:Url('getJson',['id'=>$id])}",  //异步接口
+            dataStyle: "layuiStyle",
+            dataFormat: "list",  //配置data的风格为list
+            type: "all",
+            line: true,  // 显示树线
+            // icon: "-1",  // 隐藏二级图标
+            ficon: 0,
+            dot: false,
+            response: {
+                statusCode: 1, //成功的状态码，默认：0
+                parentId: "pid", //父节点ID（必填）
+                childName: "subnode",
+            },
+            checkbar: true, //开启复选框
+            checkbarType: "all",
+//            skin: '#d2d2d2',
+        });
+
+        form.on('checkbox(pcheck)', function (data) {
+            var child = jq(data.elem).parents('.layui-elem-field').find('.subcheck');
+            child.each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+
+        });
+
+        form.on('checkbox(subcheck)', function (data) {
+            // console.log(data);
+            /*if (data.elem.checked) {
+                jq(data.elem).parents('.layui-elem-field').find('.pcheck').attr('checked', 'true');
+                if (!jq(data.elem).parents('.layui-elem-field').find('.pcheck').next().hasClass('layui-form-checked')) {
+                    jq(data.elem).parents('.layui-elem-field').find('.pcheck').next().addClass('layui-form-checked')
+
+                }
+            }*/
+        });
+        jq("#auth-btn").on("click", function () {
+            var auth_rule_ids = [];
+
+            /*jq('input[type=checkbox]:checked').each(function () {
+                auth_rule_ids.push(jq(this).val());
+            });*/
+            let param = dtree.getCheckbarNodesParam('demoTree1');
+            param.forEach(function (value, index) {
+                auth_rule_ids.push(value.nodeId);
+            });
+            var _id = jq("#group_id").val();
+            jq.ajax({
+                url: "{:url('admin/auth_group/updateAuthGroupRule')}",
+                type: "post",
+                cache: false,
+                data: {
+                    id: _id,
+                    auth_rule_ids: auth_rule_ids
+                },
+                success: function (data) {
+                    if (data.code === 1) {
+                        setTimeout(function () {
+                            location.href = "{:url('admin/auth_group/index')}";
+                        }, 1000);
+                    }
+                    layer.msg(data.msg);
+                }
+            });
+        });
+    });
+</script>
+{/block}

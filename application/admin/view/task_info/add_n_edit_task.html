@@ -1,0 +1,718 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+	.layui-form-label {
+		width: 100px;
+		padding: 10px 15px 7px;
+	}
+
+	.layui-input-block {
+		margin-left: 130px;
+	}
+	.require-text {
+		color:#DC524B;
+	}
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+	<!-- layui-btn-sm -->
+	<button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>{if $data.id>0}编辑{else}添加{/if}任务</legend>
+	</fieldset>
+
+	{if !empty($tips)}
+	<blockquote class="layui-elem-quote layui-text">
+				{$tips}
+		</blockquote>
+	{/if}
+
+	<form class="layui-form" action="{:Url('addTask')}">
+        <input type="hidden"  id="id"  name="id" value="{$data.id}">
+        <input type="hidden"   id="info_id"  name="info_id"   value="{$data.info_id}">
+		<script>
+			let renderArr = [];
+		</script>
+
+
+		{if($data.task_type == 1)}
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				任务类型          </label>
+			<div class="layui-input-inline">
+				<select name="member_develop"  id="member_develop" lay-filter="member_develop"  >
+					<option value="1" {if $data.task_level == '1'} selected {/if} > 1.派人谈话时间 </option>
+					<option value="2" {if $data.task_level == '2'} selected {/if} > 2.确定积极分子时间 </option>
+					<option value="3" {if $data.task_level == '3'} selected {/if} > 3.党委备案时间 </option>
+					<option value="4" {if $data.task_level == '4'} selected {/if} > 4.第一次思想汇报 </option>
+					<option value="5" {if $data.task_level == '5'} selected {/if} > 5.第二次思想汇报 </option>
+					<option value="6" {if $data.task_level == '6'} selected {/if} > 6.第三次思想汇报 </option>
+					<option value="7" {if $data.task_level == '7'} selected {/if} > 7.第四次思想汇报 </option>
+					<option value="8" {if $data.task_level == '8'} selected {/if} > 8.第一次支部考察 </option>
+					<option value="9"  {if $data.task_level == '9'} selected {/if} > 9.第二次支部考察 </option>
+					<option value="10" {if $data.task_level == '10'} selected {/if} > 10.确定发展对象人选时间 </option>
+					<option value="11"  {if $data.task_level == '11'} selected {/if} > 11.党总支审议时间 </option>
+					<option value="12"  {if $data.task_level == '12'} selected {/if} > 12.党委备案同意时间 </option>
+					<option value="13"  {if $data.task_level == '13'} selected {/if} > 13.支部审查时间 </option>
+					<option value="14"  {if $data.task_level == '14'} selected {/if} > 14.党委预审时间 </option>
+					<option value="15"  {if $data.task_level == '15'} selected {/if} > 15.支部大会时间 </option>
+					<option value="16"  {if $data.task_level == '16'} selected {/if} > 16.党总支审议时间 </option>
+					<option value="17" {if $data.task_level == '17'} selected {/if}> 17.党委审批时间 </option>
+				</select>
+				<input type="hidden"  id="task_level"  name="task_level" value="{$data.task_level}">
+			</div>
+		</div>
+		{/if}
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				任务名称            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="name" placeholder="" lay-verify="required"
+					   value="{$data.name}"  class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				简要说明            </label>
+			<div class="layui-input-inline">
+				<input type="hidden" name="task_type" placeholder=""
+					   value="{$data.task_type}"  >
+				<input type="text" name="list_des" placeholder=""
+					   value="{$data.list_des}"  class="layui-input" style="min-width: 455px">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="fr1">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					自
+				</label>
+			</div>
+			<div class="fr-other"  style="display: none">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					结束日期
+				</label>
+			</div>
+			<div class="layui-input-inline" >
+				<input type="text" name="end_time" placeholder="" lay-verify="required" readonly
+					   value="{$data.end_time}"  class="layui-input layui-input-inline" id="LAY_date37"   style="display: inline;  clear:both;">
+			</div>
+			<div class="fr1">
+				<label class="layui-form-label layui-input-inline"  style="float: left;width: 25px" >
+						起
+				</label>
+				<div class="layui-input-inline" >
+					<input type="number" name="end_time_from"   id='end_time_from' placeholder="请填入天数"
+						   value="{$data.end_time_from}"  class="layui-input layui-input-inline"  min="0">
+				</div>
+				<label class="layui-form-label layui-input-inline"  style="float: left;width: 60px;text-align:left" >
+					天内完成
+				</label>
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'date', id: '#LAY_date37'});
+		</script>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				任务频次           </label>
+			<div class="layui-input-inline">
+				<select name="frequency"  id="frequency"  lay-filter="frequency"   {if (!$enableFrequency)}  disabled="disabled"  {/if}   >
+					{volist name="frequency" id="vv"}
+					<option value="{$key}"
+							{if $data.frequency==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			</label>
+			<div class="layui-input-inline">
+				<span class="require-text" id="tips"></span>
+			</div>
+
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				提醒日期
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="at_date" placeholder="开始提醒日期" readonly
+					   value="{$data.at_date}"  class="layui-input" id="LAY_date14">
+			</div>
+			<div class="fr1">
+				<label class="layui-form-label layui-input-inline"  style="float: left;width: 25px;margin-right: 0px;margin-left: 10px" >
+					即：
+				</label>
+				<label class="layui-form-label layui-input-inline"  style="float: left;width: 70px;text-align:left;padding-left: 2px" >
+					任务结束前
+				</label>
+				<label id="showDayStamp" class="layui-form-label"  style="float: left;width: 10px;text-align:center;color: #DE3B1D" >
+					0
+				</label>
+				<label class="layui-form-label layui-input-inline"  style="float: left;width: 60px;text-align:left" >
+					天提醒
+				</label>
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'date', id: '#LAY_date14'});
+		</script>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				开始时分秒
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="at_time" placeholder="开始提醒时间" readonly
+					   value="{$data.at_time}"  class="layui-input" id="LAY_date13">
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'time', id: '#LAY_date13'});
+		</script>
+
+		<div class="layui-form-item" id="">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				责任人
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="uid_name" disabled lay-verify="uid_name" placeholder="请选择责任人" value="{$data.uid_name}" class="layui-input">
+				<input type="hidden" name="uid" lay-verify="persion" placeholder="请选择责任人" value="{$data.uid}" class="layui-input">
+			</div>
+			<a class="layui-btn layui-btn-sm" id="choicepersion" style="float: left;margin-right: 10px;margin-top: 4px">责任人</a>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+			  任务状态 </label>
+			<div class="layui-input-inline">
+				<select name="status"  id="status"  lay-filter="status"  >
+					{volist name="status" id="vv"}
+					<option value="{$key}"
+							{if $data.status==$key} selected    {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+
+
+
+		<div class="layui-form-item">
+
+			<label class="layui-form-label"><span class="require-text">*</span>反馈类型</label>
+			<div class="layui-input-block">
+				{volist name="feedback_type" id="item"}
+				<input type="radio" name="feedback_type" value="{$key}" title="{$item}"  {if $key==$data.feedback_type} checked  {elseif $data.feedback_type==null&&0==$key }  checked   {/else} {/if}  >
+				{/volist}
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="*">立即提交</button>
+				<!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+			</div>
+		</div>
+	</form>
+</div>
+
+</div>
+
+
+<script>
+	function minDate(){
+		var now = new Date();
+		return now.getFullYear()+"-" + (now.getMonth()+1) + "-" + now.getDate();
+	}
+
+	layui.use(['form', 'layedit', 'laydate', 'jquery', 'upload'], function () {
+		var mTmpDate = '';
+		var mTmpAtDate = '';
+		var form = layui.form
+				, layer = layui.layer
+				, layedit = layui.layedit
+				, laydate = layui.laydate
+				, $ = layui.jquery
+				, upload = layui.upload;
+		$('#end_time_from').change(function () {
+			setTime(mTmpDate);
+		});
+		form.on('select(frequency)', function(data){
+			var value =  $("#frequency").val();
+			if(value >= 4){
+				//跨度大于每季度一次以上日期，at_date可随意选择日期
+				at_date.config.min = {};
+				at_date.config.max = {year:9999};
+			}else{
+				if(mTmpDate!=''){
+					setTime(mTmpDate);
+				}
+			}
+
+			if(value == 0 ){
+				$('.fr1').css('display','block');
+				$('.fr-other').css('display','none');
+			}else{
+				$('.fr-other').css('display','block');
+				$('.fr1').css('display','none');
+			}
+			setTimeTips(mTmpAtDate);
+		});
+
+		var task_type = $("input[name='task_type']").val();
+		var isUpLevel = {if empty($isUpLevel)}""{else}{$isUpLevel}{/if};
+		function  selectMemberDevelop(){
+
+			if(""!=task_type && task_type ==1) {
+				var name = "";
+				var list_des = "";
+				var end_time_from = "";
+				var task_level = 1;
+				var value = $("#member_develop").val();
+				if(isUpLevel){
+					value = $("input[name='task_level']").val();
+					isUpLevel = 0;
+				}
+				switch (value) {
+					case "1":
+						name = '1.支部派人谈话时间';
+						list_des = '在收到入党申请书一个月内完成；';
+						end_time_from = '30';
+						task_level = 1;
+						break;
+					case "2":
+						name = '2.支部确定入党积极分子时间';
+						list_des = '在递交入党申请书满6个月以上的入党申请人中推荐产生；';
+						end_time_from = '180';
+						task_level = 2;
+						break;
+					case "3":
+						name = '3.党委备案时间';
+						list_des = '一般在确定入党积极分子后15日内向上级党委备案；';
+						end_time_from = '15';
+						task_level = 3;
+						break;
+					case "4":
+						name = '4.第一次思想汇报时间';
+						list_des = '入党积极分子一般每季度向党支部进行一次书面思想汇报；';
+						end_time_from = '120';
+						task_level = 4;
+						break;
+					case "5":
+						name = '5.第二次思想汇报时间';
+						list_des = '入党积极分子一般每季度向党支部进行一次书面思想汇报；';
+						end_time_from = '120';
+						task_level = 5;
+						break;
+					case "6":
+						name = '6.第三次思想汇报时间';
+						list_des = '入党积极分子一般每季度向党支部进行一次书面思想汇报；';
+						end_time_from = '120';
+						task_level = 6;
+						break;
+					case "7":
+						name = '7.第四次思想汇报时间';
+						list_des = '入党积极分子一般每季度向党支部进行一次书面思想汇报；';
+						end_time_from = '120';
+						task_level = 7;
+						break;
+					case "8":
+						name = '8.第一支部考察时间';
+						list_des = '支部一般每半年考察一次，总共不少于两次；';
+						end_time_from = '180';
+						task_level = 8;
+						break;
+					case "9":
+						name = '9.第二次支部考察时间';
+						list_des = '支部一般每半年考察一次，总共不少于两次；';
+						end_time_from = '180';
+						task_level = 9;
+						break;
+					case "10":
+						name = '10.支部讨论确定发展对象人选时间';
+						list_des = '在经过一年以上的培养教育和考察的入党积极分子中发展，支部讨论确定人选时间，然后公示；';
+						end_time_from = '380';
+						task_level = 10;
+						break;
+					case "11":
+						name = '11.党总支审议时间';
+						list_des = '时间为公示结束后，向上级党委备案前；';
+						end_time_from = '5';
+						task_level = 11;
+						break;
+					case "12":
+						name = '12.党委备案同意时间';
+						list_des = '一般确定发展对象人选15日内向上级党委备案，备案同意时间即为确定发展对象的时间；';
+						end_time_from = '15';
+						task_level = 12;
+						break;
+					case "13":
+						name = '13.支部审议时间';
+						list_des = '召开支部委会/支部大会听取入党介绍人关于发展对象情况汇报的时间；';
+						end_time_from = '8';
+						task_level = 13;
+						break;
+					case "14":
+						name = '14.党委预审时间';
+						list_des = '上级党委收到支部预审请示1个月内；';
+						end_time_from = '30';
+						task_level = 14;
+						break;
+					case "15":
+						name = '15.支部大会时间';
+						list_des = '召开支部大会讨论接受预备党员的时间；';
+						end_time_from = '15';
+						task_level = 15;
+						break;
+					case "16":
+						name = '16.党总支审议时间';
+						list_des = '支部大会之后，上级党委审批前；';
+						end_time_from = '7';
+						task_level = 16;
+						break;
+					case "17":
+						name = '17.党委审批时间';
+						list_des = '即召开党委会审批预备党员时间->在收到党支部上报审批预备党员的请示后3个月内，一般不超过6个月；';
+						end_time_from = '150';
+						task_level = 17;
+						break;
+					default:
+						break;
+				}
+				$("input[name='name']").val(name);
+				$("input[name='list_des']").val(list_des);
+				$("input[name='end_time_from']").val(end_time_from);
+				$("input[name='task_level']").val(task_level);
+				// $('#member_develop  option:eq('+task_level+')').attr('selected',true);
+
+				if ('' != mTmpDate || ''!=$("#LAY_date37").val()) {
+				    var d =	$("#LAY_date37").val() ;
+					var date = new Date(d);
+					var mDate = {
+						year:date.getFullYear(),
+						month:date.getMonth()+1,
+						date: date.getDate(),
+						hours:date.getHours(),
+						minutes:date.getMinutes()+1,
+					};
+					mTmpDate = mDate;
+					setTime(mDate);
+				}
+			}
+
+		}
+
+		form.on('select(member_develop)', function(data){
+			selectMemberDevelop();
+		});
+
+		var at_time =  null;
+		var at_date = null;
+
+		function setTime(pickDate){
+			mTmpDate = pickDate;
+			 var pd  = $('#LAY_date14').val();
+			 if(pd!=undefined && pd!=null && pd!=''){
+				 var pdArr = pd.split('-');
+				 if(pickDate.year <=  pdArr[0] && pickDate.month<= pdArr[1] && pickDate.date < pdArr[2] ){
+					 $('#LAY_date14').val('');
+				 }
+			 }
+			//计算最小时间
+			var value =  $("#frequency").val();
+			var date =  new Date();
+			var mDate = {
+				year:date.getFullYear(),
+				month:date.getMonth(),
+				date: date.getDate(),
+				hours:date.getHours(),
+				minutes:date.getMinutes()+1,
+			};
+			var mPickDate = {
+				year:pickDate.year,
+				month:pickDate.month-1,
+				date: pickDate.date,
+				hours:pickDate.hours,
+				minutes:pickDate.minutes,
+			};
+			if(value==0 ){
+				//指定一次
+				at_date.config.min = mDate ;
+				if(date.getDate() == pickDate.date && $('#end_time_from').val()==0){
+					at_date.config.max =  mDate;
+					at_time.config.min =mDate;
+				}else{
+					at_time.config.min = {};
+				  	var newEndTime  =	new Date(pickDate.year+"-"+pickDate.month+"-"+pickDate.date).getTime()  +  $('#end_time_from').val()*24 * 3600*1000;
+					var nDate = new Date(newEndTime);
+					var nDate = {
+						year:nDate.getFullYear(),
+						month:nDate.getMonth(),
+						date: nDate.getDate(),
+						hours:nDate.getHours(),
+						minutes:nDate.getMinutes()+1,
+					};
+					at_date.config.max =nDate;
+				}
+
+				//如果执行阶段大于七天，“提醒日期”设为倒数第七天,否则默认最后一天
+				if($('#end_time_from').val()<=7){
+					var newEndTime  =  new Date(pickDate.year+"-"+pickDate.month+"-"+pickDate.date).getTime()  + ($('#end_time_from').val()) *24 * 3600*1000;
+					var nDate = new Date(newEndTime);
+					$("input[name='at_date']").val(nDate.getFullYear()+"-"+(nDate.getMonth()+1)+"-"+nDate.getDate());
+					$('#showDayStamp').html(0);
+				}else  if ($('#end_time_from').val()>7){
+					var newEndTime  =  new Date(pickDate.year+"-"+pickDate.month+"-"+pickDate.date).getTime()  + ($('#end_time_from').val()-7) *24 * 3600*1000;
+					var nDate = new Date(newEndTime);
+					$("input[name='at_date']").val(nDate.getFullYear()+"-"+(nDate.getMonth()+1)+"-"+nDate.getDate());
+					$('#showDayStamp').html(7);
+				}
+			}else if (value >=4 ){
+			}
+			else{
+				at_time.config.min = {};
+				at_date.config.min = mDate;
+				at_date.config.max = mPickDate
+			}
+			return  "";
+		}
+
+		function setTimeTips(date){
+			var va =  $("#frequency").val();
+			if(date==null || date==''||date==undefined){
+				$('#tips').html('');
+				return;
+			}
+			if(va == 0){
+				$('#tips').html('指定在 '+date.year+"-"+date.month+"-"+date.date+' 执行一次');
+			}else if(va ==1 ){
+				$('#tips').html('每日指定时间执行一次');
+			}else if(va== 2){
+				var myDate = new Date(Date.parse(date.year+"/"+date.month+"/"+date.date));
+				var weekDay = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+				$('#tips').html('每周'+weekDay[myDate.getDay()]+'执行一次');
+			}else if (va == 3){
+				var tmpStr = '每月'+date.date+'号执行';
+				if(date.date>28){
+					tmpStr  = tmpStr + '（若执行月无此日则为末尾日）';
+				}
+				$('#tips').html(tmpStr);
+			}else if(va == 4){
+				$('#tips').html('每顺推3个月'+date.date+'号执行（一季度：123月;二季度:456;...）');
+			}else if(va == 5){
+				$('#tips').html('每顺推6个月'+date.date+'号执行（上半年1-6;下半年7-12）');
+			}else if(va ==6){
+				$('#tips').html('每年'+date.month+'月'+date.date+'号执行一次');
+			}
+		}
+
+		//创建编辑器
+		let uploadInst = [];
+		renderArr.forEach(function (v, i) {
+			if (v.type == 'editor') {
+				//编辑器
+				renderArr[i].editIndex = layedit.build(v.id, {
+					uploadImage: {
+						url: '/Admin/Upload/layedit_upimage',
+						type: 'post'
+					}
+				});
+			} else if (v.type == 'date') {
+				//日期
+				if(v.id == "#LAY_date14"){
+				  at_date=laydate.render({
+						elem: v.id
+						, range: v.range
+						,trigger:'click'
+					  	,done:function (value,date) {
+						  mTmpAtDate = date;
+						  setTimeTips(date);
+						  // 任务结束多少天
+						  var newEndTime  =	new Date(mTmpDate.year+"-"+mTmpDate.month+"-"+mTmpDate.date).getTime()  +  $('#end_time_from').val()*24 * 3600*1000;
+						  if(newEndTime>0){
+						    var newAtTime  = new Date(date.year+"-"+date.month+"-"+date.date).getTime();
+						    var stampDate =  newEndTime - newAtTime ;
+						    $('#showDayStamp').html(stampDate/(24*3600*1000));
+						  }else{
+						    $('#showDayStamp').html(0);
+						  }
+					  }
+					});
+				}else{
+					//LAY_date37
+					laydate.render({
+						elem: v.id
+						, range: v.range
+						,trigger:'click'
+						,min:minDate(),
+						done:function (value,date) {
+							setTime(date);
+						}
+					});
+				}
+
+			} else if (v.type == 'time') {
+				//日期
+				at_time = laydate.render({
+					elem: v.id
+					,type: 'time'
+					,trigger:'click'
+					// ,min:'2019-12-25 12:30:00'
+				});
+
+			} else if (v.type == 'excel') {
+				//excel上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upExcel'
+					, accept: 'file'
+					, exts: 'xls|xlsx'
+					, before: function (obj) {
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						$(v.inputId).val(res.path)
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = $(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+					}
+				});
+			} else if (v.type == 'file') {
+				//excel上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upfile'
+					, accept: 'file'
+					// , exts: '.'
+					, before: function (obj) {
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						$(v.inputId).val(res.path);
+						$(v.openId).attr('href', res.path)
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = $(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+					}
+				});
+			}
+		});
+		//自定义验证规则
+		form.verify({
+			title: function (value) {
+				if (value.length < 5) {
+					return '标题至少得5个字符啊';
+				}
+			}
+			, pass: [
+				/^[\S]{6,12}$/
+				, '密码必须6到12位，且不能出现空格'
+			]
+			, content: function (value) {
+				renderArr.forEach(function (v, i) {
+					if (v.type == 'editor') {
+						layedit.sync(i);
+					}
+				});
+				//layedit.sync(editIndex);
+			}
+			, persion: function (value) {
+				if (value == '') {
+					return '责任人不能为空';
+				}
+			}
+		});
+
+		//监听提交
+		form.on('submit(*)', function (data) {
+			let loading = layer.load(2, {
+				shade: [0.2, '#000']
+			});
+			let url = self.location.href;
+			$.post(url, data.field, function (res) {
+				layer.close(loading);
+				if (res.code != 1) {
+					return layer.msg(res.msg);
+				} else {
+					layer.msg(res.msg);
+					var isUp = {if empty($isUpLevel)}""{else}{$isUpLevel}{/if};
+					if(task_type ==1 && isUp ){
+						window.location.href = "{:Url('detail',['id'=>$data['info_id'],'task_type'=>1])}";
+					}else{
+						setTimeout(function () {
+							window.history.go(-1);
+						}, 1000);
+					}
+
+				}
+			}).error(function () {
+				layer.close(loading);
+				layer.msg('服务器错误！');
+			});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+		
+		$('#choicepersion').click(function () {
+			let url = "{:url('user/getDepUserList', array('scene'=>'user', 'checkbar'=>true, 'disToSub'=>true))}";
+			layer.open({
+				type: 2,
+				title: false,
+				area: ['700px', '90%'],
+				content: url,
+				btn: ['确认', '取消'],
+				yes: function(index, layero){
+					let childWin = $('#layui-layer-iframe'+index)[0].contentWindow;
+					let data = childWin.get_selected_data();
+					console.log('data', data)
+					var uids = '';
+					var uidNames = '';
+					for (let u in data.user) {
+						uids = uids + data.user[u].id +",";
+						uidNames = uidNames + data.user[u].name+',';
+					}
+					console.log('uids', uids)
+					uids = uids.substr(0, uids.length - 1);
+					uidNames = uidNames.substr(0, uidNames.length - 1);
+					// recorderId = data.user.indexOf(data.tags[0]);
+					$("input[name='uid_name']").val(uidNames);
+					$("input[name='uid']").val(uids);
+					layer.close(index);
+				}
+			});
+		});
+
+		selectMemberDevelop();
+	});
+
+</script>
+<script type="text/javascript" src="/js/delelement.js"></script>
+
+{/block}

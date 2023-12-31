@@ -1,0 +1,117 @@
+{extend name="base" /}
+{block name="body"}
+
+<div class="admin-main  layui-field-box layui-form">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>微信管理</legend>
+    </fieldset>
+
+<div class="admin-main">
+    <div class="layui-tab-content">
+        <form class="layui-form form-container"  data-url="{:url('admin/wx/config_update')}"  localtion-url="{:url('wx/config')}">
+            <div class="layui-tab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">公众号配置</li>
+                     <li>APP配置</li>
+                </ul>
+                <div class="layui-tab-content" style="height: 100px;">
+                    <div class="layui-tab-item layui-show">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">appId</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="app_id" value="{$res.app_id}"  placeholder="请输入appId" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">appSecret</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="app_secret" style="width:50%" value="{$res.app_secret}"  placeholder="请输入appSecret" class="layui-input">
+                            </div>
+                        </div>
+<!--                        <div class="layui-form-item">-->
+<!--                            <label class="layui-form-label">回调界面</label>-->
+<!--                            <div class="layui-input-block">-->
+<!--                                <input type="text" name="redirect" style="width:50%;" value="{$res.redirect}"  placeholder="授权后回调界面，如/api/wx/redirect" class="layui-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="mch_id" value="{$res.mch_id}"  placeholder="请输入商户号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">key</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="key" style="width:50%;" value="{$res.key}" required  placeholder=""  class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">子商户号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="sub_mch_id" value="{$res.sub_mch_id}"   placeholder="服务商需要填写,否则为空" class="layui-input">
+                            </div>
+                        </div>
+<!--                        <div class="layui-form-item">-->
+<!--                            <label class="layui-form-label">异步通知</label>-->
+<!--                            <div class="layui-input-block">-->
+<!--                                <input disabled type="text" name="notify_url" style="width:50%;" value="{$res.notify_url}"   placeholder="异步通知地址，如http://kouh.orangelite.cn/api/wx/notify" class="layui-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">APP_appId</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="app_id_app" value="{$res.app_id_app}"  placeholder="请输入APP的appId" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">APPappSecret</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="app_secret_app" style="width:50%" value="{$res.app_secret_app}"  placeholder="请输入APP的appSecret" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">APP商户号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="mch_id_app" value="{$res.mch_id_app}"  placeholder="请输入APP的商户号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">APPkey</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="key_app" style="width:50%;" value="{$res.key_app}"   placeholder=""  class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">子商户号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="sub_mch_id_app" value="{$res.sub_mch_id_app}"   placeholder="服务商需要填写,否则为空" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btable-paged" >
+                <div class="labtable-pagedyui-main">
+                    <div class="formbtngroup">
+                        <button  class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">立即设置</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+{/block}
+{block name="script"}
+<script>
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/formadd.js"></script>
+{/block}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>等待支付</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/wxzf.css">
+    <script src="/assets/js/jquery.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="all_w ">
+        <div class="gofh" style="position:fixed;top:0;left:10px;">
+            <a href="{:Url('wap/my/index')}">
+                <img src="/assets/images/jt_03.jpg" >
+            </a>
+        </div>
+        <div class="ttwenz" style="text-align:center;width:100%;">
+            <h4>确认交易</h4>
+            <h5>微信安全支付</h5>
+        </div>
+    </div>
+</div>
+<div class="wenx_xx">
+    <div class="mz">请支付</div>
+    <div class="wxzf_price">￥0.01</div>
+</div>
+<div class="skf_xinf">
+    <div class="all_w"> <span class="bt">收款方</span> <span class="fr">楚楚街</span> </div>
+</div>
+<a href="javascript:void(0);" onclick="zhifu();" class="ljzf_but all_w">立即支付</a>
+</body>
+</html>
+
+<script>
+    $(function(){
+        pushHistory();
+        window.addEventListener('popstate', function(e) {
+            window.location = '/wap/my/index'
+        }, false);
+        function pushHistory() {
+            var state = {
+                title: 'title',
+                url: '#'
+            };
+            window.history.pushState(state, 'title', '#');
+        }
+    });
+</script>

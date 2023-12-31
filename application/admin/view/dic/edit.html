@@ -1,0 +1,106 @@
+{extend name="base"/}
+{block name="css"}
+<style>
+    .require-text {
+        color: #DC524B;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="layui-tab-content">
+    <form class="layui-form layui-fluid">
+        <div class="layui-form-item heightest_score">
+            <label class="layui-form-label" style="font-size:12px;">
+                <span class="require-text">*</span>
+                所属
+            </label>
+            <div class="layui-input-block">
+                <input lay-verify="required" type="text" disabled value="{$dic_type.name}"  autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item heightest_score">
+            <label class="layui-form-label" style="font-size:12px;">
+                <span class="require-text">*</span>
+                字典值
+            </label>
+            <div class="layui-input-block">
+                <input lay-verify="required" type="text" name="value" autocomplete="off" value="{$data.value}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item heightest_score">
+            <label class="layui-form-label" style="font-size:12px;">
+                <span class="require-text">*</span>
+                字典内容
+            </label>
+            <div class="layui-input-block">
+                <input lay-verify="required" type="text" name="text" autocomplete="off" value="{$data.text}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item heightest_score">
+            <label class="layui-form-label" style="font-size:12px;">
+                <span class="require-text">*</span>
+                状态
+            </label>
+            <div class="layui-input-block">
+                <select name="status" id="">
+                    <option {if $data.status==1}selected{/if} value="1">启用</option>
+                    <option {if $data.status==0}selected{/if} value="0">停用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item heightest_score">
+            <label class="layui-form-label" style="font-size:12px;">
+                <span class="require-text">*</span>
+                排序
+            </label>
+            <div class="layui-input-block">
+                <input lay-verify="required" type="number" name="sort" placeholder="越高越靠前" autocomplete="off" value="{$data.sort}" class="layui-input">
+            </div>
+        </div>
+
+        <input type="hidden" name="id" value="{$data.id}">
+        <input type="hidden" name="type_id" value="{$dic_type.id}">
+        <input type="hidden" name="type_code" value="{$dic_type.code}">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-sm"  lay-submit lay-filter="formDemo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    //Demo
+    layui.use(['form','jquery'], function(){
+
+        let $ = layui.jquery;
+        let form = layui.form;
+        let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $.post('/admin/dic/edit',data.field,(res)=>{
+                if(res.code==1){
+                    parent.layer.msg(res.msg,{icon:1});
+                    parent.window.tableReload();
+                    parent.layer.close(index); //再执行关闭
+                }else{
+                    layer.msg(res.msg,{icon:2});
+                }
+            });
+            return false;
+        });
+
+        window.tableReload = function(){
+            tableIns.reload({where:{pid:0}});
+        };
+    });
+</script>
+{/block}
+
+{block name="js"}
+
+{/block}

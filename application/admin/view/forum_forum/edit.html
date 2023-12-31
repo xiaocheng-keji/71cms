@@ -1,0 +1,82 @@
+{extend name="base" /}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+	<button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>编辑版块</legend>
+	</fieldset>
+	<!--tab标签-->
+	<div class="layui-tab-brief">
+		<div class="">
+			<div class="layui-tab-item layui-show">
+				<form class="layui-form form-container"  data-url="{:url('admin/forumForum/update')}"  localtion-url="{:url('forumForum/index')}">
+					<div class="layui-form-item">
+						<label class="layui-form-label">名称</label>
+						<div class="layui-input-inline">
+							<input type="text" name="forum_name" value="{$tptc.forum_name}" lay-verify="is_name" placeholder="请输入名称" autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux"><text style="color:red;">*</text></div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">排序</label>
+						<div class="layui-input-inline">
+							<input type="text" name="sort_order" placeholder="请输入排序值" autocomplete="off" class="layui-input" value="{$tptc.sort_order}">
+						</div>
+						<div class="layui-form-mid layui-word-aux">数字越小排序越前(最小值为0)</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">是否显示</label>
+						<div class="layui-input-inline">
+							<input type="checkbox" name="is_show" lay-skin="switch" lay-text="显示|隐藏" lay-filter="switchshow"  value="{$tptc.is_show}"  {if $tptc.is_show == 1}checked="true"{/if}>
+						</div>
+					</div>
+
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">描述</label>
+						<div class="layui-input-block">
+							<textarea name="forum_desc" placeholder="请输入描述" class="layui-textarea">{$tptc.forum_desc}</textarea>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<input type="hidden" name="forum_id" value="{$tptc.forum_id}">
+						<div class="layui-input-block">
+							<button class="layui-btn layui-btn-sm" lay-submit lay-filter="formadd">立即提交</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/formadd.js"></script>
+
+{/block}
+{block name="script"}
+<script>
+layui.use(['form', 'jquery'],function(){
+	var form = layui.form
+	,jq = layui.jquery;
+  
+	form.verify({
+		is_name: function (value) {
+			if (value.length == '') {
+				return '名称不能为空';
+			}
+		},
+	});
+
+	form.on('switch(switchshow)', function(data){
+		let status = 0;
+		if (data.elem.checked) {
+			status = 1;
+		}
+		jq(this).val(status);
+	});
+
+})
+</script>
+{/block}

@@ -1,0 +1,123 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <blockquote class="layui-elem-quote layui-text">
+        排序规则：数值0排序最前面，数字越大越靠后
+    </blockquote>
+
+
+    <div class="layui-field-box">
+
+        <button class="layui-btn" data-url="{:url('admin/paid/video_type_alldelete')}"  lay-submit lay-filter="alldelete">删除选中</button>
+
+
+        <a href="{:url('admin/paid/video_type_add')}" class="layui-btn" id="add">
+            添加课程
+        </a>
+
+        <form class="" style="float:right;" action="{:url('admin/paid/video_type')}" method="get"  >
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" name="keyword" value="{:session('keyword')}" placeholder="请输入关键词" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn">搜索</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <table class="layui-table admin-table">
+            <thead>
+                <tr>
+                    <th width="5%" align="center">
+                        <input type="checkbox" name="checkAll" lay-filter="checkAll">
+                    </th>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <!--<th>代码</th>-->
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {volist name="list" id="vo"}
+                <tr>
+                    <td align="center">
+                        <input type="checkbox" name="delid[]" lay-filter="checkOne" value="{$vo.id}">
+                    </td>
+                    <td>{$vo.id}</td>
+                    <!--<td>{$vo.typecode}</td>-->
+                    <td>{if condition="$vo.pid gt 0"}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|--{/if}{$vo.typename}</td>
+                    <td>
+                        <input type="checkbox" name="status" lay-skin="switch" lay-text="开启|关闭" lay-filter="switchTest" value="{$vo.id}" {if $vo.status==1}checked{/if}>
+                    </td>
+                    <td>
+                        {if condition="$vo.pid eq 0"}
+                        <a href="{:url('admin/paid/video_type_add',['pid'=>$vo['id']])}" class="layui-btn layui-btn-normal layui-btn-xs">添加子类</a>
+                        {else/}
+                        <button data-cid="{$vo.id}" class="layui-btn  layui-btn-warm layui-btn-xs target_user">学习人员</button>
+                        {/if}
+                        <a href="{:url('admin/paid/video_type_edit',['id'=>$vo['id']])}" class="layui-btn layui-btn-normal layui-btn-xs">编辑</a>
+                        <a href="javascript:;" data-id="{$vo.id}" data-url="{:url('admin/paid/video_type_delete',array('id'=>$vo['id']))}" data-opt="del"  class="elementdel layui-btn layui-btn-danger layui-btn-xs ajax-delete">删除</a>
+                    </td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div id="tree" style="display: block;"></div>
+
+
+{/block}
+
+{block name="page"}
+    <div class="btable-paged" >
+    <div class="layui-main">
+        {$list->render()|raw}
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+<script>
+    layui.use(['tree','jquery','layer','form'],function(){
+        let jq = layui.jquery;
+        let layer = layui.layer;
+        let form = layui.form;
+        jq('.target_user').click((e)=>{
+            let cid = e.target.dataset.cid;
+            layer.open({
+                title:'添加目标用户',
+                type:2,
+                content:'/admin/paid/target_user/cid/'+cid,
+                area:['100%','100%']
+            });
+        });
+
+        form.on('switch(switchTest)',function(data){
+            let loading = layer.load(2, {shade: [0.2, '#000']});
+            if (data.elem.checked) {
+                status = 1;
+            } else {
+                status = 0;
+            }
+            jq.post('/admin/paid/type_change_update',{id:data.value,status},(res)=>{
+                layer.close(loading);
+                if(res.status==1){
+                    layer.msg(res.msg,{icon:1});
+                }else{
+                    layer.msg(res.msg,{icon:2});
+                }
+            });
+        });
+    });
+</script>
+{/block}

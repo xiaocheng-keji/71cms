@@ -1,0 +1,32 @@
+{extend name="base" /}
+{block name="body"}
+	<style>
+		html,body{height:100%}
+		.dtree {
+			padding-right:15px;
+		}
+	</style>
+	<!-- <ul id="demoTree" class="dtree" data-id="0"></ul> -->
+	<div style="display: flex;flex-direction: row;padding-top: 10px;">
+		<div id="dep-div" style="overflow-x: hidden;overflow-y: auto;">
+			<div class="dtree-nav-item">
+				<div id="whole" class="dtree-nav-div dtree-theme-item dtree-theme-item-this">
+					<i class="dtreefont dtreefont-special dtree-theme-dtreefont dtree-theme-icon dtree-icon-weibiaoti5" data-spread="close" data-id="3" dtree-id="demoTree"></i>
+					<cite class="t-click" data-id="0" data-leaf="node">全部<div></div></cite>
+				</div>
+			</div>
+			{include file="public/dtree" scene="userList" /}
+		</div>
+		<iframe style="width: 80%;border:none;overflow: hidden" id="userListIframe" src="{:url('user/index')}"></iframe>
+	</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script>
+	$(function () {
+	    let bh = $('html').height();
+        $('#dep-div').height(bh-20);
+        $('#userListIframe').height(bh-20);
+    })
+</script>
+{/block}

@@ -1,0 +1,19 @@
+{extend name="base" /}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>编辑数据权限</legend>
+    </fieldset>
+    {include file="public/dtree" scene="depAuth" /}
+    <input type="hidden" name="user_id" value="{$user_id}">
+</div>
+{/block}
+{block name="js"}
+<script>
+    layui.use('layer', function () {
+        var layer = layui.layer, jq = layui.jquery;
+        jq('#demoTree').removeClass('dtree');
+    });
+</script>
+{/block}

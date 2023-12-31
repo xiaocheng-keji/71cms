@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>智慧党建系统后台管理</title>
+    <link rel="stylesheet" href="/plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/main.css" media="all"/>
+
+
+    <link rel="stylesheet" href="/css/form.css">
+    <style>
+        p{
+            text-align: left;
+            line-height: 1.5;
+            margin: 20px 10px 40px;
+        }
+        body{
+            padding: 20px;
+        }
+    </style>
+
+    <!--[if lt IE 9]>
+    <script src="__CSS__/html5shiv.min.js"></script>
+    <script src="__CSS__/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="/plugins/layui/layui.js"></script>
+</head>
+<body>
+<p>数据导出中请稍候...<span id="progress_txt"></span></p>
+<div class="layui-progress layui-progress-big" lay-filter="progress" lay-showPercent="yes">
+    <div class="layui-progress-bar" lay-percent=""></div>
+</div>
+<script>
+    location.href = '{:url("",["act"=>"export", "export_id"=>$export_id])}';
+    layui.use(['table', 'jquery', 'form', 'element'], function () {
+        var table = layui.table
+            , jq = layui.jquery
+            , form = layui.form
+            , element = layui.element
+            , s = parseInt('{$millisecond|default=3000}');
+
+        var si = setInterval(function () {
+            jq.get('{:url("",["act"=>"get_export_progress", "export_id"=>$export_id])}', function (res) {
+                // console.log(res)
+                if (res.data.count == res.data.now) {
+                    clearInterval(si);
+                    setTimeout(function(){
+                        // window.open("about:blank", "_self").close();
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+                    }, 3000);
+                }
+                // jq('#progress_txt').text('[' + res.data.now + '/' + res.data.count + ']')
+                var percent = (Math.round(res.data.now / res.data.count * 10000) / 100.00)+"%";//获取进度百分比
+                console.log('percent', percent)
+                element.progress('progress', percent);
+                element.progress('progress', res.data.now + '/' + res.data.count);
+            });
+        }, s);
+
+
+    });  // end layui use
+</script>
+</body>
+</html>

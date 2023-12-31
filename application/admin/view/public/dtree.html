@@ -1,0 +1,171 @@
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/dtree.css">
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/font/dtreefont.css">
+
+<ul id="demoTree" class="dtree" style="padding-bottom: 40px" data-id="0"></ul>
+{if condition="'[scene]' == 'depAuth'"}
+	<div class="btable-paged">
+		<div class="layui-main">
+			<div class="formbtngroup">
+				<button id="preserve" class="layui-btn layui-btn-sm">立即更新</button>
+				<!--<button onclick="history.go(-1);" class="layui-btn layui-btn-primary layui-btn-sm">返回</button>-->
+			</div>
+		</div>
+	</div>
+{elseif condition="'[scene]' == 'dataAuth'"}
+<div class="btable-paged">
+	<div class="layui-main">
+		<div class="formbtngroup">
+			<button id="saveDataAuth" class="layui-btn layui-btn-sm">立即更新</button>
+			<!--<button onclick="history.go(-1);" class="layui-btn layui-btn-primary layui-btn-sm">返回</button>-->
+		</div>
+	</div>
+</div>
+{/if}
+<script>
+	layui.extend({
+		dtree: '/plugins/layui/layui_ext/dtree/dtree'   // {/}的意思即代表采用自有路径，即不跟随 base 路径
+	}).use('dtree', function () {
+		var dtree = layui.dtree, layer = layui.layer, jq = layui.jquery;
+		// var demoTree = [$list|raw];
+		console.log('[scene]');
+		let dataUrl = "{:url('user/departmentDtree')}";
+		let dtreeData = {
+			elem: "#demoTree",
+			url: dataUrl,
+			type: "all",
+			dot: false,
+			line: true
+		}
+		if ('[scene]' == 'depAuth') {
+			let user_id = jq("input[name='user_id']").val();
+			dtreeData.url = dtreeData.url + '?scene=depAuth&user_id=' + user_id;
+			dtreeData.checkbar = true;
+			dtreeData.checkbarType = "no-all";
+			dtreeData.checkbarData = "all";
+			// dtreeData.checkbarData = "halfChoose";
+		} else if ('[scene]' == 'dataAuth') {
+			let table_id = jq("input[name='table_id']").val();
+			let table_name = jq("input[name='table_name']").val();
+			dtreeData.url = dtreeData.url + '?scene=dataAuth&table_name=' + table_name + '&table_id=' + table_id;
+			dtreeData.checkbar = true;
+			dtreeData.checkbarType = "self";
+			dtreeData.checkbarData = "all";
+			// dtreeData.checkbarData = "halfChoose";
+		} else if ('[scene]' == 'choiceGroup') {
+			dtreeData.checkbar = true;
+			dtreeData.checkbarType = "self";
+		}
+		var DemoTree = dtree.render(dtreeData);
+		console.log('')
+		dtree.on("node('demoTree')", function (param) {
+			console.log('node');
+			console.log(param);
+			jq('#whole').removeClass('dtree-theme-item-this');
+			if ('[scene]' == 'userList'){
+                let dep_auth = {:json_encode($Think.session.dep_auth)};
+                console.log(dep_auth);
+                if (dep_auth[param.param.nodeId] != 1){
+                	layer.msg('您没有查看此组织数据的权限')
+					return;
+				}
+				let locationurl = "{:url('user/index')}" + "?dep_id=" +param.param.nodeId + "&dep_name=" + param.param.context;
+				console.log(locationurl);
+				jq('#userListIframe').attr('src', locationurl);
+			} else if ('[scene]' == 'choiceUser') {
+				let dep_auth = {:json_encode($Think.session.dep_auth)};
+				console.log(dep_auth);
+				if (dep_auth[param.param.nodeId] != 1){
+					layer.msg('您没有查看此组织数据的权限')
+					return;
+				}
+				let locationurl = "{:url('user/userDtree')}" + "?dep_id=" +param.param.nodeId
+				jq('#userListIframe').attr('src', locationurl);
+			}
+			// location.href = locationurl;
+		});
+
+		jq('#whole').click(function () {
+			console.log('whole');
+			let _div = DemoTree.getNowNode();
+			_div.removeClass('dtree-theme-item-this');
+			jq(this).addClass('dtree-theme-item-this');
+			let locationurl = '';
+			if ('[scene]' == 'userList'){
+				locationurl = "{:url('user/index')}";
+			} else if ('[scene]' == 'choiceUser') {
+				locationurl = "{:url('user/userDtree')}";
+			}
+			if (locationurl != '') {
+				jq('#userListIframe').attr('src', locationurl);
+			}
+		});
+
+		jq('#preserve').click(function () {
+			let isChage = dtree.changeCheckbarNodes('demoTree');
+			console.log(isChage);
+			if (isChage === false) {
+				layer.msg("请先编辑", {icon: 2, anim: 6, time: 1000});
+				return;
+			}
+			loading = layer.load(2, {
+				shade: [0.2,'#000']
+			});
+			let user_id = jq("input[name='user_id']").val();
+			let table_name = jq("input[name='table_name']").val();
+			let auth = dtree.getCheckbarNodesParam('demoTree');
+			let data = {
+				user_id: user_id,
+				table_name: table_name,
+				auth: auth,
+			}
+			postRequest("{:url('editDepAuth')}", data, "{:url('index')}");
+
+		});
+
+		function postRequest (url, data, locationurl) {
+			console.log('postRequest');
+			jq.post(url, data, function (res) {
+				if(res.code == 200){
+					layer.close(loading);
+					layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+						location.href = locationurl;
+					});
+				}else{
+					layer.close(loading);
+					layer.msg(res.msg, {icon: 2, anim: 6, time: 1000});
+				}
+			});
+		}
+
+		jq('#saveDataAuth').click(function () {
+			let isChage = dtree.changeCheckbarNodes('demoTree');
+			console.log(isChage);
+			if (isChage === false) {
+				layer.msg("请先编辑", {icon: 2, anim: 6, time: 1000});
+				return;
+			}
+			loading = layer.load(2, {
+				shade: [0.2,'#000']
+			});
+			let table_id = jq("input[name='table_id']").val();
+			let table_name = jq("input[name='table_name']").val();
+			let auth = dtree.getCheckbarNodesParam('demoTree');
+			let data = {
+				table_id: table_id,
+				table_name: table_name,
+				auth: auth,
+			}
+			jq.post("{:url('editDepAuth')}", data, function (res) {
+				if(res.code == 1){
+					layer.close(loading);
+					layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+						history.back();
+					});
+				}else{
+					layer.close(loading);
+					layer.msg(res.msg, {icon: 2, anim: 6, time: 1000});
+				}
+			});
+		});
+	});
+</script>

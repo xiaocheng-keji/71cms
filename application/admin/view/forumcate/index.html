@@ -1,0 +1,123 @@
+{extend name="base" /}
+{block name="body"}
+<div class="admin-main">
+<div class="layui-field-box layui-form">
+				<a href="{:url('admin/forumcate/add')}" class="layui-btn layui-btn-sm" id="add">
+					<i class="layui-icon">&#xe608;</i> 添加板块
+				</a>
+<table class="layui-table admin-table">
+	<thead>
+                    <tr>
+<th width="5%" align="center">ID</th>
+<th width="20%" align="center">板块名称</th>
+<th width="10%" align="center">是否显示</th>
+<th width="10%" align="center">板块侧栏</th>
+<th width="10%" align="center">板块图片</th>
+<th width="25%" align="center">板块连接</th>
+<th width="10%" align="center">添加时间</th>
+<th width="10%" align="center">基本操作</th>
+</tr>
+   </thead>
+                    <tbody>
+{volist name="category_level_list" id="vo"}
+<tr>
+<td align="center">{$vo.id}</td>
+<td style="padding-left: 20px;"><a target="_blank" href="{:routerurl('index/view',array('id'=>$vo.id))}">{neq name="vo.level" value="1"}|{php}for($i=1;$i<$vo['level'];$i++){echo ' --';}{/php}{/neq} {$vo.name}</a></td>
+<td align="center">
+
+<input type="checkbox" name="show" lay-skin="switch" lay-text="显示|隐藏" lay-filter="switchshow"  value="{$vo['id']}" {php}echo $vo['show']==1 ? 'checked' : '';{/php}>
+</td>
+<td align="center">
+<input type="checkbox" name="sidebar" lay-skin="switch" lay-text="开启|关闭" lay-filter="switchTest"  value="{$vo['id']}" {php}echo $vo['sidebar']==1 ? 'checked' : '';{/php}>
+
+</td>
+<td align="center">{if condition="$vo['pic'] neq ''"}<img style="border: 1px solid #CDCDCD;padding: 3px;border-radius: 2px;" src="__PUBLIC__{$vo.pic}" height="25">{else /}暂无图片{/if}</td>
+<td style="padding-left: 20px;">{:routerurl('index/view',array('id'=>$vo.id))}</td>
+<td align="center">{$vo.time|date="Y-m-d"}</td>
+<td align="center">
+<a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-sm" href="{:url('forumcate/edit',array('id'=>$vo['id']))}">修改</a>
+<a href="javascript:;" data-id="{$vo.id}" data-url="{:url('admin/forumcate/delete',array('id'=>$vo['id']))}" data-opt="del"  class="elementdel layui-btn-sm layui-btn layui-btn-danger layui-btn-xs ajax-delete">删除</a>
+
+</td>
+</tr>
+{/volist}
+  </tbody>
+</table>
+	</div>
+		
+			
+		</div>				
+{/block}
+
+    {block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+ {/block}
+    {block name="script"}
+    <script>
+layui.use(['form'],function(){
+  var form = layui.form
+  ,jq = layui.jquery;
+
+
+ //jq('.btable-paged').eq(1).hide();
+ var status=0;
+ form.on('switch(switchTest)', function(data){
+	  loading = layer.load(2, {
+	      shade: [0.2,'#000']
+	    });
+	    if(data.elem.checked){
+	    	status=1;
+	    }else{
+	    	status=0;
+	    }
+	    var url="{:url('admin/forumcate/updatestatus')}?id="+data.value+'&status='+status+'&name=sidebar' ;
+	   
+	    
+	    jq.get(url,function(data){
+	    	
+	      if(data.code == 200){
+	        layer.close(loading);
+	        layer.msg(data.msg, {icon: 1, time: 1000}, function(){
+	        //  location.reload();
+	        });
+	      }else{
+	        layer.close(loading);
+	        layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+	      }
+	    });
+	    return false;
+	  });
+ var status=0;
+ form.on('switch(switchshow)', function(data){
+	  loading = layer.load(2, {
+	      shade: [0.2,'#000']
+	    });
+	    if(data.elem.checked){
+	    	status=1;
+	    }else{
+	    	status=0;
+	    }
+	    var url="{:url('admin/forumcate/updatestatus')}?id="+data.value+'&status='+status+'&name=show' ;
+	   
+	    
+	    jq.get(url,function(data){
+	    	
+	      if(data.code == 200){
+	        layer.close(loading);
+	        layer.msg(data.msg, {icon: 1, time: 1000}, function(){
+	        //  location.reload();
+	        });
+	      }else{
+	        layer.close(loading);
+	        layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+	      }
+	    });
+	    return false;
+	  });
+
+})
+</script>
+ {/block}
+
+
+

@@ -1,0 +1,145 @@
+{extend name="base" /}
+
+{block name="css"}
+<style>
+    .layui-tab-item{
+        margin-bottom:100px;
+    }
+    .layui-form-label{
+        width:120px;
+    }
+</style>
+{/block}
+
+{block name="body"}
+
+<div class="admin-main  layui-field-box layui-form">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>推送设置</legend>
+    </fieldset>
+
+    <div class="admin-main">
+        <div class="layui-tab-content">
+            <form class="layui-form form-container"  data-url="{:url('admin/push/index')}"  localtion-url="{:url('push/index')}">
+                <div class="layui-tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">微信模板推送</li>
+                        <li>个推推送</li>
+                    </ul>
+                    <div class="layui-tab-content" style="height: 100px;">
+                        <!--第一页-->
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">会议推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="meeting_weixin_on" value="0" title="关闭" {if $res.meeting.meeting_weixin_on==0}checked{/if}>
+                                    <input type="radio" name="meeting_weixin_on" value="1" title="开启" {if $res.meeting.meeting_weixin_on==1}checked{/if}>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="meeting_id" value="{$res.meeting.meeting_id}" placeholder="填写模板ID" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="activity_weixin_on" value="0" title="关闭" {if $res.activity.activity_weixin_on==0}checked{/if}>
+                                    <input type="radio" name="activity_weixin_on" value="1" title="开启" {if $res.activity.activity_weixin_on==1}checked{/if}>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="activity_id" value="{$res.activity.activity_id}" placeholder="填写模板ID" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">督办推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="supervise_weixin_on" value="0" title="关闭" {if $res.supervise.supervise_weixin_on==0}checked{/if}>
+                                    <input type="radio" name="supervise_weixin_on" value="1" title="开启" {if $res.supervise.supervise_weixin_on==1}checked{/if}>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="supervise_id" value="{$res.supervise.supervise_id}" placeholder="填写模板ID" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">通知推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="notice_weixin_on" value="0" title="关闭" {if $res.notice.notice_weixin_on==0}checked{/if}>
+                                    <input type="radio" name="notice_weixin_on" value="1" title="开启" {if $res.notice.notice_weixin_on==1}checked{/if}>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="notice_id" value="{$res.notice.notice_id}" placeholder="填写模板ID" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <!--第二页-->
+                        <div class="layui-tab-item">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">APPID</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="appid" value="{$res.appid}" placeholder="填写个推APPID" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">APPKEY</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="appkey" value="{$res.appkey}" placeholder="填写个推APPKEY" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">MASTERSECRET</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="mastersecret" value="{$res.mastersecret}" placeholder="填写个推MASTERSECRET" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">会议推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="meeting_getui_on" value="0" title="关闭" {if $res.meeting.meeting_getui_on==0}checked{/if}>
+                                    <input type="radio" name="meeting_getui_on" value="1" title="开启" {if $res.meeting.meeting_getui_on==1}checked{/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="activity_getui_on" value="0" title="关闭" {if $res.activity.activity_getui_on==0}checked{/if}>
+                                    <input type="radio" name="activity_getui_on" value="1" title="开启" {if $res.activity.activity_getui_on==1}checked{/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">督办推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="supervise_getui_on" value="0" title="关闭" {if $res.supervise.supervise_getui_on==0}checked{/if}>
+                                    <input type="radio" name="supervise_getui_on" value="1" title="开启" {if $res.supervise.supervise_getui_on==1}checked{/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">通知推送</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="notice_getui_on" value="0" title="关闭" {if $res.notice.notice_getui_on==0}checked{/if}>
+                                    <input type="radio" name="notice_getui_on" value="1" title="开启" {if $res.notice.notice_getui_on==1}checked{/if}>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btable-paged" >
+                    <div class="labtable-pagedyui-main">
+                        <div class="formbtngroup">
+                            <button  class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">立即设置</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="script"}
+<script>
+    layui.use('element', function(){
+        var element = layui.element;
+    });
+
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/formadd.js"></script>
+{/block}

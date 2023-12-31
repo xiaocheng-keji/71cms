@@ -1,0 +1,23 @@
+{
+  "id": "3776892",
+  "name": "houdada",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "162869",
+      "name": "扫码",
+      "font_class": "iconfontscan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "629357",
+      "name": "搜索",
+      "font_class": "sousuo",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    }
+  ]
+}

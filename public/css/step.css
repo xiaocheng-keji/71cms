@@ -1,0 +1,82 @@
+.clearfix::after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+.clearfix {
+}
+
+/* 必要布局样式css */
+.step-content {
+    padding: 80px 0;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.step-header h2 {
+    position: relative;
+    font-weight: normal;
+    text-align: center;
+    font-size: 38px;
+    color: #353535;
+    z-index: 50;
+}
+
+.step-header h3 {
+    position: relative;
+    font-weight: normal;
+    text-align: center;
+    font-size: 24px;
+    color: #888;
+    z-index: 50;
+}
+
+.step-layout {
+    width: 1000px;
+    position: relative;
+    margin: 0 auto
+}
+
+.step-layout-list {
+    text-align: center;
+    padding: 60px 0 0;
+}
+
+.step-layout-item {
+    float: left;
+    vertical-align: top;
+    width: 25%;
+    position: relative;
+}
+
+.step-layout-item img {
+    vertical-align: top;
+    display: inline-block;
+    background-color: transparent;
+}
+
+.step-layout-item h4 {
+    font-size: 24px;
+    margin: 20px 0 5px;
+    font-weight: normal;
+}
+
+.step-layout-item p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #888;
+}
+
+.step-layout .step-layout-list .step-layout-item:not(:last-child):after {
+    content: "";
+    position: absolute;
+    top: 60px;
+    right: -10px;
+    display: block;
+    width: 20px;
+    height: 28px;
+    background: url(../images/sapp-store-arror.png) no-repeat;
+}

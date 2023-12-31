@@ -1,0 +1,798 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+	.require-text {
+        color:#DC524B;
+    }
+	.close{
+		position:absolute;
+		right:5px;
+		top:5px;
+		width:20px;
+		height:20px;
+		background-size:100%;
+		border-radius: 50%;
+		background-image: url('/images/close.png');
+	}
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+	<button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>
+			{if $meetingInfo.id>0}编辑{else}添加{/if}{if $meeting_type=='2'}会议{elseif $meeting_type=='3' /}活动{else /}{/if}
+		</legend>
+	</fieldset>
+	<form class="layui-form" action="">
+		<script>
+			let renderArr = [];
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				栏目
+			</label>
+			<div class="layui-input-inline">
+				<select name="cat_id">
+					{volist name="cat_options" id="vv"}
+					<option value="{$key}"
+							{$vv.disabled?'disabled':''}
+					{if $key==$meetingInfo.cat_id} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				地点
+			</label>
+			<div class="layui-input-inline">
+				<input id="place" type="text" name="place" lay-verify="places" placeholder="请输入会议地点" value="{$meetingInfo.place}" class="layui-input">
+			</div>
+			<!--<button class="layui-btn" type="button" id="selectMap">地图选择</button>-->
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<input type="hidden" name="latitude" id="latitude" value="{$meetingInfo.latitude}">
+		<input type="hidden" name="longitude" id="longitude" value="{$meetingInfo.longitude}">
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			主题
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="theme" lay-verify="themes" placeholder="请输入会议主题" value="{$meetingInfo.theme}" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			时间
+			</label>
+			<div class="layui-input-inline" style="width: 300px;">
+			<input type="text" name="messingtime" lay-verify="messingtimes" readonly placeholder="请选择会议时间" value="{$meetingInfo.messingtime}"  class="layui-input" id="date">
+		</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">要求</label>
+			<div class="layui-input-block">
+				<textarea class="layui-textarea" name="require" lay-verify="" placeholder="" id="">{$meetingInfo.require}</textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			内容
+			</label>
+			<div class="layui-input-block">
+				<textarea class="layui-textarea layui-hide" name="content" lay-verify="content" placeholder="" id="LAY_editor">{$meetingInfo.content|raw}</textarea>
+			</div>
+		</div>
+		<div class="layui-form-item" id="pic-line" style="display:none;">
+			<label class="layui-form-label">
+				<span class="require-text"></span>
+			</label>
+			<div class="layui-input-block" id="pic-list">
+				{volist name="meetingInfo.fengcai_pic" id="vo"}
+					<div style="display:inline-block;position:relative;">
+						<img src="{$vo.savepath}" width="128" height="96" alt="" style="margin:10px 10px;">
+						<div class="close" data-id="{$vo.id}"></div>
+					</div>
+				{/volist}
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				所属组织
+			</label>
+			<div class="layui-input-inline" style="width: 380px;">
+				<select name="publish">
+					{volist name="dep_options" id="vv"}
+					{if $meetingInfo.publish>0}
+					<option value="{$key}" {$vv.disabled?'disabled':''}
+					{if $meetingInfo.publish==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv}</option>
+					{else}
+					<option value="{$key}" {$vv.disabled?'disabled':''}
+					{if in_array($key,$currentDep)} selected {/if}> {:isset($vv.title)?$vv.title:$vv}</option>
+					{/if}
+					{/volist}
+				</select>
+			</div>
+		</div>
+		{if $meeting_type==3 || $meetingInfo.meeting_type==3}
+		<div class="layui-form-item" id="">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				负责人
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="compere" disabled lay-verify="comperes" placeholder="请选择负责人" value="{$meetingInfo.compereName}" class="layui-input layui-btn-sm">
+			</div>
+			<a class="layui-btn layui-btn-sm" id="choiceCompere" style="float: left;margin-right: 10px;margin-top: 4px">选择负责人</a>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		{else}
+		<div class="layui-form-item" id="">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				主持人
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="compere" disabled lay-verify="comperes" placeholder="请选择主持人" value="{$meetingInfo.compereName}" class="layui-input layui-btn-sm">
+			</div>
+			<a class="layui-btn layui-btn-sm" id="choiceCompere" style="float: left;margin-right: 10px;margin-top: 4px">选择主持人</a>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		{/if}
+		<div class="layui-form-item" id="">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			记录人
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="recorder" disabled lay-verify="recorders" placeholder="请选择记录人" value="{$meetingInfo.recorderName}" class="layui-input">
+			</div>
+            <a class="layui-btn layui-btn-sm" id="choiceRecorder" style="float: left;margin-right: 10px;margin-top: 4px">选择记录人</a>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			人员
+			</label>
+			<div class="layui-input-block">
+				<input type="radio" lay-filter="attendee" {if $meetingInfo.attendee == 0}checked{/if} name="attendee" value="0" title="全体党员" >
+				<input type="radio" lay-filter="attendee" {if $meetingInfo.attendee == 1}checked{/if} name="attendee" value="1" title="指定党员" >
+			</div>
+		</div>
+		<div class="layui-form-item layui-hide" id="choiceUser">
+            <label class="layui-form-label">
+            <span class="require-text">*</span>
+            指定党员
+            </label>
+            <div class="layui-input-block" style="display: flex;">
+                <div class="tags" id="tags" style="width: 80%;margin: 0px;padding: 0px 10px;">
+                    <input type="text" name="nickname" id="inputTags" placeholder="请选择党员" autocomplete="off" />
+                </div>
+                <a class="layui-btn" id="appoint" style="margin: 0px 10px;">选择党员</a>
+            </div>
+        </div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			签到
+			</label>
+			<div class="layui-input-block">
+				<input type="radio" lay-filter="sign_status" {if $meetingInfo.sign_status == 0}checked{else /}{/if} name="sign_status" value="0" title="不签到" >
+				<input type="radio" lay-filter="sign_status" {if $meetingInfo.sign_status == 1}checked{else /}{/if} name="sign_status" value="1" title="签到" >
+			</div>
+		</div>
+		<div class="layui-form-item layui-hide" id="choiceResponsibility">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			签到负责人
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="sign_responsibility" disabled lay-verify="" placeholder="请选择负责人" value="{$meetingInfo.signresponsibilityName}" class="layui-input">
+			</div>
+            <a class="layui-btn" id="choiceSignResponsibility">选择负责人</a>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item layui-hide" id="sign_time">
+			<label class="layui-form-label">
+				<!--				<span class="require-text">*</span>-->
+				签到时间
+			</label>
+			<div class="layui-input-inline" style="width: 300px;">
+				<input type="text" name="sign_time" lay-verify="sign_time" placeholder="请选择签到开始时间" value="{$meetingInfo.sign_time}"  class="layui-input" id="sign_time_inp">
+			</div>
+		</div>
+		{if $meeting_type==3 || $meetingInfo.meeting_type==3}
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+			<span class="require-text">*</span>
+			活动类型
+			</label>
+			<div class="layui-input-inline">
+				<select name="activity_type">
+					{volist name="activity_type_arr" id="vv"}
+					<option value="{$vv.id}"
+							{if $vv.id==$meetingInfo.activity_type} selected {/if}>{$vv.name} (+{$vv.points}积分)
+					</option>
+					{/volist}
+				</select>
+			</div>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		{/if}
+		<div class="attachment-div">
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					附件
+				</label>
+				<div class="layui-input-block upload-attachment" style="border-bottom: 1px solid #ddd;padding: 0 0 5px 0;">
+					<div class="file-list">
+						{if !empty($meetingInfo.attachment)}
+						{foreach $meetingInfo.attachment as $ak => $attachment}
+						<div class="file-item">
+							<input type="text" readonly value="{$attachment.name}" class="layui-input">
+							<input type="hidden" name="attachment[]" value="{$attachment.savepath}" class="layui-input">
+							<a href="{$attachment.savepath}" class="layui-btn layui-btn-sm layui-btn-primary" target="_blank">下载</a>
+							<a href="javascript:void(0)" class="remove-file layui-btn layui-btn-sm layui-btn-primary">删除</a>
+						</div>
+						{/foreach}
+						{/if}
+					</div>
+					<div>
+						<div class="progress-div">
+							<div class="layui-progress" lay-showpercent="yes"
+								 lay-filter="progress11" id="progress11">
+								<div class="layui-progress-bar layui-bg-green" lay-percent="0%" style="width: 0%;"><span
+										class="layui-progress-text">0%</span></div>
+							</div>
+						</div>
+						<div class="upload-btn-div" style="margin-top: 5px;">
+							<button type="button" class="layui-btn layui-btn-sm" id="layui-btn11">上传文件</button>
+							<span style="color: #bbb;">相关材料可在此上传</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<script>
+				renderArr.push({
+					type: 'file',
+					btnId: '#layui-btn11',
+					progressId: '#progress11',
+					progressLayFilter: 'progress11',
+				});
+			</script>
+		</div>
+		<div class="layui-form-item">
+            <input type="hidden" name="id" value="{$meetingInfo.id}">
+            <div class="layui-input-block">
+				{if isset($meetingInfo.meeting_type)}
+					<input type="hidden" name="meeting_type" value="{$meetingInfo.meeting_type}">
+				{else}
+					<input type="hidden" name="meeting_type" value="{$meeting_type}">
+				{/if}
+                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="formDemo">立即提交</button>
+                <!-- <button type="reset" class="layui-btn layui-btn-primary">重置</button> -->
+            </div>
+        </div>
+	</form>
+</div>
+{/block}
+{block name="js"}
+<script>
+	function setPlace(place,latitude,longitude){
+		document.getElementById('place').value = place;
+		document.getElementById('latitude').value = latitude;
+		document.getElementById('longitude').value = longitude;
+	}
+
+	layui.extend({
+		inputTags: '/plugins/layui/inputTags/inputTags',
+		yutons_sug: '/plugins/layui/yutons-mods/yutons_sug',
+	}).use(['form', 'layedit', 'laydate', 'jquery', 'upload', 'inputTags', 'yutons_sug','element','layer'], function () {
+		var form = layui.form
+			, layer = layui.layer
+			, layedit = layui.layedit
+			, laydate = layui.laydate
+			, jq = layui.jquery
+			, upload = layui.upload
+			, inputTags = layui.inputTags
+			, yutons_sug = layui.yutons_sug
+			, element = layui.element
+			,layer = layui.layer;
+
+
+		var selected_appoint_user = []
+		    ,selected_appoint_group = []
+		    ,tags = []
+		    ,compereId = 0
+		    ,recorderId = 0
+		    ,signResponsibilityId = 0;
+
+		//创建编辑器
+		let uploadInst = [];
+		renderArr.forEach(function (v, i) {
+			if (v.type == 'editor') {
+				//编辑器
+				renderArr[i].editIndex = layedit.build(v.id, {
+					uploadImage: {
+						url: '/Admin/Upload/layedit_upimage',
+						type: 'post'
+					}
+				});
+			} else if (v.type == 'date') {
+				console.log(v)
+				//日期
+				laydate.render({
+					elem: v.id
+					, range: v.range,trigger: 'click'
+				});
+			} else if (v.type == 'datetime') {
+				console.log(v)
+				//日期
+				laydate.render({
+					elem: v.id
+					, type: 'datetime'
+					, range: v.range,trigger: 'click'
+				});
+			} else if (v.type == 'image') {
+				//单图片上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upimage'
+					, progress: function(n){
+						var percent = n + '%' //获取进度百分比
+						element.progress(v.progressLayFilter, percent);
+					}
+					, before: function (obj) {
+						jq(v.progressId).show();
+						element.progress(v.progressLayFilter, 0);
+						//预读本地文件示例，不支持ie8
+						obj.preview(function (index, file, result) {
+							jq(v.imgId).attr('src', result); //图片链接（base64）
+						});
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							element.progress(v.progressLayFilter, 0);
+							jq(v.progressId).hide();
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path);
+						jq(v.imgId).attr('src', res.path).show();
+						jq(v.aId).attr('href', res.path);
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+						demoText.find('.demo-reload').on('click', function () {
+							uploadInst[i].upload();
+						});
+					}
+				});
+			} else if (v.type == 'file') {
+				uploadInst[i] = renderUpload(v);
+			}
+		});
+
+		function renderUpload(v) {
+			upload.render({
+				elem: v.btnId
+				, url: '{:url("/Admin/Upload/upfile")}'
+				, accept: 'file'
+				// , exts: '.'
+				, progress: function (n) {
+					var percent = n + '%' //获取进度百分比
+					element.progress(v.progressLayFilter, percent);
+				}
+				, before: function (obj) {
+					let div = jq(v.btnId).closest('.upload-attachment');
+					div.find('.upload-btn-div').hide();
+					div.find('.progress-div').show();
+					element.progress(v.progressLayFilter, 0);
+				}
+				, done: function (res) {
+					let div = jq(v.btnId).closest('.upload-attachment');
+					div.find('.upload-btn-div').show();
+					div.find('.progress-div').hide();
+					//如果上传失败
+					if (res.code != 200) {
+						return layer.msg(res.msg);
+					}
+					//上传成功
+					var html = "<div class=\"file-item\">\n                            <input type=\"text\" readonly value=\"" + res.info.name + "\" class=\"layui-input\">\n                            <input type=\"hidden\" name=\"attachment[]\" value=\"" + res.path + "\" class=\"layui-input\">\n                            <a href=\"{:url('File/download')}?file=" + res.token + "\" class=\"layui-btn layui-btn-sm layui-btn-primary\" target=\"_blank\">下载</a>\n                            <a href=\"javascript:void(0)\" class=\"remove-file layui-btn layui-btn-sm layui-btn-primary\">删除</a>\n                        </div>";
+					div.find('.file-list').append(html);
+					let l = div.find('.file-item').length;
+					if (l >= 10) {
+						div.find('.upload-btn-div').hide();
+					} else {
+						div.find('.upload-btn-div').show();
+					}
+				}
+				, error: function () {
+					let div = jq(v.btnId).closest('.upload-attachment');
+					div.find('.upload-btn-div').show();
+					div.find('.progress-div').hide();
+					//演示失败状态，并实现重传
+					var demoText = jq(v.textId);
+					demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+				}
+			});
+		}
+
+		jq('body').on('click', '.remove-file', function () {
+			let div = jq(this).closest('.upload-attachment')
+			jq(this).closest('.file-item').remove();
+			let l = div.find('.file-item').length;
+			if (l >= 10) {
+				div.find('.upload-btn-div').hide();
+			} else {
+				div.find('.upload-btn-div').show();
+			}
+		})
+
+		if('{$meetingInfo.attendee}' == 1){
+        	jq('#choiceUser').removeClass('layui-hide');
+		}
+
+		if('{$meetingInfo.sign_status}' == 1){
+        	jq('#choiceResponsibility').removeClass('layui-hide');
+        	jq('#sign_time').removeClass('layui-hide');
+		}
+
+		if ('{$meetingInfo.compere}' > 0) {
+			compereId = '{$meetingInfo.compere}';
+		}
+
+		if ('{$meetingInfo.recorder}' > 0) {
+			recorderId = '{$meetingInfo.recorder}';
+		}
+
+		if ('{$meetingInfo.sign_responsibility}' > 0) {
+			signResponsibilityId = '{$meetingInfo.sign_responsibility}';
+		}
+
+		let choice_user = {:json_encode($meetingInfo.choice_user)};
+		if (choice_user != '' && choice_user != null) {
+			choice_user.forEach(function (item, index) {
+			    selected_appoint_user.push(item);
+			});
+		}
+
+		let choice_group = {:json_encode($meetingInfo.choice_group)};
+		if (choice_group != '' && choice_group != null) {
+			choice_group.forEach(function (item, index) {
+			    selected_appoint_group.push(item);
+			});
+		}
+
+		var today = new Date();
+    	let currenttime = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + ' ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+		laydate.render({
+			elem: '#date',
+			range: true,
+			type: "datetime"
+		});
+		//签到时间
+		laydate.render({
+			elem: '#sign_time_inp',
+			range: false,
+			type: "datetime"
+		});
+
+		//选择地址
+		jq('#selectMap').click(function(){
+			layer.open({
+				type: 2,
+				content: ['/admin/map/index?address={$meetingInfo.place||default="南宁市"}&latitude={$meetingInfo.latitude||default="22.78176"}&longitude={$meetingInfo.longitude||default="108.320113"}','no'],
+				area:['100%','100%']
+			});
+		});
+
+
+		//min: currenttime
+		var editor_i = layedit.build('LAY_editor', {
+			uploadImage: { url: '/Admin/Upload/layedit_upimage', type: 'post'}
+		});
+
+		 //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length < 5) {
+                    return '标题至少得5个字符';
+                }
+            }
+
+            , places: function (value) {
+            	if (value == '') {
+                    return '地点不能为空';
+            	}
+            }
+
+            , themes: function (value) {
+            	if (value == '') {
+                    return '主题不能为空';
+            	}
+            }
+            
+            , messingtimes: function (value) {
+            	if (value == '') {
+                    return '时间不能为空';
+            	}
+            }
+            
+            , comperes: function (value) {
+            	if (value == '') {
+                    return '{if $meeting_type==3 || $meetingInfo.meeting_type==3}负责人{else}主持人{/if}不能为空';
+            	}
+            }
+            
+            , recorders: function (value) {
+            	if (value == '') {
+                    return '记录人不能为空';
+            	}
+            }
+
+            , content: function (value) {
+            	layedit.sync(editor_i);
+            }
+        });
+
+        form.on('radio(attendee)', function (data) {
+        	if (data.value == 1) {
+        		jq('#choiceUser').removeClass('layui-hide');
+        	} else {
+        		jq('#choiceUser').addClass('layui-hide');
+        	}
+        })
+
+        form.on('radio(sign_status)', function (data) {
+        	if (data.value == 1) {
+        		jq('#choiceResponsibility').removeClass('layui-hide');
+        		jq('#sign_time').removeClass('layui-hide');
+        		// jq('#choiceResponsibility').attr('lay-verify', 'required');
+        	} else {
+        		jq('#choiceResponsibility').addClass('layui-hide');
+        		jq('#sign_time').addClass('layui-hide');
+        		// jq('#choiceResponsibility').attr('lay-verify', '');
+        	}
+        })
+
+        jq('#choiceRecorder').click(function () {
+        	let url = "{:url('user/getDepUserList', array('scene'=>'user', 'checkbar'=>false))}";
+        	layer.open({
+        		type: 2,
+        		title: false,
+        		area: ['700px', '90%'],
+        		content: url,
+        		btn: ['确认', '取消'],
+        		yes: function(index, layero){
+       				let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+       				let data = childWin.get_selected_data();
+					// recorderId = data.user.indexOf(data.tags[0]);
+					// jq("input[name='recorder']").val(data.tags[0]);    
+					recorderId = data.user[0].id;
+					jq("input[name='recorder']").val(data.user[0].name);
+					// jq("input[name='train_uid']").val(data.user[0].id);
+       				// recorderId = data.user.indexOf(data.tags[0]);
+       				// jq("input[name='recorder']").val(data.tags[0]);
+					layer.close(index);
+				}
+        	});
+        });
+
+         jq('#choiceCompere').click(function () {
+        	let url = "{:url('user/getDepUserList', array('scene'=>'user', 'checkbar'=>false))}";
+        	layer.open({
+        		type: 2,
+        		title: false,
+        		area: ['700px', '90%'],
+        		content: url,
+        		btn: ['确认', '取消'],
+        		yes: function(index, layero){
+       				let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+       				let data = childWin.get_selected_data();
+					// compereId = data.user.indexOf(data.tags[0]);
+					// jq("input[name='compere']").val(data.tags[0]);
+					compereId = data.user[0].id;
+					jq("input[name='compere']").val(data.user[0].name);
+					// jq("input[name='train_uid']").val(data.user[0].id);
+       				// compereId = data.user.indexOf(data.tags[0]);
+       				// jq("input[name='compere']").val(data.tags[0]);
+					layer.close(index);
+				}
+        	});
+        });
+
+        jq('#choiceSignResponsibility').click(function () {
+        	let url = "{:url('user/getDepUserList', array('scene'=>'user', 'checkbar'=>false))}";
+        	layer.open({
+        		type: 2,
+        		title: false,
+        		area: ['700px', '90%'],
+        		content: url,
+        		btn: ['确认', '取消'],
+        		yes: function(index, layero){
+       				let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+       				let data = childWin.get_selected_data();
+					// signResponsibilityId = data.user.indexOf(data.tags[0]);
+					// jq("input[name='sign_responsibility']").val(data.tags[0]);
+					signResponsibilityId = data.user[0].id;
+					jq("input[name='sign_responsibility']").val(data.user[0].name);
+       				// signResponsibilityId = data.user.indexOf(data.tags[0]);
+       				// jq("input[name='sign_responsibility']").val(data.tags[0]);
+					layer.close(index);
+				}
+        	});
+        });
+
+        jq('#appoint').click(function () {
+        	let url = "{:url('user/getDepUserList', array('checkbar'=>true, 'disToSub'=>true))}";
+        	console.log(url);
+        	layer.open({
+        		type: 2,
+        		title: false,
+        		area: ['700px', '90%'],
+        		content: url,
+        		btn: ['确认', '取消'],
+        		yes: function(index, layero){
+       				let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+       				let data = childWin.get_selected_data();
+					let user = data.user;
+					let group = data.group;
+					let tags_arr = data.tags;
+					user.forEach(function (item, index) {
+					    selected_appoint_user.push(item);
+					    tags.push(item.name)
+					    TagsObj.addTag(item);
+					});
+					group.forEach(function (item, index) {
+					    selected_appoint_group.push(item);
+					    tags.push(item.name)
+					    TagsObj.addTag(item);
+					});
+					// for (let u in user) {
+					// 	if (user[u] != '') {
+					// 		selected_appoint_user[u] = user[u];
+					// 	}
+					// }
+     //                for (let g in group) {
+     //                    if (group[g] != '') {
+     //                        console.log('group[g]', group[g])
+     //                        let tagsIndex = selected_appoint_group.indexOf(group[g]);
+     //                        if (tagsIndex == -1) {
+     //                            // selected_appoint_group.push(group[g]);
+					// 			selected_appoint_group[g] = group[g];
+     //                        }
+     //                    }
+     //                }
+     //                console.log('tags',tags);
+     //                for (let i in tags_arr) {
+     //                    let tagsIndex = tags.indexOf(tags_arr[i]);
+     //                    if (tagsIndex == -1) {
+     //                        tags.push(tags_arr[i]);
+     //                        TagsObj.addTag(tags_arr[i]);
+     //                    }
+     //                }
+					layer.close(index);
+				}
+        	});
+        });
+
+        yutons_sug.render({
+        	id: "inputTags",
+			height: "167",
+			cols: [
+				[{
+					field: 'nickname',
+					title: '用户名'
+				}, {
+					field: 'mobile',
+					title: '手机号'
+				}, {
+					field: 'dep_name',
+					title: '部门'
+				}]
+			],
+			field: 'nickname',
+			type: 'sugTable', //设置输入框提示类型：sug-下拉框，sugTable-下拉表格
+			url: "{:url('user/getLikeUserList')}" + "?keyword=",
+			remove: function (res) {
+				selected_appoint_user[res.id] =  res.nickname;
+				tags.push(res.nickname);
+			}
+        });
+        let inputTagsData = {
+            elem:'#inputTags',
+            aldaBtn: true,
+			count: 9999,
+            done: function(value){
+              //console.log(value);
+            },
+            remove: function (value) {
+		        del_selected_data(value);
+		    }
+        };
+        let updateTags = {:json_encode($meetingInfo.tags)};
+        if (updateTags != '' && updateTags != null) {
+            inputTagsData.content = [];
+            updateTags.forEach(function (v,i) {
+                inputTagsData.content.push(v);
+            });
+        	tags = updateTags;
+        }
+		inputTagsData.content = [];
+		selected_appoint_group.forEach(function (v, i) {
+		    inputTagsData.content.push(v);
+		});
+		selected_appoint_user.forEach(function (v, i) {
+		    inputTagsData.content.push(v);
+		});
+        var TagsObj = inputTags.render(inputTagsData);
+
+		form.on('submit(formDemo)', function (data) {
+			var loading = layer.load(2, {
+				shade: [0.2,'#000']
+			});
+			let param = data.field;
+
+			param.compere = compereId;
+			param.recorder = recorderId;
+			if (param.attendee == 1) {
+				let user = [];
+				let group = [];
+				for (let v of selected_appoint_user) {
+				    user.push(v.id + '-' + v.name);
+				}
+				for (let v of selected_appoint_group) {
+				    group.push(v.id + '-' + v.name)
+				 }
+				param.tags = tags;
+				param.choice_user = user;
+				param.choice_group = group;
+			}
+			if (param.sign_status == 1) {
+				param.sign_responsibility = signResponsibilityId;
+			}
+			// console.log(param);
+			// layer.close(loading);
+			// return false;
+			let url = self.location.href;
+            jq.post(url, param, function (res) {
+            	layer.close(loading);
+                if (res.code != 200) {
+                    return layer.msg(res.msg||'未知错误');
+                } else {
+                    layer.msg(res.msg);
+                    setTimeout(function () {
+                        window.history.go(-1)
+                    }, 1000);
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+
+		function del_selected_data (param) {
+			selected_appoint_group = selected_appoint_group.filter(res => {
+			    return res.id != param.id || res.name != param.name || res.type != param.type;
+			});
+			selected_appoint_user = selected_appoint_user.filter(res => {
+			    return res.id != param.id || res.name != param.name || res.type != param.type;
+			});
+		}
+	});
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+{/block}

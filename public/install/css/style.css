@@ -1,0 +1,59 @@
+
+body {
+    background-color: #f9f9f9;
+}
+
+.layui-container {
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 40px 0;
+}
+
+.install-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin:20px 0;
+}
+.install-title img{
+    width: 120px;
+    height: 43px;
+    margin-right: 20px;
+}
+
+.step-div {
+    /*border: 1px solid #FFF;*/
+    padding: 20px 20px 20px 30px;
+}
+
+.btn-div {
+    text-align: center;
+}
+
+.layui-icon.layui-timeline-axis {
+    color: #666;
+}
+
+.layui-icon.active {
+    color: #d81e06;
+}
+
+.span-ok {
+    color: #009688;
+}
+
+.span-no {
+    color: #ff0000;
+}
+
+.text-center {
+    text-align: center;
+}
+.mt20 {
+    margin-top: 20px;
+}
+.mb20 {
+    margin-bottom: 20px;
+}

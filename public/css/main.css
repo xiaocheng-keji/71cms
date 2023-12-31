@@ -1,0 +1,304 @@
+.fly-panel {
+    background-color: #fff;
+    border-radius: 2px;
+    padding: 20px;
+}
+
+.tpt—index table {
+    margin-bottom: 10px;
+}
+
+.tpt—index tr {
+    font-size: 13px;
+    line-height: 38px;
+    border-bottom: 1px solid rgb(234, 234, 234);
+}
+
+.layui-form-checkbox span {
+    padding: 0 10px;
+    height: 100%;
+    font-size: 14px;
+
+}
+
+.layui-form-checkbox[lay-skin=primary] i {
+    position: relative;
+    top: 0;
+    /*width: 25px;
+    line-height: 25px;*/
+}
+
+.btable-paged {
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    position: fixed;
+    padding-bottom: 20px;
+    bottom: 0px;
+    height: 36px;
+    line-height: 36px;
+}
+
+.formbtngroup {
+    margin-left: 30px;
+    float: left;
+}
+
+.admin-table-page {
+    padding: 10px 15px;
+    overflow: hidden;
+}
+
+.pagination {
+    display: inline-block;
+    padding-left: 0;
+
+    border-radius: 4px;
+    float: left;
+}
+
+.pagination li {
+    display: inline;
+}
+
+.pagination li a,
+.pagination li span {
+    position: relative;
+    float: left;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+    color: #393D49;
+    background: #fff;
+    margin: 0 0 0 8px;
+    border: 1px solid #eee;
+}
+
+.pagination li a:hover {
+    color: #fff;
+    background: #d81e06;
+}
+
+.pagination .active span {
+    background: #d81e06;
+    color: #fff;
+}
+
+.pagination .disabled {
+    display: none;
+}
+
+.layui-table td, .layui-table th {
+    padding: 9px 15px;
+    min-height: 14px;
+    line-height: 14px;
+}
+
+.layui-box-searchber {
+    overflow: hidden;
+}
+
+.layui-form-pane {
+    float: right;
+}
+
+.layui-form-pane .layui-form-label {
+    width: 80px;
+    padding: 8px 7px;
+    height: 30px;
+    line-height: 15px;
+}
+
+.layui-form-pane .layui-input {
+    border-radius: 0 2px 2px 0;
+    height: 30px;
+    line-height: 30px;
+}
+
+.label-tint {
+    clear: both;
+    color: #F7B824;
+    margin-left: 110px;
+
+}
+
+/* 图标 */
+
+@font-face {
+    font-family: "iconfont";
+    src: url('iconfont.eot?t=1477416582'); /* IE9*/
+    src: url('iconfont.eot?t=1477416582#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('iconfont.woff?t=1477416582') format('woff'), /* chrome, firefox */ url('iconfont.ttf?t=1477416582') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/ url('iconfont.svg?t=1477416582#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zan:before {
+    content: "\e612";
+}
+
+.icon-jiazaizhong:before {
+    content: "\e60e";
+}
+
+.icon-sousuo:before {
+    content: "\e621";
+}
+
+.icon-quanpingpad:before {
+    content: "\e61d";
+}
+
+.icon-shezhi:before {
+    content: "\e607";
+}
+
+.icon-shijian:before {
+    content: "\e60a";
+}
+
+.icon-guanbi:before {
+    content: "\e614";
+}
+
+.icon-tianjia:before {
+    content: "\e616";
+}
+
+.icon-tuichu:before {
+    content: "\e601";
+}
+
+.icon-shui:before {
+    content: "\e602";
+}
+
+.icon-qq:before {
+    content: "\e618";
+}
+
+.icon-weibo:before {
+    content: "\e617";
+}
+
+.icon-tupian:before {
+    content: "\e608";
+}
+
+.icon-logo:before {
+    content: "\e603";
+}
+
+.icon-daima:before {
+    content: "\e609";
+}
+
+.icon-biaoqing:before {
+    content: "\e60f";
+}
+
+.icon-nan:before {
+    content: "\e619";
+}
+
+.icon-nv:before {
+    content: "\e61a";
+}
+
+.icon-quitquanping:before {
+    content: "\e61e";
+}
+
+.icon-zuichun:before {
+    content: "\e61c";
+}
+
+.icon-charushuipingxian:before {
+    content: "\e622";
+}
+
+.icon-yulan:before {
+    content: "\e60d";
+}
+
+.icon-liulanyanjing:before {
+    content: "\e60b";
+}
+
+.icon-touxiang:before {
+    content: "\e604";
+}
+
+.icon-caina:before {
+    content: "\e613";
+}
+
+.icon-room:before {
+    content: "\e615";
+}
+
+.icon-svgmoban53:before {
+    content: "\e610";
+}
+
+.icon-shichang:before {
+    content: "\e600";
+}
+
+.icon-shouye:before {
+    content: "\e605";
+}
+
+.icon-tishilian:before {
+    content: "\e629";
+}
+
+.icon-fabu:before {
+    content: "\e606";
+}
+
+.icon-pinglun:before {
+    content: "\e60c";
+}
+
+.icon-zan1:before {
+    content: "\e611";
+}
+
+.icon-chengshi:before {
+    content: "\e61b";
+}
+
+.icon-lianjie:before {
+    content: "\e620";
+}
+
+.icon-renshu:before {
+    content: "\e61f";
+}
+
+.icon-huizongzuoyoutuodong:before {
+    content: "\e623";
+}
+
+.icon-404:before {
+    content: "\e627";
+}
+
+.icon-wenda:before {
+    content: "\e626";
+}
+
+.icon-top:before {
+    content: "\e624";
+}
+
+.icon-ui:before {
+    content: "\e625";
+}
+
+

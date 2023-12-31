@@ -1,0 +1,130 @@
+.main{
+    margin-bottom:50px;
+}
+.main *{
+    font-size:16px;
+}
+body{
+    background:#fff;
+}
+
+.contain{
+    margin:10px 20px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 0 10px #bbb;
+    position:absolute;
+    top:20px;
+    /*width:100%;*/
+}
+.contain .item{
+    flex:0 0 25%;
+    /*background:red;*/
+    padding:10px 0;
+    /*border:1px solid #bbb;*/
+
+}
+.contain .item .pic{
+    /*width:18vm;*/
+    text-align:center;
+    /*height:18vm;*/
+}
+.contain .item .pic img{
+    width:10vw;
+    height:10vw;
+}
+.contain .item .text{
+    text-align:center;
+    font-size:12px;
+}
+.menu2{
+    margin:20px;
+    justify-content:space-between;
+}
+.menu2>div{
+    flex:0 0 48%;
+}
+.menu2 div img{
+    width:100%;
+}
+
+.study-list{
+    margin:0 20px;
+    padding-top:20px;
+    border-top:2px solid #eee;
+}
+.study-list .head{
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+.study-list .head .title{
+    align-items:center;
+    font-weight: bold;
+    font-size:18px;
+}
+.study-list .head .title img{
+    align-items:center;
+    margin-right:18px;
+}
+.more{
+    color:#bbb;
+    font-size:14px;
+}
+.more a{
+    color:#bbb;
+    text-decoration: none;
+    font-size:14px;
+}
+.study-list-2{
+    padding:10px 0;
+    align-items:center;
+}
+.head2{
+    align-items:center;
+    font-weight:bold;
+}
+.head2 img{
+    margin-right:12px;
+}
+.study-list-2 .content{
+    justify-content:space-between;
+    margin:10px 0;
+}
+.exam-title{
+    margin:5px 24px;
+    flex:auto;
+    width:0;
+}
+.exam-result{
+    justify-content:space-between;
+    flex:0 0 30vw;
+}
+.exam-icon{
+    margin-right:5px;
+    width:11px;
+    height:14px;
+}
+.video-content{
+    /*margin:10px 0;*/
+    flex-flow:wrap;
+}
+.video-content .video-list{
+    flex:0 0 50%;
+    text-align:center;
+    margin:10px 0;
+    width:0;
+}
+.video-content .video-list img{
+    width:40vw;
+    height:25vw;
+}
+.video-title{
+    font-size:14px;
+    padding:5px 10px;
+}
+.video-complete{
+    font-size:11px;
+    color:#bbb;
+    padding:0 10px;
+}

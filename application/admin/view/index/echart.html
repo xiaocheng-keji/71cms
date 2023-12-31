@@ -1,0 +1,868 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="shortcut icon" href="/images/favicon.ico">
+    <style>
+        html,body{
+            height:100%;
+            margin:0;
+            color:white;
+        }
+        body>div{
+            height:100%;
+            margin-bottom:0 !important;
+        }
+        #border{
+            display:flex;
+            flex-direction: column;
+            height:100%;
+        }
+        #border>div{
+            margin:0 30px;
+            margin-top:30px;
+        }
+        .top{
+            display:flex;
+            flex:1;
+        }
+        .part_age{
+            display:flex;
+            flex-direction: column;
+            height:100%;
+        }
+        #map>div{
+            /*background:#03142B;*/
+            /*opacity: 0.5;*/
+            height:100%;
+            color:white;
+            display: flex;
+            flex-direction:column;
+            text-align:center;
+        }
+        #center-map{
+            display:flex;
+            height:100%;
+        }
+        .part_age>div{
+            background:#03142B;
+            margin-top:10px;
+            display:flex;
+            height:100%;
+        }
+        .bottom{
+            height:30%;
+            display:flex;
+        }
+        .bottom-box{
+            display:flex;
+            height:100%;
+            flex-direction: column;
+        }
+        .bottom-box>div{
+            background:#03142B;
+            width:100%;
+        }
+        .bottom-title{
+            height:50px;
+        }
+        .echart-box{
+            display:flex;
+            height:100%;
+        }
+        #jilu{
+            display:flex;
+            height:100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content:center;
+        }
+        #sex{
+            display:flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+{/block}
+{block name="body"}
+
+<!--星空图-->
+<canvas style="position:fixed;z-index: -100" id="canvas"></canvas>
+{empty name="full"}
+<a class="layui-btn layui-btn-sm layui-btn-danger" target="_blank" href="?full=1" style="position:fixed;top:10px;right:10px;">全屏</a>
+{/empty}
+<!--布局-->
+<div style="" id="border">
+    <div class="top layui-row layui-col-space15">
+        <div class="part_age layui-col-sm3">
+            <div id="dangling"></div>
+            <div id="nianling"></div>
+        </div>
+        <div id="map" class="layui-col-sm6">
+            <div>
+                <div id="center-title" style="font-size:40px;">智慧党建大数据平台</div>
+                <div id="center-people" class="layui-row" style="margin-top:20px;">
+                    <div class="layui-col-sm6">
+                        <img width="20" height="20" src="__PUBLIC__/assets/image/party_count.png" alt="">
+                        <span style="font-size:15px;">党员 <span style="font-size:30px;">{$party_count}</span>人</span>
+                    </div>
+                    <div class="layui-col-sm6">
+                        <img width="25" height="25" src="__PUBLIC__/assets/image/department.png" alt="">
+                        <span style="font-size:15px;">组织<span style="font-size:30px;">{$department}</span>个</span>
+                    </div>
+                </div>
+                <div id="center-map" class="layui-row">
+                    <div class="layui-col-sm3" id="sex">
+                        <div style="width: 70%">
+                            <div style="color:#1F7FD6;">男女比例</div>
+                            <div class="layui-row" style="margin-top:20px;">
+                                <div class="layui-col-sm6">
+                                    <img width="30" src="__PUBLIC__/assets/image/male.png" alt="">
+                                </div>
+                                <div class="layui-col-sm6">
+                                    <img width="30" src="__PUBLIC__/assets/image/female.png" alt="">
+                                </div>
+                            </div>
+                            <div class="layui-row">
+                                <div class="layui-col-sm6">{$male_percent}%</div>
+                                <div class="layui-col-sm6">{$female_percent}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm9" id="china-map">地图</div>
+                </div>
+            </div>
+        </div>
+        <div class="part_age layui-col-sm3">
+            <div id="xueli"></div>
+            <div id="minzu"></div>
+        </div>
+    </div>
+
+
+    <div class="bottom layui-row layui-col-space15" style="margin-top:10px;margin-bottom:30px;">
+        <div class="layui-col-sm3 bottom-box">
+            <div class="bottom-title">
+                三会一课
+                <!--<form action="" class="layui-form">-->
+                    <div class="layui-inline">
+                        <select name="changeSan" id="changeSan" lay-filter="changeSan">
+                        </select>
+                    </div>
+                <!--</form>-->
+
+
+            </div>
+            <div class="echart-box" id="sanhui"></div>
+        </div>
+        <div class="layui-col-sm9 bottom-box">
+            <div class="bottom-box">
+                <div class="bottom-title">
+                    学习记录
+                    <div class="layui-inline">
+                        <select name="changeWei" id="changeWei" lay-filter="changeWei">
+                        </select>
+                    </div>
+                </div>
+                <div id="" class="layui-row echart-box">
+                    <div id="jilu" class="layui-col-sm2">
+                        <div>
+                            学习总时长
+                            <br>
+                            <span style="font-size:25px;color:orange;margin:20px 0;" id="total_time">0</span><span style="color:orange;">小时</span>
+                            <br>
+                            学习总人次
+                            <br>
+                            <span style="font-size:25px;color:orange;margin:20px 0;" id="times">0</span><span style="color:orange;">次</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm5" id="month-hour"></div>
+                    <div class="layui-col-sm5" id="month-ci"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="/plugins/echarts-en.min.js"></script>
+<script src="/plugins/china.js"></script>
+
+<script>
+    let nianling_id = document.getElementById('nianling');
+    let dangling_id = document.getElementById('dangling');
+    let xueli_id = document.getElementById('xueli');
+    let minzu_id = document.getElementById('minzu');
+    let month_hour_id = document.getElementById('month-hour');
+    let month_ci_id = document.getElementById('month-ci');
+    let china_map_id = document.getElementById('china-map');
+    let myChart1;
+</script>
+
+<!--获取数据-->
+<script>
+    layui.use(['layer','jquery','form'],function(){
+        let form = layui.form;
+        let jq = layui.jquery;
+
+
+        jq.post('/admin/index/getReportData',{},(res)=>{
+            minzu(res.nation);
+            xueli(res.education);
+            age(res.age);
+            jiguan(res.native_place);
+            join(res.join);
+        });
+
+        let dateObj = new Date();
+        let cur_date = dateObj.getFullYear();
+        let next_date = `${dateObj.getFullYear()}-${dateObj.getMonth()+1}`;
+        let date = `${cur_date}-01 - ${next_date}`;
+        let sanhuiOption = '';
+        for(let i=cur_date;i>2017;i--){
+            sanhuiOption += `<option name="${i}">${i}</option>`;
+        }
+        jq('#changeSan').append(sanhuiOption);
+        jq.post('/admin/index/meetingList',{date:date,dep_id:0,is_ajax:1},(res)=>{
+            sanhui(res);
+        });
+        jq('#changeSan').change(function(){
+            let cur_date = jq(this).val();
+            let next_date = `${cur_date}-12`;
+            let date = `${cur_date}-01 - ${next_date}`;
+            jq.post('/admin/index/meetingList',{date:date,dep_id:0,is_ajax:1},(res)=>{
+                sanhui(res);
+            });
+        });
+
+        jq.post('/admin/index/weiDangKe',{},(res)=>{
+            moth_times(res.weidangke.moth_times);
+            moth_time(res.weidangke.moth_time);
+            changeTimes(res.weidangke.times,res.weidangke.total_time)
+        });
+
+        let wei = '';
+        for(let i=cur_date;i>2017;i--){
+            wei += `<option name="${i}">${i}</option>`;
+        }
+        jq('#changeWei').append(wei);
+        jq('#changeWei').change(function(){
+            console.log(jq(this).val());
+            jq.post('/admin/index/weiDangKe',{year:jq(this).val()},(res)=>{
+                changeTimes(res.weidangke.times,res.weidangke.total_time);
+                moth_times(res.weidangke.moth_times);
+                moth_time(res.weidangke.moth_time);
+            });
+        });
+
+
+    });
+</script>
+<!--党龄分布-->
+<script>
+    function join(data){
+        // 基于准备好的dom，初始化echarts实例
+        myChart1 = echarts.init(dangling_id);
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '党龄分布',
+                textStyle:{
+                    color:'#2B94B2'
+                }
+            },
+            tooltip: {},
+            grid:{
+//            containLabel:true
+            },
+            xAxis: {
+                boundaryGap:true,
+                data: ["5年以内","5-10年","10-20年","20年以上","其他"],
+                axisLabel:{
+                    color:'white',
+                    rotate:45,
+                    fontSize:10
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'white',
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+            },
+            yAxis: {
+                name:'单位：人',
+                axisLabel:{
+                    color:'white',
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'white'
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+                splitLine:{
+                    show:false
+                },
+                nameGap:15
+            },
+            series: [{
+                name: '单位：人',
+                type: 'bar',
+                barWidth:'20',
+                data: data,
+                label:{
+                    show:true,
+                    position:'top',
+                    color:'white'
+                },
+                color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [{
+                        offset: 0, color: '#21BBE5' // 0% 处的颜色
+                    }, {
+                        offset: 1, color: 'rgba(128, 128, 128, 0)' // 100% 处的颜色
+                    }],
+                    global: false // 缺省为 false
+                }
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option);
+    }
+
+</script>
+
+<!--年龄分布-->
+<script>
+    function age(data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart2 = echarts.init(nianling_id);
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '年龄分布',
+                textStyle:{
+                    color:'#2B94B2'
+                }
+            },
+            tooltip: {},
+            legend: {
+                data:['人数']
+            },
+            grid:{
+                right:'20%',
+                left:'15%',
+                bottom:30,
+                top:30,
+//            containLabel:true
+            },
+            xAxis: {
+                name:'单位：人',
+                axisLine:{
+                    lineStyle:{
+                        color:'white',
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+                splitLine:{
+                    show:false
+                },
+            },
+            yAxis: {
+                data:["小于30岁","30-40岁","40-50岁","50-60岁","60-70岁","70岁以上","其他"] ,
+                axisLabel:{
+                    show:true,
+                    rotate:30,
+                    fontSize:10
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'white',
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+                splitLine:{
+                    show:false
+                },
+            },
+            series: [{
+                name: '单位：人',
+                type: 'bar',
+                barWidth:'10',
+                data: data,
+                label:{
+                    show:true,
+                    position:'right',
+                    color:'white'
+                },
+                color: {
+                    type: 'linear',
+                    x: 1,
+                    y: 0,
+                    x2: 0,
+                    y2: 0,
+                    colorStops: [{
+                        offset: 0, color: '#21BBE5' // 0% 处的颜色
+                    }, {
+                        offset: 1, color: 'rgba(128, 128, 128, 0)' // 100% 处的颜色
+                    }],
+                    global: false // 缺省为 false
+                }
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart2.setOption(option);
+    }
+
+</script>
+
+<!--学历分布-->
+<script>
+    function xueli(data){
+        // 绘制图表。
+        echarts.init(xueli_id).setOption({
+            title:{
+                text:"学历分布",
+                textStyle:{
+                    color:'#2B94B2'
+                }
+            },
+            tooltip : {},
+            series: {
+                type: 'pie',
+                color:['red','orange','yellow','green','cyan','blue','purple'],
+                data: data,
+                radius:'40%',
+            }
+        });
+    }
+
+</script>
+
+<!--民族分布-->
+<script>
+    function minzu(data){
+        // 绘制图表。
+        echarts.init(minzu_id).setOption({
+            title:{
+                text:"民族分布",
+                textStyle:{
+                    color:'#2B94B2'
+                }
+            },
+            grid:{
+                top:'30%',
+                bottom:'30%'
+
+            },
+            tooltip : {},
+            series: {
+                type: 'pie',
+                color:['red','orange','yellow','green','cyan','blue','purple'],
+                data: data,
+                radius:'40%',
+            }
+        });
+    }
+
+</script>
+
+<!--微党课时间和次数-->
+<script>
+    function changeTimes(times,time){
+        document.getElementById('times').innerHTML = times;
+        document.getElementById('total_time').innerHTML = time;
+    }
+</script>
+
+<!--微党课，每月时间-->
+<script>
+    function moth_time(data){
+        // 绘制图表。
+        echarts.init(month_hour_id).setOption({
+            grid:{
+                top:30,
+                bottom:30,
+//            right:'60%'
+            },
+            tooltip : {
+                trigger:'axis'
+            },
+            xAxis: {
+                boundaryGap:false,
+                type: 'category',
+                data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+                axisLabel:{
+                    color:'white',
+                    fontSize:8
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'#fff',
+                    },
+                },
+                axisTick:{
+                    color:'white',
+                    lineStyle:{
+                        color:'white',
+                    },
+                },
+            },
+            yAxis: {
+                name:'单位：小时',
+                type:'value',
+                axisLabel:{
+                    color:'white',
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'white'
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+                splitLine:{
+                    show:false
+                },
+                nameGap:10
+            },
+            series: {
+                type: 'line',
+                data:data ,
+                smooth:true,
+                color:['#1F7FD6']
+            }
+        });
+    }
+
+</script>
+
+<!--微党课，每月次数-->
+<script>
+    function moth_times(data){
+        // 绘制图表。
+        echarts.init(month_ci_id).setOption({
+            grid:{
+                top:30,
+                bottom:30,
+//            right:'60%'
+            },
+            tooltip : {
+                trigger:'axis'
+            },
+            xAxis: {
+                boundaryGap:false,
+                type: 'category',
+                data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+                axisLabel:{
+                    color:'white',
+                    fontSize:8
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'#fff',
+                    },
+                },
+                axisTick:{
+                    color:'white',
+                    lineStyle:{
+                        color:'white',
+                    },
+                },
+            },
+            yAxis: {
+                name:'单位：次',
+                type:'value',
+                axisLabel:{
+                    color:'white',
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'white'
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+                splitLine:{
+                    show:false
+                },
+                nameGap:10
+            },
+            series: {
+                type: 'line',
+                data:data ,
+                smooth:true,
+                color:['#44AE7C']
+            }
+        });
+    }
+
+</script>
+
+<!--地图-->
+<script>
+    function jiguan(data){
+        echarts.init(china_map_id).setOption({
+            title : {
+                text: '  ',
+                subtext: '籍贯分布',
+                left: 'center',
+                subtextStyle:{
+                    color:'#1F7FD6',
+                    fontSize:20
+                }
+            },
+            tooltip : {
+                trigger: 'item',
+                textStyle:{
+                    color:'yellow',
+                    align:'left'
+                },
+            },
+            series : [
+                {
+                    name: '人数',
+                    type: 'map',
+                    mapType: 'china',
+                    roam: false,
+                    label: {
+                        emphasis: {
+                            show: true,
+                            color:'#fff'
+                        },
+                    },
+                    itemStyle:{
+                        areaColor:'#1F7FD6'
+                    },
+                    data:data
+                }
+            ]
+        });
+    }
+
+</script>
+
+<!--三会一课-->
+<script>
+    function sanhui(data){
+        let huiyi=[],shidao=[],queqin=[],qingjia=[];
+        for(let v of data){
+            huiyi.push(v.meeting);
+            shidao.push(v.reach);
+            queqin.push(v.absent);
+            qingjia.push(v.leave);
+        }
+//        会议人数
+//        实到人数
+//        缺勤人数
+//        请假人数
+        // 绘制图表
+        // 。
+        echarts.init(document.getElementById('sanhui')).setOption({
+            grid:{
+                top:30,
+                bottom:30,
+//            right:'60%'
+            },
+            tooltip : {
+                trigger:'axis'
+            },
+            xAxis: {
+                boundaryGap:false,
+                type: 'category',
+                data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+                axisLabel:{
+                    color:'white',
+                    fontSize:8
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'#fff',
+                    },
+                },
+                axisTick:{
+                    color:'white',
+                    lineStyle:{
+                        color:'white',
+                    },
+                },
+            },
+            yAxis: {
+                name:' ',
+                type:'value',
+                axisLabel:{
+                    color:'white',
+                },
+                axisLine:{
+                    lineStyle:{
+                        color:'white'
+                    }
+                },
+                axisTick:{
+                    show:false
+                },
+                splitLine:{
+                    show:false
+                },
+                nameGap:10
+            },
+            series: [
+                {
+                    name:'会议数',
+                    type: 'line',
+                    data:huiyi ,
+                    smooth:true,
+                    color:['#00d626']
+                },
+                {
+                    name:'实到人数',
+                    type: 'line',
+                    data:shidao ,
+                    smooth:true,
+                    color:['#ced600']
+                },
+                {
+                    name:'缺席人数',
+                    type: 'line',
+                    data:queqin ,
+                    smooth:true,
+                    color:['#d61200']
+                },
+                {
+                    name:'请假人数',
+                    type: 'line',
+                    data:qingjia ,
+                    smooth:true,
+                    color:['#5a03d6']
+                },
+            ]
+        });
+    }
+</script>
+
+<!--背景-->
+<script>
+    var canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+//        w = canvas.width = window.innerWidth,
+//        h = canvas.height = window.innerHeight,
+        w = canvas.width = screen.availWidth;
+    h= canvas.height = screen.availHeight;
+
+        hue = 217,
+        stars = [],
+        count = 0,
+        maxStars = 200;
+
+    // Cache gradient
+    var canvas2 = document.createElement('canvas'),
+        ctx2 = canvas2.getContext('2d');
+    canvas2.width = 100;
+    canvas2.height = 100;
+    var half = canvas2.width/2,
+        gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+    gradient2.addColorStop(0.025, '#fff');
+    gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+    gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+    gradient2.addColorStop(1, 'transparent');
+
+    ctx2.fillStyle = gradient2;
+    ctx2.beginPath();
+    ctx2.arc(half, half, half, 0, Math.PI * 2);
+    ctx2.fill();
+
+    // End cache
+
+    function random(min, max) {
+        if (arguments.length < 2) {
+            max = min;
+            min = 0;
+        }
+
+        if (min > max) {
+            var hold = max;
+            max = min;
+            min = hold;
+        }
+
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    var Star = function() {
+
+        this.orbitRadius = random(w / 2-50);
+        this.radius = random(100, this.orbitRadius) / 10;
+        this.orbitX = w / 2;
+        this.orbitY = h / 2;
+        this.timePassed = random(0, maxStars);
+        this.speed = 0;
+        this.alpha = random(2, 10) / 10;
+
+        count++;
+        stars[count] = this;
+    }
+
+    Star.prototype.draw = function() {
+        var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
+            y = Math.cos(this.timePassed) * this.orbitRadius/2 + this.orbitY,
+            twinkle = random(10);
+
+        if (twinkle === 1 && this.alpha > 0) {
+            this.alpha -= 0.05;
+        } else if (twinkle === 2 && this.alpha < 1) {
+            this.alpha += 0.05;
+        }
+
+        ctx.globalAlpha = this.alpha;
+        ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+        this.timePassed += this.speed;
+    }
+
+    for (var i = 0; i < maxStars; i++) {
+        new Star();
+    }
+
+    function animation() {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+        ctx.fillRect(0, 0, w, h)
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (var i = 1, l = stars.length; i < l; i++) {
+            stars[i].draw();
+        };
+
+        window.requestAnimationFrame(animation);
+    }
+
+    animation();
+</script>
+
+
+<script>
+    window.addEventListener("resize", () => {
+//        this.nianling_id.resize();
+//        this.dangling_id.resize();
+//        this.xueli_id.resize();
+//        this.minzu_id.resize();
+//        this.month_hour_id.resize();
+//        this.month_ci_id.resize();
+//        this.china_map_id.resize();
+        this.myChart1.resize();
+    });
+</script>
+{/block}

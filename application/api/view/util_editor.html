@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no,uc-fitscreen=yes">
+        <link rel="stylesheet" href="/plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/common.css">
+    <script type="text/javascript" src="/plugins/layui/layui.js"></script>
+    <style>
+        html{
+            height:100%;
+        }
+        body{
+            height:100%;
+        }
+        .main{
+            height:100%;
+        }
+        .box{
+            padding:10px;
+            height:100%;
+        }
+        .box .editor{
+            flex:auto;
+        }
+        .box .button{
+            flex:0 0 60px;
+
+        }
+        /*.layui-util-face{*/
+        /*    left:0 !important;*/
+        /*}*/
+        /*.layui-clear{*/
+        /*    width:90vw !important;*/
+        /*}*/
+    </style>
+</head>
+<body>
+    <div class="main flex flex-column">
+        <div class="box flex flex-column">
+            <div class="editor">
+                <textarea id="demo" style="display: none;">{$content}</textarea>
+            </div>
+            <div class="button flex flex-inline-item flex-center">
+                <button class="layui-btn layui-btn-danger" id="sure">确定</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script type="text/javascript" src="/plugins/uniapp/jweixin-1.4.0.min.js"></script>
+<script type="text/javascript" src="/plugins/uniapp/uni.webview.1.5.2.min.js"></script>
+
+
+<script>
+    document.addEventListener('UniAppJSBridgeReady', function() {
+    });
+
+    layui.use(['jquery','layer','layedit'],function(){
+        let $ = layui.jquery;
+        let layedit = layui.layedit;
+        let layer = layui.layer;
+
+        let tenant_id = '{$tenant_id}';
+        let token = '{$token}';
+
+        let height = $('.editor').height()-89;
+        let index = layedit.build('demo',{
+            height:height.toString(),
+            uploadImage: {
+                url: '/api/util/up_image/tenant_id/'+tenant_id,type: 'post'
+            },
+            tool:[
+                'strong' //加粗
+                ,'italic' //斜体
+                ,'underline' //下划线
+                ,'del' //删除线
+                ,'left' //左对齐
+                ,'center' //居中对齐
+                ,'right' //右对齐
+                ,'image' //插入图片
+            ]
+            // tool: [
+            //     'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face'
+            //     , '|', 'left', 'center', 'right', '|', 'link', 'unlink','images', 'image_alt', 'video', 'anchors'
+            // , '|','table', 'fullScreen'
+            // ]
+        }); //建立编辑器
+
+        // layedit.sync(index);
+
+        //确定上传的东西
+        $('#sure').click(function(){
+            layer.load(2);
+            let content = layedit.getContent(index);
+
+            let param = {
+                token,
+                content
+            };
+            $.ajax({
+                url:'{:url("saveRich")}',
+                data:param,
+                method:'post',
+                headers: {
+                    tenant:tenant_id
+                },
+                dataType:'json',
+                success:(data)=>{
+                    layer.closeAll()
+                    uni.postMessage({
+                        data: {
+                            content
+                        }
+                    });
+                    uni.navigateBack();
+                }
+            });
+
+
+
+
+
+        });
+    });
+</script>

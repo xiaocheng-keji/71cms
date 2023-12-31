@@ -1,0 +1,24 @@
+.classify {
+	width: 100%;
+	overflow-x:scroll;
+	margin-top: 2.0625rem;
+}
+.classify_div{
+	color: #999;
+	font-size: 1.875rem;
+	padding: 0 1.5625rem;
+	font-weight: bold;
+}
+.classify_div_text {
+	min-width: 3.125rem;
+	margin-bottom: 0.53125rem;
+}
+.text_selected{
+	color: #000000;
+}
+.selected {
+	height: 0.4375rem;
+	background-color: #E93129;
+	margin: 0 1.25rem;
+	border-radius: 6.25rem;
+}

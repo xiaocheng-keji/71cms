@@ -1,0 +1,81 @@
+{extend name="base"/}
+
+{block name="body"}
+<div class="admin-main">
+    <div class="layui-tab-content">
+        <script type="text/html" id="toolbar">
+            <label>
+                <input style="width:200px;display:inline-block" type="text" name="time_range" placeholder="选择时间段" autocomplete="off" class="layui-input" id="test">
+            </label>
+        </script>
+        <div id="list" lay-filter="list"></div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['table','jquery','laydate'], function(){
+        let table = layui.table;
+        let laydate = layui.laydate;
+        let $ = layui.jquery;
+
+        let time_range = '';
+        let height = document.documentElement.clientHeight-80;
+
+        let tableIns = table.render({
+            elem: '#list'
+            ,url: '/admin/wx/dz_list' //数据接口
+            ,page: true //开启分页
+            ,height:height
+            ,toolbar: '#toolbar'
+            ,title:'对账单列表'
+            ,cols: [[ //表头
+                {title:'序号',type:'numbers'}
+                ,{field: 'pay_time', title: '交易时间',width:'180'}
+                ,{field: 'goods_name', title: '商品名称',width:'200'}
+                ,{field: 'app_id', title: '公众号账号ID',width:'180'}
+                ,{field: 'mch_id', title: '商户号',width:'120'}
+                ,{field: 'smn', title: '特约商户号',width:'120'}
+                ,{field: 'imei', title: '设备号',width:'100'}
+                ,{field: 'order_sn_wx', title: '微信订单号',width:'250'}
+                ,{field: 'order_sm_sh', title: '商户订单号',width:'200'}
+                ,{field: 'user_tag', title: '用户标识',width:'200'}
+                ,{field: 'pay_type', title: '交易类型',width:'100'}
+                ,{field: 'pay_status', title: '交易状态',width:'100'}
+                ,{field: 'bank', title: '付款银行',width:'110'}
+                ,{field: 'money_type', title: '货币种类',width:'100'}
+                ,{field: 'total_amount', title: '应结订单金额',width:'100'}
+                ,{field: 'coupon_amount', title: '代金券金额',width:'100'}
+                ,{field: 'refund_number_wx', title: '微信退款单号',width:'300'}
+                ,{field: 'refund_number_sh', title: '商户退款订单',width:'200'}
+                ,{field: 'refund_amount', title: '退款金额',width:'100'}
+                ,{field: 'coupon+refuund_amount', title: '代金券或立减优惠退款金额',width:'100'}
+                ,{field: 'refund_type', title: '退款类型',width:'100'}
+                ,{field: 'refund_status', title: '退款状态',width:'100'}
+                ,{field: 'service_charge', title: '手续费',width:'100'}
+                ,{field: 'rate', title: '费率',width:'80'}
+                ,{field: 'order_money', title: '订单金额',width:'100'}
+                ,{field: 'refund_money', title: '申请退款金额',width:'100'}
+                ,{field: 'mark', title: '备注',width:'200'}
+                ,{field: 'time', title: '获取时间',width:'180'}
+            ]]
+            ,done:(res, curr, count)=>{
+                laydate.render({
+                    elem: '#test',
+                    range:true,
+                    done:function(value, date, endDate){
+                        time_range = value;
+                        time = value.split(' - ');
+                        tableIns.reload({'where':{start:time[0],end:time[1]},page:{cur:1}});
+                    }
+                });
+
+                $('input[name="time_range"]').val(time_range);
+            }
+        });
+
+    });
+
+</script>
+{/block}

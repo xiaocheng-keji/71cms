@@ -1,0 +1,552 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+	.layui-upload-img {
+		width: 92px;
+		height: 92px;
+		margin: 0 10px 10px 0;
+	}
+
+	.layui-form-label {
+		width: 100px;
+		padding: 10px 15px 7px;
+	}
+
+	.layui-input-block {
+		margin-left: 130px;
+	}
+	.require-text {
+		color:#DC524B;
+	}
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+	<!-- layui-btn-sm -->
+	<button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>{if $data.id>0}编辑{else}创建申请{/if}</legend>
+	</fieldset>
+
+	<form class="layui-form" action="">
+		<script>
+			let renderArr = [];
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				组织          </label>
+			<div class="layui-input-inline">
+				<select name="dep_id" >
+					{volist name="dep_options" id="vv"}
+					<option value="{$key}"
+							{$vv.disabled?'disabled':''}
+					{if $data.dep_id==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				手机号            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="phone" placeholder="" lay-verify="required"
+					   value="{$data.phone}"  class="layui-input"
+				>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				姓名            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="nickname" placeholder="" lay-verify="required"
+					   value="{$data.nickname}"  class="layui-input"
+				>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				性别            </label>
+			<div class="layui-input-block">
+				{volist name="sex_column" id="vo"}
+				<input type="radio" name="sex" value="{$key}" title="{$vo}" {if $data.sex==$key}checked{/if}>
+				{/volist}
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				民族            </label>
+			<div class="layui-input-inline">
+				<select name="nation" >
+					{volist name="nation_column" id="vv"}
+					<option value="{$key}"
+					{if $data.nation==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				籍贯            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="native_place" placeholder="" lay-verify="required"
+					   value="{$data.native_place}"  class="layui-input"
+				>
+<!--				<select name="native_place" >-->
+<!--					{volist name="native_options" id="vv"}-->
+<!--					<option value="{$key}"-->
+<!--							{if $data.native_place==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>-->
+<!--					{/volist}-->
+<!--				</select>-->
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				公民身份证号            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="idcard" placeholder="" lay-verify="required"
+					   value="{$data.idcard}"  class="layui-input"
+				>
+
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				出生日期            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="birthday" placeholder="" lay-verify="required" readonly
+					   value="{$data.birthday}"  class="layui-input" id="LAY_date37">
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'date', id: '#LAY_date37'});
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				学历            </label>
+			<div class="layui-input-inline">
+				<select name="education" >
+					{volist name="education_column" id="vv"}
+					<option value="{$key}"
+							{if $data.education==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				发展阶段            </label>
+			<div class="layui-input-inline">
+				<select name="status" >
+					{volist name="status_options" id="vv"}
+					<option value="{$key}"
+							{if is_object($data)&&$data->getData('status')==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		<!--<div class="layui-form-item">
+			<label class="layui-form-label">
+				建立提醒清单
+			</label>
+			<div class="layui-input-inline">
+				{if $data.is_task_remind }
+				<input type="checkbox"  onclick="checkboxOnclick(this)" lay-skin="switch" name="is_task_remind" lay-text="是|否"   lay-filter="switchshow"    data-id="is_task_remind"  value="{$data.is_task_remind|raw}" checked />
+				{else}
+					<input type="checkbox"  onclick="checkboxOnclick(this)"  lay-skin="switch" name="is_task_remind" lay-text="是|否"   lay-filter="switchshow"    data-id="is_task_remind"  value="{$data.is_task_remind|raw}" />
+				{/if}
+			</div>
+		</div>-->
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+					申请入党时间            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="apply_time" placeholder="" lay-verify="required" readonly
+					   value="{$data.apply_time}"  class="layui-input" id="LAY_date10">
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'date', id: '#LAY_date10'});
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				入党申请书            </label>
+			<div class="layui-input-block">
+				<div class="layui-input-inline">
+					<input type="text" name="apply_petition" placeholder=""
+						   value="{$data.apply_petition}"  class="layui-input" id="input11">
+				</div>
+				<div class="layui-upload">
+					<button type="button" class="layui-btn layui-btn-sm" id="layui-btn11">上传文件</button>
+					<div class="layui-upload-list">
+						<p id="text11"></p>
+					</div>
+					{if !empty($data.apply_petition)}
+						<a href="{$data.apply_petition}" id="open11" target="_blank">查看</a>
+					{/if}
+				</div>
+			</div>
+		</div>
+		<script>
+			renderArr.push({
+				type: 'file',
+				btnId: '#layui-btn11',
+				textId: '#text11',
+				inputId: '#input11',
+				openId: '#open11'
+			});
+		</script>
+
+		<div class="layui-form-item" id="">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				培养联系人
+			</label>
+			<div class="layui-input-inline" style="width:400px">
+				<div class="tags" id="tags" style="width: 94%;margin: 0px;padding: 0px 10px;">
+					<input type="text" id="inputTags" placeholder="请选择培养联系人" autocomplete="off" />
+				</div>
+<!--				<input type="text" name="train" disabled lay-verify="train" placeholder="请选择培养联系人" value="{$data.train}" class="layui-input">-->
+<!--				<input type="hidden" name="train_uid" lay-verify="train" placeholder="请选择培养联系人" value="{$data.train_uid}" class="layui-input">-->
+			</div>
+			<a class="layui-btn layui-btn-sm" id="choiceTrain" style="float: left;margin-right: 10px;margin-top: 4px">培养联系人</a>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				成为预备党员时间
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="yubei_time" placeholder="成为预备党员前可不填" readonly
+					   value="{$data.yubei_time}"  class="layui-input" id="LAY_date12">
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'date', id: '#LAY_date12'});
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				转正时间
+			</label>
+			<div class="layui-input-inline">
+				<input type="text" name="zhuanzheng_time" placeholder="转正前可不填" readonly
+					   value="{$data.zhuanzheng_time}"  class="layui-input" id="LAY_date13">
+			</div>
+		</div>
+		<script>
+			renderArr.push({type: 'date', id: '#LAY_date13'});
+		</script>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="*">立即提交</button>
+				<!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+			</div>
+		</div>
+	</form>
+</div>
+
+</div>
+
+<script>
+
+	layui.extend({
+		inputTags: '/plugins/layui/inputTags/inputTags',
+	}).use(['form', 'layedit', 'laydate', 'jquery', 'upload','inputTags'], function () {
+		var form = layui.form
+				, layer = layui.layer
+				, layedit = layui.layedit
+				, laydate = layui.laydate
+				, jq = layui.jquery
+				, inputTags = layui.inputTags
+				, upload = layui.upload;
+
+		var selected_appoint_user = []
+				,tags = []
+
+		form.on('switch(switchshow)', function(obj){
+			var value = jq("input[name='is_task_remind']").val();
+			if(value == ''|| value == 0){
+				jq("input[name='is_task_remind']").val(1);
+			}else{
+				jq("input[name='is_task_remind']").val(0);
+			}
+		});
+
+			//创建编辑器
+		let uploadInst = [];
+		renderArr.forEach(function (v, i) {
+			if (v.type == 'editor') {
+				//编辑器
+				renderArr[i].editIndex = layedit.build(v.id, {
+					uploadImage: {
+						url: '/Admin/Upload/layedit_upimage',
+						type: 'post'
+					}
+				});
+			} else if (v.type == 'date') {
+				//日期
+				laydate.render({
+					elem: v.id
+				});
+			} else if (v.type == 'datetime') {
+				//日期
+				laydate.render({
+					elem: v.id,
+					type: 'datetime'
+				});
+			} else if (v.type == 'image') {
+				//单图片上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upimage'
+					, before: function (obj) {
+						//预读本地文件示例，不支持ie8
+						obj.preview(function (index, file, result) {
+							jq(v.imgId).attr('src', result); //图片链接（base64）
+						});
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path);
+						jq(v.imgId).attr('src', res.path).show();
+						jq(v.aId).attr('href', res.path);
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+						demoText.find('.demo-reload').on('click', function () {
+							uploadInst[i].upload();
+						});
+					}
+				});
+			} else if (v.type == 'excel') {
+				//excel上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upExcel'
+					, accept: 'file'
+					, exts: 'xls|xlsx'
+					, before: function (obj) {
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path)
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+					}
+				});
+			} else if (v.type == 'file') {
+				//excel上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upfile'
+					, accept: 'file'
+					// , exts: '.'
+					, before: function (obj) {
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path);
+						jq(v.openId).attr('href', res.path)
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+					}
+				});
+			}
+		});
+		//自定义验证规则
+		form.verify({
+			title: function (value) {
+				if (value.length < 5) {
+					return '标题至少得5个字符啊';
+				}
+			}
+			, pass: [
+				/^[\S]{6,12}$/
+				, '密码必须6到12位，且不能出现空格'
+			]
+			, content: function (value) {
+				renderArr.forEach(function (v, i) {
+					if (v.type == 'editor') {
+						layedit.sync(i);
+					}
+				});
+				//layedit.sync(editIndex);
+			}
+			, train: function (value) {
+				if (value == '') {
+					return '培养联系人不能为空';
+				}
+			}
+		});
+
+		//监听指定开关
+		form.on('switch(switchTest)', function (data) {
+			layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+				offset: '6px'
+			});
+			layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+		});
+
+		//监听提交
+		form.on('submit(*)', function (data) {
+			if(selected_appoint_user.length == 0){
+				layer.msg('请选择培养联系人', {icon: 5});
+				return false;
+			}
+			//保留selected_appoint_user的id
+			let ids = [];
+			selected_appoint_user.forEach(function (v, i) {
+				ids.push(v.id+'-'+v.name);
+			});
+			data.field.train_uid = ids.join(',');
+			let loading = layer.load(2, {
+				shade: [0.2, '#000']
+			});
+			let url = self.location.href;
+			jq.post(url, data.field, function (res) {
+				layer.close(loading);
+				if (res.code != 1) {
+					return layer.msg(res.msg);
+				} else {
+					layer.msg(res.msg);
+					if(""!=res.url){
+						setTimeout(function () {
+							window.location.href = res.url;
+						}, 1000)
+					}else{
+						setTimeout(function () {
+							window.history.go(-1)
+						}, 1000);
+					}
+				}
+			}).error(function () {
+				layer.close(loading);
+				layer.msg('服务器错误！');
+			});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+
+
+
+		//多图片上传
+		upload.render({
+			elem: '#test2'
+			, url: '/upload/'
+			, multiple: true
+			, before: function (obj) {
+				//预读本地文件示例，不支持ie8
+				obj.preview(function (index, file, result) {
+					$('#demo2').append('<img src="' + result + '" alt="' + file.name + '" class="layui-upload-img">')
+				});
+			}
+			, done: function (res) {
+				//上传完毕
+			}
+		});
+
+
+		jq('#choiceTrain').click(function () {
+			let url = "{:url('user/getDepUserList', array('scene'=>'user', 'checkbar'=>true))}";
+			layer.open({
+				type: 2,
+				title: false,
+				area: ['700px', '90%'],
+				content: url,
+				btn: ['确认', '取消'],
+				yes: function(index, layero){
+					// let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+					// let data = childWin.get_selected_data();
+					// // recorderId = data.user.indexOf(data.tags[0]);
+					// // jq("input[name='train']").val(data.tags[0]);
+					// // jq("input[name='train_uid']").val(recorderId);
+					// recorderId = data.user.indexOf(data.tags[0]);
+					// jq("input[name='train']").val(data.user[0].name);
+					// jq("input[name='train_uid']").val(data.user[0].id);
+					let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+					let data = childWin.get_selected_data();
+					let user = data.user;
+					let group = data.group;
+					let tags_arr = data.tags;
+					user.forEach(function (item, index) {
+						selected_appoint_user.push(item);
+						tags.push(item.name)
+						TagsObj.addTag(item);
+					});
+					layer.close(index);
+				}
+			});
+		});
+
+		let inputTagsData = {
+			elem:'#inputTags',
+			aldaBtn: true,
+			count: 9999,
+			done: function(value){
+				//console.log(value);
+			},
+			remove: function (value) {
+				del_selected_data(value);
+			}
+		};
+		let choice_user = {:json_encode($data.choice_user??[])};
+		if (choice_user != '' && choice_user != null) {
+			choice_user.forEach(function (item, index) {
+				selected_appoint_user.push(item);
+			});
+		}
+		let updateTags = {:json_encode($data.tags??[])};
+		if (updateTags != '' && updateTags != null) {
+			inputTagsData.content = [];
+			updateTags.forEach(function (v,i) {
+				inputTagsData.content.push(v);
+			});
+			tags = updateTags;
+		}
+		inputTagsData.content = [];
+		selected_appoint_user.forEach(function (v, i) {
+			inputTagsData.content.push(v);
+		});
+		var TagsObj = inputTags.render(inputTagsData);
+
+		function del_selected_data (param) {
+			selected_appoint_user = selected_appoint_user.filter(res => {
+				return res.id != param.id || res.name != param.name || res.type != param.type;
+			});
+		}
+
+	});
+</script>
+<script type="text/javascript" src="/js/delelement.js"></script>
+
+{/block}

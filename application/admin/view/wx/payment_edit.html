@@ -1,0 +1,96 @@
+{extend name="base" /}
+{block name="css"}
+	<style>
+	.layui-input-block {
+		width: 175px;
+		margin: 0px auto;
+	}
+	.layui-input {
+		margin-top: 5px;
+	}
+	.require-text {
+        color:#DC524B;
+    }
+	</style>
+{/block}
+{block name="body"}
+<form class="layui-form" lay-filter="payment_edit" style="margin:10px 20px;"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+	<div class="layui-form-item">
+		<label><b>{$res.nickname}</b></label>
+	</div>
+
+	<div class="layui-form-item">
+		<label>
+			<span class="require-text">*</span>
+			缴费标题
+		</label>
+		<input type="text" name="title" placeholder="请输入标题" value="{$res.title}" autocomplete="off" class="layui-input" lay-verify="required">
+	</div>
+	<div class="layui-form-item">
+		<label>
+			<span class="require-text">*</span>
+			归属年份
+		</label>
+		<input type="text" name="year" id="year" placeholder="选择归属年份" lay-verify="required|number" value="{$res.year}" autocomplete="off" class="layui-input">
+	</div>
+	<div class="layui-form-item">
+		<label>
+			<span class="require-text">*</span>
+			截止日期
+		</label>
+		<input type="text" name="end_time" id="end_time" placeholder="选择截止日期" lay-verify="required|date" value="{$res.end_time}" autocomplete="off" class="layui-input">
+	</div>
+	<div class="layui-form-item">
+		<label>
+			<span class="require-text">*</span>
+			应缴金额
+		</label>
+		<input type="text" name="payment" placeholder="请输入缴纳金额" lay-verify="required|number" value="{$res.payment}" autocomplete="off" class="layui-input">
+	</div>
+	<input type="hidden" name="id" value="{$res.id}">
+	<div class="layui-form-item">
+		<div class="layui-input-block">
+			<button class="layui-btn layui-btn-sm" lay-submit lay-filter="*">立即提交</button>
+			<button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+		</div>
+	</div>
+	<!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+{/block}
+
+
+{block name="js"}
+<script>
+	layui.use(['form','layer','jquery','laydate'],function(){
+		let form = layui.form;
+		let layer = layui.layer;
+		let $ = layui.jquery;
+		let laydate = layui.laydate;
+
+		laydate.render({
+			elem: '#end_time',
+		});
+		laydate.render({
+			elem:'#year',
+			type:'year'
+		});
+
+		let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+
+		form.on('submit(*)', function(data){
+			$.post('/admin/wx/payment_edit',data.field,(res)=>{
+				if(res.status==1){
+					parent.layer.msg(res.msg,{icon:1});
+					parent.window.tableReload();
+					parent.layer.close(index); //再执行关闭
+				}else{
+					layer.msg(res.msg,{icon:2});
+				}
+
+			});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+	});
+</script>
+{/block}

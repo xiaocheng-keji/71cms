@@ -1,0 +1,205 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+body{
+	background: #eee;
+}
+.dis_flex {
+	display: flex;
+}
+.search {
+	background: white;
+	display: flex;
+	justify-content: space-between;
+}
+.rwo_space_around {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+.row_space_between {
+	display: flex;
+	justify-content: space-between;
+}
+.row_row {
+	display: flex;
+	flex-direction: row;
+}
+.top_content {
+	width: 90%;
+	height: 100px;
+	background: white;
+	margin: 20px auto;
+}
+.portrait {
+	display: flex;
+	flex-direction: column;
+}
+.top_content_div{
+	justify-content: center;
+	align-items: center;
+}
+.top_content_div_title {
+	margin-right: 10px;
+}
+.top_content_div_content {
+	font-size: 38px;
+	font-weight: 700;
+}
+.content {
+	width: 90%;
+	background: white;
+	margin: 20px auto;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+.content_title {
+	font-size: 28px;
+	text-align: center;
+}
+.content_detail {
+	background: #0c64eb;
+	color: #fff;
+	/*margin: 0px auto;*/
+}
+.content_div {
+	/*padding: 20px 14.5px;*/
+	padding: 20px 15px;
+	border-bottom: 1px solid #eee;
+}
+.current_content {
+	/*width: 200px;*/
+	width: 290px;
+}
+.current_content_title {
+	color: #A6AAB8;;
+	margin-top: 5px;
+}
+.current_content_content {
+	color: #CBD0DB;
+}
+.current_content_div {
+	font-size: 14px;
+}
+.current_time {
+	display: flex;
+	justify-content: center;
+}
+.current_year {
+	position: relative;
+	bottom: -2.5px;
+}
+
+	.layui-input{
+		height: 30px;
+	}
+</style>
+{/block}
+{block name="body"}
+	<div class="admin-main layui-form">
+    	<div class="layui-field-box search">
+	        <form class="layui-form " action="{:url('admin/Datacount/meetingList')}" method="get">
+	        	<div class="layui-inline">
+		            <input type="text" name="date" placeholder="请选择时间" value="{$date}" class="layui-input" style="width: 186px;" id="date">
+		        </div>
+		        <div class="layui-inline">
+	            	<select name="dep_id">
+						{volist name="dep_options" id="vv"}
+						<option value="{$key}"
+								{$vv.disabled&&$key!=$dep.dep_id?'disabled':''}
+								{if $dep_id==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+						{/volist}
+		            </select>
+	            </div>
+        		<button id="search_btn " class="layui-btn layui-btn-sm" data-type="reload">搜索</button>
+			</form>
+			<a href="javascript:;" id="export" class="layui-btn layui-btn-sm">导出Excel</a>
+    	</div>
+    	<div class="rwo_space_around top_content">
+			<div class="dis_flex top_content_div">
+				<text class="top_content_div_title">会议总数:</text>
+				<text class="top_content_div_content">{$total.meeting}</text>
+			</div>
+			<div class="dis_flex top_content_div">
+				<text class="top_content_div_title">实到人数:</text>
+				<text class="top_content_div_content">{$total.reach}</text>
+			</div>
+			<div class="dis_flex top_content_div">
+				<text class="top_content_div_title">缺席人数:</text>
+				<text class="top_content_div_content">{$total.absent}</text>
+			</div>
+			<div class="dis_flex top_content_div">
+				<text class="top_content_div_title">请假人数:</text>
+				<text class="top_content_div_content">{$total.leave}</text>
+			</div>
+    	</div>
+    	<div class="portrait content">
+    		{volist name="month" id="vo"}
+				<div class="rwo_space_around content_div">
+					<text class="content_title">
+						<!-- <text class="current_content_div current_content_title" style="opacity:0;">{$vo.year}</text> -->
+						<div style="width: 60px;text-align: right;">
+							{$vo.month}月
+						</div>
+						<div class="current_year current_content_div current_content_title" style="width: 60px;text-align: right;margin-top: 0px;">{$vo.year}</div>
+					</text>
+					<!-- <div class="content_detail">
+						<text>查看详细</text>
+					</div> -->
+					<a href="{:url('datacount/meeting_month', array('time'=>$vo.time, 'dep_id'=>$dep_id,'meeting_type'=>2))}" class="layui-btn layui-btn-radius layui-btn-normal content_detail">查看详情</a>
+					<!-- <div class="row_space_between current_content"> -->
+						<div class="portrait top_content_div current_content_div">
+							<text class="current_content_title" style="color: #0e9aef">会议总数</text>
+							<text class="current_content_content" style="color: #0e9aef">{$vo.meeting}</text>
+						</div>
+						<div class="portrait top_content_div current_content_div">
+							<text class="current_content_title" style="color: #0e9aef">实到人数</text>
+							<text class="current_content_content" style="color: #0e9aef">{$vo.reach}</text>
+						</div>
+						<div class="portrait top_content_div current_content_div">
+							<text class="current_content_title" style="color: #0e9aef">缺席人数</text>
+							<text class="current_content_content" style="color: #0e9aef">{$vo.absent}</text>
+						</div>
+						<div class="portrait top_content_div current_content_div">
+							<text class="current_content_title" style="color: #0e9aef">请假人数</text>
+							<text class="current_content_content" style="color: #0e9aef">{$vo.leave}</text>
+						</div>
+					<!-- </div> -->
+					<!-- <div class="row_space_between current_content" style="border-top: 1px solid #ddd;margin-top: 3px;padding-top: 3px;"> -->
+						{volist name="vo.cats" id="cat"}
+						<div class="portrait top_content_div current_content_div">
+							<text class="current_content_title">{$cat.name}</text>
+							<text class="current_content_content">{$cat.num}</text>
+						</div>
+						{/volist}
+					<!-- </div> -->
+				</div>
+			{/volist}
+    	</div>
+	</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+<script type="text/javascript">
+	layui.use(['form', 'laydate', 'jquery'], function () {
+		var form = layui.form
+			, laydate = layui.laydate
+			, jq = layui.jquery;
+
+		laydate.render({
+			elem: '#date',
+			range: true,
+			type: "month"
+		});
+
+		jq('#export').click(function () {
+			let date_time = jq('#date').val();
+			console.log(date_time);
+			let dep_id = jq("select[name='dep_id']").val();
+			console.log(dep_id);
+			location.href = "{:url('datacount/meetingExport')}" + '?dep_id='+dep_id+'&date='+date_time;
+		});
+	});
+</script>
+{/block}

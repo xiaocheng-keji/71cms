@@ -1,0 +1,332 @@
+{extend name="base" /}
+
+{block name="body"}
+<style>
+    .layui-table-tool-temp{
+        padding-right:0;
+    }
+</style>
+<div class="admin-main">
+    <div class="layui-tab-content">
+        <!--头部按钮，增删改查-->
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-row">
+                <div class="layui-col-sm8">
+                    <button class="layui-btn layui-btn-sm" lay-event="delete">删除选中</button>
+                    <input style="width:30%;display:inline-block" type="text" name="keyword"  lay-verify="required" value="" placeholder="输入用户名或缴费标题" autocomplete="off" class="layui-input">
+                    <input style="width:200px;display:inline-block" type="text" name="time_range" autocomplete="off" placeholder="选择缴费日期" class="layui-input" id="time">
+
+
+                    <div class="layui-input-inline" style="width:100px;">
+                        <select name="is_pay" lay-verify="required" lay-filter="is_pay" id="view">
+                        </select>
+                    </div>
+                    <button class="layui-btn layui-btn-sm" lay-event="search">搜索</button>
+                    <!--<button class="layui-btn layui-btn-sm" lay-event="add">添加</button>-->
+                </div>
+                <div class="layui-col-sm4 layui-row">
+                    <div class="layui-layout-right">
+                        <button class="layui-btn layui-btn-sm" lay-event="download" id="download">示例下载</button>
+                        <span id="file_name"></span>
+                        <button type="button" class="layui-btn layui-btn-sm" id="daobtn"><i class="layui-icon">&#xe67c;</i>导入</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="daoru" id="daoru" style="display:none;">确定上传</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="quxiao" id="quxiao" style="display:none;">取消上传</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="export" id="export">导出</button>
+                    </div>
+
+                </div>
+            </div>
+        </script>
+        <script id="option" type="text/html">
+            {{# layui.each(d.list, function(index, item){ }}
+               {{ item.html }}
+            {{# }); }}
+        </script>
+
+
+
+
+
+        <!--每行操作栏-->
+        <script type="text/html" id="barDemo">
+
+            {{# if(d.is_pay==0){ }}
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            {{# } }}
+        </script>
+
+        <div id="demo" lay-filter="test"></div>
+    </div>
+
+</div>
+
+{/block}
+
+
+{block name="js"}
+<script>
+    layui.use(['table','upload','jquery','laydate','form','laytpl'], function(){
+        let table = layui.table;//列表组件
+        let upload = layui.upload;//上传组件
+        let jq = layui.jquery;//jquery组件
+        let laydate = layui.laydate;
+        let form = layui.form;
+        let laytpl = layui.laytpl;
+
+        let keyword = '';//搜索框关键字
+        let list = [];
+        let res_id = [];
+        let time_range = '';//选择时间
+        let is_pay = '2';
+
+
+        let tableIns = table.render({
+            elem: '#demo'
+            ,url: '/admin/wx/get_list/' //数据接口
+            ,page: true //开启分页
+//            ,defaultToolbar: []
+            ,toolbar: '#toolbarDemo'
+            ,defaultToolbar:false
+//            ,title:'缴费人员'
+//            ,totalRow:true
+            ,cols: [[ //表头
+                {checkbox:true}
+                ,{field: 'pay_time', title: '缴费日期',width:170}
+                ,{field: 'title', title: '缴费标题'}
+                ,{field: 'uid', title: '用户id'}
+                ,{field: 'nickname', title: '用户名'}
+                ,{field: 'year', title: '归属年份'}
+                ,{field: 'end_time', title: '截止时间'}
+                ,{field: 'payment', title: '应缴金额'}
+                ,{field: 'is_pay', title: '支付状态',templet: function(d){
+                    if(d.is_pay==0){
+                        return '<span style="color:red;">未支付</span>';
+                    }else{
+                        return '<span style="color:green;">已支付</span>';
+                    }
+                }}
+                ,{title:'操作', toolbar: '#barDemo'}
+            ]]
+            ,done:(res, curr, count)=>{
+                upload_fuc();
+                list = [];
+                res_id = [];
+                for(let v of res.data){
+                    res_id.push(v.id);
+                }
+                jq('input[name="keyword"]').val(keyword);
+                jq('input[name="time_range"]').val(time_range);
+
+                laydate.render({
+                    elem: '#time',
+                    range:true,
+                    done:function(value, date, endDate){
+                        time_range = value;
+                    }
+                });
+                jq('input[name="time_range"]').val(time_range);
+
+                get_option();
+
+//                laytpl({
+//
+//                });
+            }
+        });
+
+        table.on('tool(test)',function(obj){
+            let data = obj.data;
+            let event = obj.event;
+            switch (event){
+                case 'edit':
+                    layer.open({
+                        title:'编辑信息',
+                        type:2,
+                        content:'/admin/wx/payment_edit/id/'+data.id,
+                        area:['400px','90%']
+                    });
+//                    obj.update({
+//                        title: '123'
+//                    });
+                    break;
+                case 'del':
+                    layer.confirm('确定删除该条数据吗?', (index)=>{
+                         //删除对应行（tr）的DOM结构，并更新缓存
+                        layer.close(index);
+                        //向服务端发送删除指令
+                        jq.post('/admin/wx/payment_del',{id:data.id},(res)=>{
+                            if(res.status==1){
+                                obj.del();
+                                layer.msg(res.msg,{icon:1});
+                            }else{
+                                layer.msg(res.msg,{icon:2});
+                            }
+                        });
+
+                    });
+                    break;
+            }
+        });
+
+        table.on('toolbar(test)',function(obj){
+            let type = obj.event;
+            switch (type){
+                case 'quxiao':
+                    jq('#daoru').css('display','none');
+                    jq('#quxiao').css('display','none');
+                    jq('#file_name').text('');
+                    jq('input[name="file"]').val('');
+                    break;
+                case 'daoru':
+                    break;
+                case 'export':
+                    keyword = jq('input[name="keyword"]').val();
+                    window.location.href = '/admin/wx/export?keyword='+keyword+'&time_range='+time_range+'&is_pay='+is_pay;
+                    break;
+                case 'search':
+                    keyword = jq('input[name="keyword"]').val();
+
+                    tableIns.reload({'where':{keyword,time_range,is_pay},page:{cur:1}});
+                    break;
+                case 'delete':
+                    if(list.length==0){
+                        layer.msg('请勾选删除项',{icon:2});
+                        // layer.close(index);
+                        return false;
+                    }else{
+                        layer.confirm('确定删除勾选数据吗?', {icon: 3, title:'删除提示'}, function(index){
+                            var index = layer.load(1);
+                            jq.post('/admin/wx/payment_del',{id:list},(res)=>{
+                                if(res.status==1){
+                                    layer.msg(res.msg,{icon:1});
+                                    tableIns.reload({where:{keyword,time_range,is_pay},page:{cur:1}});
+                                }else{
+                                    layer.msg(res.msg,{icon:2});
+                                }
+                                layer.close(index);
+                            });
+                        }); 
+
+                    }
+                    break;
+                case 'download':
+//                    console.log(location);
+                    window.location.href = location.origin+'/sys/jiaofei.xlsx';
+            }
+        });
+
+        table.on('checkbox(test)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            let checked = obj.checked;
+            let type = obj.type;
+            let id = obj.data.id;
+
+            if(type=='all'){
+                if(checked){
+                    list = res_id;
+                }else{
+                    list = [];
+                }
+
+            }else if(type=='one'){
+                if(checked){
+                    list.push(id);
+                }else{
+                    list = list.filter((one)=>{
+                        return one!=id;
+                    })
+                }
+            }
+        });
+
+
+
+
+
+        //执行实例
+        function upload_fuc(){
+            let uploadInst = upload.render({
+                elem: '#daobtn' //绑定元素
+                ,url: '/admin/wx/upload_excel' //上传接口
+                ,accept:'file'
+                ,auto:false
+                ,bindAction:'#daoru'
+                ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                    layer.load(1); //上传loading
+                }
+                ,done: function(res){
+                    //上传完毕回调
+                    if(res.status==1){
+                        layer.closeAll();
+                        layer.msg(res.msg,{icon:1});
+                        tableIns.reload();
+                    }else{
+                        layer.closeAll();
+                        layer.msg(res.msg,{icon:2});
+                    }
+
+                }
+                ,error: function(){
+                    //请求异常回调
+                    layer.closeAll();
+                    layer.msg('上传出错',{icon:2});
+                }
+                ,choose: (obj)=>{
+                    console.log(obj);
+                    jq('#daoru').css('display','inline-block');
+                    jq('#quxiao').css('display','inline-block');
+                    obj.preview(function(index, file, result){
+                        jq('#file_name').text(file.name)
+                    });
+                }
+            });
+        }
+
+
+        function get_option(){
+            let data;
+            console.log(is_pay);
+            if(is_pay==1){
+                data = { //数据
+                    'list':[
+                        {'html':'<option value="2">支付状态</option>'},
+                        {'html':'<option value="0">未支付</option>'},
+                        {'html':'<option value="1" selected>已支付</option>'},
+                    ]
+                };
+            }else if(is_pay==0){
+                data = { //数据
+                    'list':[
+                        {'html':'<option value="2">支付状态</option>'},
+                        {'html':'<option value="0" selected>未支付</option>'},
+                        {'html':'<option value="1">已支付</option>'},
+                    ]
+                };
+            }else{
+                data = { //数据
+                    'list':[
+                        {'html':'<option value="2" selected>支付状态</option>'},
+                        {'html':'<option value="0">未支付</option>'},
+                        {'html':'<option value="1">已支付</option>'},
+                    ]
+                };
+            }
+            let getTpl = option.innerHTML ,view = document.getElementById('view');
+            laytpl(getTpl).render(data, function(html){
+                view.innerHTML = html;
+                form.render();
+            });
+        }
+
+        //选择select事件
+        form.on('select(is_pay)',function(data){
+            is_pay = data.value;
+        });
+
+        window.tableReload = function(){
+            keyword = jq('input[name="keyword"]').val();
+            tableIns.reload({'where':{keyword,time_range,is_pay}});
+        };
+    });
+</script>
+{/block}

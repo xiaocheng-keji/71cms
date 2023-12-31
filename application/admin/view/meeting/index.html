@@ -1,0 +1,519 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dropdown/dropdown.css">
+<style>
+    .layui-laypage-btn {
+        border: 1px solid #666 !important;
+    }
+    .layui-form-select .layui-input{
+        height: 30px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    {if !empty($tips)}
+    <blockquote class="layui-elem-quote layui-text">
+        {volist name="tips" id="vo"}
+        {$vo}
+        {/volist}
+    </blockquote>
+    {/if}
+    <form id="search_form" class="layui-form layui-clear " action="">
+        {volist name="top_btn" id="vo"}
+        <a class="layui-btn  layui-btn-sm" href="{$vo.href}">{$vo.title}</a>
+        {/volist}
+        <div class="" style="float: right;">
+            <script>
+                let renderArr = [];
+            </script>
+            {volist name="search_fields" id="vo"}
+            {switch vo.type}
+            {case text}
+            <div class="layui-inline">
+                <input type="text" name="{$vo.field}" autocomplete="off" lay-verify="" placeholder="请输入{$vo.title}关键字"
+                       value="{$vo.value}" {$vo.attr|raw} class="layui-input"  style="height: 30px;">
+            </div>
+            {/case}
+            {case date}
+            <div class="layui-inline">
+                <input type="text" name="{$vo.field}" placeholder="{$vo.placeholder}"
+                       value="{$vo.value}" {$vo.attr|raw} class="layui-input layui-btn-sm" id="LAY_date{$i}" style="height: 30px;">
+            </div>
+            <script>
+                renderArr.push({type: 'date', id: '#LAY_date{$i}', range: '{$vo.range|default=false}'});
+            </script>
+            {/case}
+            {case switchbtn}
+            <div class="layui-inline">
+                <input type="checkbox" name="{$vo.field}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="switchshow"  value="{$vo.value}" {php}echo $vo['value']==1 ? 'checked' : '';{/php}>
+            </div>
+            {/case}
+            {case value="hidden"}
+            <input type="hidden" name="{$vo.field}" value="{$vo.value}"/>
+            {/case}
+            {case select}
+            <div class="layui-inline" >
+                <select name="{$vo.field}">
+                    {volist name="vo.options" id="vv"}
+                    <option value="{$key}"
+                            {$vv.disabled?'disabled':''}
+                    {if $vo['value']==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+                    {/volist}
+                </select>
+            </div>
+            {/case}
+            {/switch}
+            {/volist}
+            {if count($search_fields) >0}
+            <button id="search_btn" class="layui-btn layui-btn-sm" data-type="reload">搜索</button>
+            {/if}
+        </div>
+    </form>
+    <div class="layui-clear">
+        <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="toolbarExport">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="exportData">导出选中的</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="dropdown">
+        {volist name="row_btn" id="rbtn"}
+        {volist name="rbtn" id="vo"}
+        {if $vo.type == 'btn'}
+        {{#  if( {$vo.opt|raw} ){ }}
+        {if stripos($vo.href,'delete')!=false}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" data-delete-href="{$vo.href}" lay-event="delete">删除</a>
+        {else}
+        <a class="layui-btn {$vo.class|raw} layui-btn-xs" data-ext="{$vo.ext_param|raw}" lay-event="{$vo.href}{$vo.ext_param}">{$vo.title}</a>
+        {/if}
+        {{#  } }}
+        {elseif $vo.type == 'checkbox'}
+        {{#  if({$vo.opt|raw}){ }}
+        <input type="checkbox"  lay-skin="switch" name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="switchshow"  data-url="{$vo.href|raw}"   data-id="{{  {$vo.id|raw} }}"  value="{$vo.value|raw}" checked />
+        {{#  } else { }}
+        <input type="checkbox" lay-skin="switch"  name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="switchshow"   data-url="{$vo.href|raw}"  data-id="{{  {$vo.id|raw} }}"  value="{$vo.value|raw}"  />
+
+        {{#  } }}
+        {/if}
+        {/volist}
+        {/volist}
+        
+    </script>
+
+    {volist name="row_btn" id="rbtn"}
+    <script type="text/html" id="{$key}">
+        {volist name="rbtn" id="vo"}
+        {if $vo.type == 'btn'}
+        {{#  if( {$vo.opt|raw} ){ }}
+        {if stripos($vo.href,'delete')!=false}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" data-delete-href="{$vo.href}" lay-event="delete">删除</a>
+        {else}
+        <a class="layui-btn {$vo.class|raw} layui-btn-xs" data-ext="{$vo.ext_param|raw}" lay-event="{$vo.href}{$vo.ext_param}">{$vo.title}</a>
+        {/if}
+        {{#  } }}
+        {elseif $vo.type == 'checkbox'}
+        {{#  if({$vo.opt|raw}){ }}
+        <input type="checkbox"  lay-skin="switch" name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="switchshow"  data-url="{$vo.href|raw}"   data-id="{{  {$vo.id|raw} }}"  value="{$vo.value|raw}" checked />
+        {{#  } else { }}
+        <input type="checkbox" lay-skin="switch"  name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="switchshow"   data-url="{$vo.href|raw}"  data-id="{{  {$vo.id|raw} }}"  value="{$vo.value|raw}"  />
+
+        {{#  } }}
+        {/if}
+        {/volist}
+    </script>
+    {/volist}
+</div>
+{/block}
+{block name="js"}
+<script src="__PUBLIC__/js/clipboard.min.js"></script>
+<script>
+    layui.config({
+        base: '/plugins/layui/layui_ext/' //配置 layui 第三方扩展组件存放的基础目录
+    }).extend({
+        dropdown: 'dropdown/dropdown' //以 regionSelect 组件为例，定义该组件模块名
+    }).use(['table', 'jquery','form','layer', 'laydate', 'dropdown'], function () {
+        var table = layui.table
+            , jq = layui.jquery
+            , layer = layui.layer
+            , laydate = layui.laydate
+            , dropdown = layui.dropdown
+            , currPage = 1
+            , form = layui.form;
+
+        let url = self.location.href;
+        let tableData = {
+            elem: '#demo'
+            , url: url
+            , defaultToolbar: []//['filter', 'print', 'exports']
+            , title: '{$title}'
+            , toolbar: '{$toolbar_id|default=""}'
+            , cellMinWidth: 80
+            , cols: {$cols|raw}
+            , page: JSON.parse('{$page|raw}')
+            , limit: {$limit}
+            , response: {
+                statusCode: 1
+            }
+            ,id: 'testReload'
+            ,done: function (res, curr, count) {
+                console.log('res', res)
+                currPage = curr;
+                if (res.data.length == 0 && currPage > 1) {
+                    //当前页数据为空自动切到前一页
+                    active['reload'] ? active['reload'].call(this, currPage - 1) : '';
+                }
+                // 表格下拉菜单初始化
+                dropdown("#demo", res.data, function (data) {
+                    var options = [
+                        {
+                            title: "会议链接",
+                            icon: "layui-icon-file",
+                            event: function() {
+                                let value = '{:url("/wap/meeting/detail",[],true,true)}?id='+data.id;
+                                //页面层
+                                layer.open({
+                                    type: 1,
+                                    title: '会议链接',
+                                    // skin: 'layui-layer-rim', //加上边框
+                                    area: ['420px', '200px'], //宽高
+                                    content: '<div style="padding: 20px;text-align: center"><input id="clipboard-textarea" class="layui-input" value="'+value+'" readonly><button style="margin-top: 20px;" class="layui-btn clipboard-btn" data-clipboard-target="#clipboard-textarea">点击复制</button></div>'
+                                });
+                                clipboard = new ClipboardJS('.clipboard-btn');
+                                clipboard.on('success', function(e) {
+                                    console.info('Action:', e.action);
+                                    console.info('Text:', e.text);
+                                    console.info('Trigger:', e.trigger);
+                                    e.clearSelection();
+                                    layer.msg('复制成功');
+                                });
+
+                                clipboard.on('error', function(e) {
+                                    layer.msg('复制失败');
+                                    console.error('Action:', e.action);
+                                    console.error('Trigger:', e.trigger);
+                                });
+                            }
+                        },
+                    ];
+                    if(data.canCancel==1){
+                        options.push({
+                            title: "取消会议",
+                            icon: "layui-icon-unlink",
+                            event: function() {
+                                layer.confirm('确定取消吗?',{icon: 3, title:'提示'}, function (index) {
+                                    location.href = "{:url('meeting/cancelMeeting')}?id=" + data.id;
+                                });
+                            }
+                        });
+                    }
+                    // if(data.canCancel==1){
+                    //     options.push({
+                    //         title: "取消会议",
+                    //         icon: "layui-icon-unlink",
+                    //         url: "{:url('Activity/cancelMeeting')}?id=" + data.id
+                    //     });
+                    // }
+                    return options;
+                    if(data.id%2===1){
+                        options.push(
+                            {
+                                title: "layui",
+                                icon: "layui-icon-release",
+                                url: "https://www.layui.com/"
+                            }
+                        )
+                    }else{
+                        options.push(
+                            {
+                                title: "qq",
+                                icon: "layui-icon-release",
+                                url: "https://www.qq.com/"
+                            }
+                        )
+                    }
+
+                    return options;
+                    // 拼接数组(几个数组代表几个按钮)
+                    // var options = [
+                    //     {
+                    //         title: "查看", // 按钮显示内容
+                    //         icon: "layui-icon-form", // 图标样式
+                    //         url: "http://baidu.com", // 按钮跳转地址（与event二选一）
+                    //         event: function () {
+                    //             // 按钮触发事件
+                    //         }
+                    //     }
+                    // ];
+                    // return options;
+                })
+            }
+        };
+
+        let page_where = {:json_encode($page_where)};
+        if (page_where != null && page_where != '') {
+            tableData.where = page_where;
+        }
+
+        table.render(tableData);
+
+        //TODO （暂无用）头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+                case 'exportData':
+                    var arr = checkStatus.data;
+                    if(arr.length == 0){
+                        layer.alert('请先选中', {icon: 2, time: 3000});
+                        return false;
+                    }
+                    var arg = [];
+                    for (var index in arr){
+                        arg.push(arr[index].id)
+                    }
+                    // layer.alert(JSON.stringify(arg));
+                    var body = jq(document.body),
+                        form = jq("<form method='post' target='_blank'></form>"),
+                        input;
+                    form.attr({"action":'{:url("export")}'});
+                    jq.each(arg,function(key,value){
+                        input = jq("<input type='hidden'>");
+                        input.attr({"name":'id[]'});
+                        input.val(value);
+                        form.append(input);
+                    });
+
+                    form.appendTo(document.body);
+                    form.submit();
+                    document.body.removeChild(form[0]);
+            };
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除该条数据吗?',{icon: 3, title:'删除提示'}, function (index) {
+                    var url = jq(obj.tr[0].innerHTML).find('a[data-delete-href]').data('deleteHref');
+                    jq.post(url, {id: data.id}, function (res) {
+                        if (res.code != 1) {
+                            return layer.alert(res.msg, {icon: 2, time: res.wait*1000});
+                        } else {
+                            layer.msg(res.msg);
+                            setTimeout(function () {
+                                obj.del();
+                                layer.close(index);
+                                if(tableData.page!=false){
+                                    active['reload'] ? active['reload'].call(this, currPage) : '';
+                                }
+                            }, 300);
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                window.location.href = "{:url('edit')}" + '?id=' + data.id;
+            } else if(obj.event === 'row') {
+                console.log('row')
+            } else {
+                window.location.href = obj.event;
+            }
+        });
+
+        //TODO （暂无用）监听单元格编辑
+        table.on('edit(test)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            /*layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);*/
+            jq.post("{:url('updateField')}", {id: data.id, field: field, value: value}, function (res) {
+                if (res.code != 1) {
+                    return layer.msg(res.msg);
+                } else {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+
+        var active = {
+            reload: function (page) {
+                console.log('page', page)
+                page = page || 1;
+                var search_form = jq('#search_form').serializeArray();
+                var where = {};
+                jq.each(search_form, function () {
+                    where[this.name] = this.value;
+                });
+                console.log(where);
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: page //重新从第 1 页开始
+                    }
+                    , where: where
+                });
+            }
+        };
+
+        //创建编辑器
+        let uploadInst = [];
+        renderArr.forEach(function (v, i) {
+            if (v.type == 'editor') {
+                //编辑器
+                renderArr[i].editIndex = layedit.build(v.id, {
+                    uploadImage: "{url: '/Admin/Upload/layedit_upimage', type: 'post'}"
+                });
+            } else if (v.type == 'date') {
+                console.log(v)
+                //日期
+                laydate.render({
+                    elem: v.id
+                    ,range: v.range
+                });
+            } else if (v.type == 'datetime') {
+                console.log(v)
+                //日期
+                laydate.render({
+                    elem: v.id,
+                    type: 'datetime'
+                });
+            } else if (v.type == 'image') {
+                //单图片上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upimage'
+                    , before: function (obj) {
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function (index, file, result) {
+                            jq(v.imgId).attr('src', result); //图片链接（base64）
+                        });
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg(res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path);
+                        jq(v.imgId).attr('src', res.path).show();
+                        jq(v.aId).attr('href', res.path);
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                        demoText.find('.demo-reload').on('click', function () {
+                            uploadInst[i].upload();
+                        });
+                    }
+                });
+            } else if (v.type == 'excel') {
+                //excel上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upExcel'
+                    , accept: 'file'
+                    , exts: 'xls|xlsx'
+                    , before: function (obj) {
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg(res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path)
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                    }
+                });
+            }
+        });
+        console.log('renderArr', renderArr)
+
+        jq('#search_btn').on('click', function () {
+            var type = jq(this).data('type');
+            active[type] ? active[type].call(this) : '';
+            return false;
+        });
+
+
+        //搜索滑动按钮
+        var status=0;
+        form.on('switch(switchshow)', function(data){
+
+            loading = layer.load(2, {
+                shade: [0.2,'#000']
+            });
+
+            if(data.elem.checked){
+                status=1;
+            }else{
+                status=0;
+            }
+            var url  =  data.elem.getAttribute("data-url")+ "?name="+ data.elem.name + "&status="+status +'&id='+data.elem.getAttribute("data-id");
+
+            jq.get(url,function(data){
+                layer.close(loading);
+                if(data.code != 200){
+                    //失败
+                    data.elem.checked = !data.elem.checked;
+                    form.render('checkbox');
+                }
+                layer.msg(data.msg, {icon: 1, time: 1000});
+            });
+            return false;
+        });
+
+
+    });  // end layui use
+
+    function formatTime(obj) {
+        return formatUnixtimestamp(obj);
+    }
+
+    function formatUnixtimestamp(obj) {
+        if(obj == undefined || '' == obj || null == obj){
+            return '';
+        }
+        var obj = new Date(obj * 1000);
+        var year = 1900 + obj.getYear();
+        var month = "0" + (obj.getMonth() + 1);
+        var date = "0" + obj.getDate();
+        var hour = "0" + obj.getHours();
+        var minute = "0" + obj.getMinutes();
+        var second = "0" + obj.getSeconds();
+        return year + "-" + month.substring(month.length - 2, month.length) + "-" + date.substring(date.length - 2, date.length)
+            + " " + hour.substring(hour.length - 2, hour.length) + ":"
+            + minute.substring(minute.length - 2, minute.length) + ":"
+            + second.substring(second.length - 2, second.length);
+    }
+
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+{/block}

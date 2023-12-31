@@ -1,0 +1,190 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+{/block}
+{block name="body"}
+<div class="admin-main layui-form">
+    <div class="layui-field-box">
+        <div class="layui-box-searchber">
+            <!-- <button class="layui-btn layui-btn-sm" data-url="{:url('admin/forum/alldelete')}"  lay-submit lay-filter="alldelete">删除选中</button> -->
+            <!--<a href="{:Url('admin/forum/add')}" class="layui-btn layui-btn-sm">发帖</a>-->
+            <form class=" layui-form-pane" action="{:url('admin/forum/index')}" method="get">
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="font-size: 14px;">关键词</label>
+                    <div class="layui-input-inline" style="font-size: 14px;">
+                        <input type="text" style="font-size: 14px;" name="keyword" value="{:session('forumkeyword')}" placeholder="请输入关键词"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn  layui-btn-sm" style="font-size: 14px;">搜索</button>
+                </div>
+            </form>
+        </div>
+        <hr>
+
+        <table class="layui-table admin-table">
+            <thead>
+            <tr>
+                <!--<th width="5%" align="center"><input type="checkbox" name="checkAll" lay-filter="checkAll"></th>-->
+                <th width="5%" align="center">ID</th>
+                <th width="30%" align="center">帖子标题</th>
+                <!-- <th width="10%" align="center">是否显示</th> -->
+                <!-- <th width="10%" align="center">是否顶置</th> -->
+                <!--<th width="10%" align="center">是否热门</th>-->
+                <th width="10%" align="center">所属栏目</th>
+                <th width="10%" align="center">添加时间</th>
+                <th width="10%" align="center">操作</th>
+            </tr>
+            </thead>
+            <tbody id="content">
+            {if count($user_list) > 0}
+                {volist name="user_list" id="vo"}
+                <tr>
+                    <!--<td align="center"><input type="checkbox" name="ids[{$vo.post_id}]" lay-filter="checkOne"
+                                              value="{$vo.post_id}"></td>-->
+                    <td align="center">{$vo.post_id}</td>
+                    <td style="padding-left: 20px;">{$vo.title}</td>
+                    <!-- <td align="center">
+                    <input type="checkbox" name="show" lay-skin="switch" lay-text="显示|隐藏" lay-filter="switchopen"  value="{$vo['post_id']}" {php}echo $vo['open']==1 ? 'checked' : '';{/php}>
+
+                    </a>
+                    </td>
+                    <td align="center">
+                    <input type="checkbox" name="show" lay-skin="switch" lay-text="置顶|置顶" lay-filter="switchsettop"  value="{$vo['post_id']}" {php}echo $vo['settop']==1 ? 'checked' : '';{/php}>
+
+
+                    </a>
+                    </td> -->
+                    <!--<td align="center">
+                        <input type="checkbox" name="show" lay-skin="switch" lay-text="热门|热门" lay-filter="switchchoice"
+                               value="{$vo['post_id']}" {php}echo $vo['is_recommend'] > 0 ? 'checked' : '';{/php}>
+
+
+                        </a>
+                    </td>-->
+                    <td align="center">
+                        {$vo.forum_name}
+                    </td>
+                    <td align="center">{$vo.add_time|date="Y-m-d H:i"}</td>
+                    <td align="center">
+                        <!-- <a class="layui-btn layui-btn-normal layui-btn-xs" href="{:url('forum/edit',array('id'=>$vo['id']))}">修改</a> -->
+                        <a class="elementdel layui-btn layui-btn-danger layui-btn-xs" style="font-size: 14px;" href="javascript:;"
+                           data-id="{$vo.post_id}" data-url="{:url('admin/forum/del',array('id'=>$vo['post_id']))}"
+                           title="删除" nickname="{$vo.title}">删除</a>
+                    </td>
+                </tr>
+                {/volist}
+            {else /}
+                <tr>
+                    <td colspan="5" style="font-size: 14px;text-align: center;">暂无相关结果</td>
+                </tr>
+            {/if}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+{/block}
+{block name="page"}
+<div class="btable-paged">
+    <div class="layui-main">
+        {$user_list->render()|raw}
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+{/block}
+{block name="script"}
+
+<script>
+    layui.use('form', function () {
+        var form = layui.form
+            , jq = layui.jquery;
+        var status = 0;
+        form.on('switch(switchopen)', function (data) {
+            loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+            if (data.elem.checked) {
+                status = 1;
+            } else {
+                status = 0;
+            }
+            var url = "{:url('admin/forum/toggle')}?id=" + data.value + '&status=' + status + '&name=open';
+
+
+            jq.get(url, function (data) {
+
+                if (data.code == 200) {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                        //  location.reload();
+                    });
+                } else {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+                }
+            });
+            return false;
+        });
+
+        form.on('switch(switchchoice)', function (data) {
+            loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+            if (data.elem.checked) {
+                status = 1;
+            } else {
+                status = 0;
+            }
+            var url = "{:url('admin/forum/recommend')}?id=" + data.value + '&status=' + status + '&name=is_recommend';
+
+
+            jq.get(url, function (data) {
+
+                if (data.code == 200) {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                        //  location.reload();
+                    });
+                } else {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+                }
+            });
+            return false;
+        });
+        form.on('switch(switchsettop)', function (data) {
+            loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+            if (data.elem.checked) {
+                status = 1;
+            } else {
+                status = 0;
+            }
+            var url = "{:url('admin/forum/toggle')}?id=" + data.value + '&status=' + status + '&name=settop';
+
+
+            jq.get(url, function (data) {
+
+                if (data.code == 200) {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                        //  location.reload();
+                    });
+                } else {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+                }
+            });
+            return false;
+        });
+
+
+    })
+</script>
+{/block}

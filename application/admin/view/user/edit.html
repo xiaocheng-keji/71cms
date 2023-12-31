@@ -1,0 +1,662 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="/css/form.css">
+<style>
+    .layui-upload-img {
+        width: 92px;
+        height: 92px;
+        margin: 0 10px 10px 0;
+    }
+
+    .layui-form-label {
+        width: 100px;
+    }
+
+    .layui-input-block {
+        margin-left: 130px;
+    }
+    .require-text {
+        color:#DC524B;
+    }
+</style>
+{/block}
+{block name="body"}
+<!--主体-->
+<div style="margin-bottom:36px;" class="">
+    <div class="admin-main layui-form layui-field-box">
+        <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            {if empty($user)}
+<!--                <legend>添加用户</legend>-->
+            {else /}
+<!--                <legend>编辑用户</legend>-->
+            {/if}
+            <legend style="font-weight: bold">基本信息</legend>
+        </fieldset>
+
+        <form class="layui-form" action="" autocomplete="off">
+            <script>
+                let renderArr = [];
+            </script>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    姓名
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="nickname" lay-verify="" placeholder=""
+                           value="{$user.nickname}" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    手机号
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="mobile" lay-verify="" placeholder=""
+                           value="{$user.mobile}" class="layui-input" autocomplete="new-password">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text"></span>
+                    身份证号
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="idcard" lay-verify="" placeholder=""
+                           value="{$user.idcard}" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    性别
+                </label>
+                <div class="layui-input-block">
+                    {volist name="sex_column" id="vo"}
+                    <input autocomplete="off" type="radio" name="sex" value="{$key}" title="{$vo}" {if $user.sex==$key}checked{/if}>
+                    {/volist}
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    民族
+                </label>
+                <div class="layui-input-inline">
+                    <select name="nation">
+                        <option value="">请选择民族</option>
+                        {volist name="nation_column" id="vo"}
+                        <option value="{$key}" {if $key==$user.nation}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text"></span>
+                    家庭住址
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="address" lay-verify="" placeholder=""
+                           value="{$user.address}" class="layui-input" style="width:380px;">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    出生时间
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="birthday" placeholder="出生时间" readonly
+                           value="{if !is_null($user.birthday)}{$user.birthday|date='Y-m-d'}{/if}" class="layui-input" id="LAY_date59">
+                </div>
+            </div>
+            <script>
+                renderArr.push({type: 'date', id: '#LAY_date59'});
+            </script>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+<!--                    <span class="require-text">*</span>-->
+                    学历
+                </label>
+                <div class="layui-input-inline">
+                    <select name="education">
+                        <option value="">请选择学历</option>
+                        {volist name="education_column" id="vo"}
+                        <option value="{$key}" {if $key==$user.education}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <!--                    <span class="require-text">*</span>-->
+                    籍贯
+                </label>
+                <!--                <div class="layui-input-inline">-->
+                <!--                    <select name="jiguan">-->
+                <!--                        <option value="">请选择籍贯</option>-->
+                <!--                        {volist name="jiguan" id="vo"}-->
+                <!--                        <option value="{$vo}" {if $vo==$user.jiguan}selected{/if}>{$vo}</option>-->
+                <!--                        {/volist}-->
+                <!--                    </select>-->
+                <!--                </div>-->
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="native_place" lay-verify="" placeholder="请填写籍贯"
+                           value="{$user.native_place}" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <!-- <span class="require-text">*</span> -->
+                    是否台湾籍
+                </label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" type="radio" name="roc" value="1" title="是" {if $user.roc==1}checked{/if}>
+                    <input autocomplete="off" type="radio" name="roc" value="0" title="否" {if $user.roc==0}checked{/if}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+<!--                    <span class="require-text">*</span>-->
+                    工作岗位
+                </label>
+                <div class="layui-input-inline">
+                    <select name="job">
+                        <option value="">请选择工作岗位</option>
+                        {volist name="jobs_column" id="vo"}
+                        <option value="{$key}" {if $key==$user.job}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <!-- <span class="require-text">*</span> -->
+                    是否退休
+                </label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" type="radio" name="retirement" value="1" title="是" {if $user.retirement==1}checked{/if}>
+                    <input autocomplete="off" type="radio" name="retirement" value="0" title="否" {if $user.retirement==0}checked{/if}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text"></span>
+                    排序
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="sort" lay-verify="" placeholder=""
+                           value="{$user.sort}" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    状态
+                </label>
+                <div class="layui-input-inline">
+                    <select name="people_status">
+                        <option value="">请选择状态</option>
+                        {volist name="people_status_column" id="vo"}
+                        <option value="{$key}" {if $key==$user.people_status}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">党员照片</label>
+                <div class="layui-input-block">
+                    <div class="layui-input-inline">
+                        <input autocomplete="off" type="text" name="head_pic" placeholder=""
+                               value="{$user.head_pic}"
+                               class="layui-input" id="input1">
+                    </div>
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-sm" id="layui-btn1">上传图片</button>
+                        <div class="layui-upload-list">
+                            <a target="_blank"
+                               href="{$user.head_pic}">
+                                <img class="layui-upload-img" id="layui-upload-img1" {if empty($user.head_pic)}style="display:none;"{/if}
+                                src="{$user.head_pic}">
+                            </a>
+                            <p id="text1"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                renderArr.push({
+                    type: 'image',
+                    btnId: '#layui-btn1',
+                    imgId: '#layui-upload-img1',
+                    textId: '#text1',
+                    inputId: '#input1',
+                    aId: '#layui-upload-a1'
+                });
+            </script>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend style="font-weight: bold">党员信息</legend>
+            </fieldset>
+            {php}$dep_i=0;{/php}
+            {volist name="dep_arr" id="dep"}
+                {php}$dep_i++;{/php}
+                <div class="layui-form-item dep-item">
+                    <label class="layui-form-label">所属组织{$dep_i}</label>
+                    <div class="layui-input-inline" style="width: 300px;">
+                        <select name="department[{$dep_i}][dep_id]">
+                            {volist name="dep_options" id="vv"}
+                            <option value="{$key}"
+                                    {$vv.disabled&&$key!=$dep.dep_id?'disabled':''}
+                            {if $dep.dep_id==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+                            {/volist}
+                        </select>
+                    </div>
+
+                    <label class="layui-form-label" style="width: 30px;">职务</label>
+                    <div class="layui-input-inline">
+                        <select name="department[{$dep_i}][level_id]">
+                            {volist name="level_options" id="vo"}
+                            <option value="{$key}" {if $key==$dep.level_id}selected{/if}>{$vo}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <a href="javascript:void(0);" title="删除所属组织" class="layui-btn del-dep-btn layui-btn-primary">移除</a>
+                </div>
+            {/volist}
+            <div class="layui-form-item" id="addDepBtnItem">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    添加所属组织
+                </label>
+                <div class="layui-input-inline" style="width: auto;">
+                    <a href="javascript:void(0);" title="增加所属组织" id="addDepBtn" class="layui-btn">添加</a>
+                </div>
+                <div class="layui-form-mid layui-word-aux">最少添加一个所属组织</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    人员类别
+                </label>
+                <div class="layui-input-inline">
+                    <select name="people_type">
+                        <option value="">请选择人员类别</option>
+                        {volist name="people_type_column" id="vo"}
+                        <option value="{$key}" {if $key==$user.people_type}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+<!--                    <span class="require-text">*</span>-->
+                    申请入党时间
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="apply_time" placeholder="申请入党时间" readonly
+                           value="{if !is_null($user.apply_time)}{$user.apply_time|date='Y-m-d'}{/if}" class="layui-input" id="LAY_date58">
+                </div>
+            </div>
+            <script>
+                renderArr.push({type: 'date', id: '#LAY_date58'});
+            </script>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+<!--                    <span class="require-text">*</span>-->
+                    入党时间
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="join_time" placeholder="入党时间" readonly
+                           value="{if !is_null($user.join_time)}{$user.join_time|date='Y-m-d'}{/if}" class="layui-input" id="LAY_date57">
+                </div>
+            </div>
+            <script>
+                renderArr.push({type: 'date', id: '#LAY_date57'});
+            </script>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+<!--                    <span class="require-text">*</span>-->
+                    转正时间
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="become_time" placeholder="转正时间" readonly
+                           value="{if !is_null($user.become_time)}{$user.become_time|date='Y-m-d'}{/if}" class="layui-input" id="LAY_date60">
+                </div>
+            </div>
+            <script>
+                renderArr.push({type: 'date', id: '#LAY_date60'});
+            </script>
+
+<!--            <div class="layui-form-item">-->
+<!--                <label class="layui-form-label">-->
+<!--                    <span class="require-text">*</span>-->
+<!--                    党员状态-->
+<!--                </label>-->
+<!--                <div class="layui-input-block">-->
+<!--                    <input autocomplete="off" type="radio" name="work_status" value="1" title="在岗" {if $user.work_status==1||$user.work_status==0}checked{/if}>-->
+<!--                    <input autocomplete="off" type="radio" name="work_status" value="2" title="调离" {if $user.work_status==2}checked{/if}>-->
+<!--                    <input autocomplete="off" type="radio" name="work_status" value="3" title="退休" {if $user.work_status==3}checked{/if}>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <!-- <span class="require-text">*</span> -->
+                    党籍状态
+                </label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" type="radio" name="party_status" value="1" title="正常" {if $user.party_status==1}checked{/if}>
+                    <input autocomplete="off" type="radio" name="party_status" value="0" title="停止党籍" {if $user.party_status==0}checked{/if}>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <!-- <span class="require-text">*</span> -->
+                    是否失联
+                </label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" type="radio" lay-filter="lost_contact" name="lost_contact" value="1" title="是" {if $user.lost_contact==1}checked{/if}>
+                    <input autocomplete="off" type="radio" lay-filter="lost_contact" name="lost_contact" value="0" title="否" {if $user.lost_contact==0}checked{/if}>
+                </div>
+            </div>
+
+            <div class="layui-form-item{if $user.lost_contact==0} layui-hide{/if}" id="lost_contact_time">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    失联时间
+                </label>
+                <div class="layui-input-inline">
+                    <input autocomplete="off" type="text" name="lost_contact_time" placeholder="申请失联时间" readonly
+                           value="{if !is_null($user.lost_contact_time)}{$user.lost_contact_time|date='Y-m-d'}{/if}" class="layui-input" id="LAY_date61">
+                </div>
+            </div>
+            <script>
+                renderArr.push({type: 'date', id: '#LAY_date61'});
+            </script>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend style="font-weight: bold">账号信息</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <!-- <span class="require-text">*</span> -->
+                    账号状态
+                </label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" type="radio" name="status" value="1" title="开启" {if $user.status==1}checked{/if}>
+                    <input autocomplete="off" type="radio" name="status" value="0" title="关闭" {if $user.status==0}checked{/if}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" autocomplete="new-password" name="password" placeholder="如不修改密码请留空"
+                           value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="require-text">*</span>
+                    确认密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" autocomplete="new-password" name="confirm_password" placeholder="如不修改密码请留空"
+                           value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="*">立即提交</button>
+                    <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form', 'layedit', 'laydate', 'jquery', 'upload'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , jq = layui.jquery
+            , upload = layui.upload;
+
+        //创建编辑器
+        let uploadInst = [];
+        renderArr.forEach(function (v, i) {
+            if (v.type == 'editor') {
+                //编辑器
+                renderArr[i].editIndex = layedit.build(v.id, {
+                    uploadImage: {
+                        url: '/Admin/Upload/layedit_upimage', type: 'post'
+                    }
+                });
+            } else if (v.type == 'date') {
+                console.log(v)
+                //日期
+                laydate.render({
+                    elem: v.id
+                    ,trigger: 'click'
+                });
+            } else if (v.type == 'datetime') {
+                console.log(v)
+                //日期
+                laydate.render({
+                    elem: v.id,
+                    type: 'datetime'
+                    ,trigger:'click'
+                });
+            } else if (v.type == 'image') {
+                //单图片上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upimage'
+                    , before: function (obj) {
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function (index, file, result) {
+                            jq(v.imgId).attr('src', result); //图片链接（base64）
+                        });
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg('上传失败！' + res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path);
+                        jq(v.imgId).attr('src', res.path).show();
+                        jq(v.aId).attr('href', res.path);
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                        demoText.find('.demo-reload').on('click', function () {
+                            uploadInst[i].upload();
+                        });
+                    }
+                });
+            } else if (v.type == 'excel') {
+                //excel上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upExcel'
+                    , accept: 'file'
+                    , exts: 'xls|xlsx'
+                    , before: function (obj) {
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg('上传失败！' + res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path)
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    }
+                });
+            }
+        });
+        console.log('renderArr', renderArr)
+        //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length < 5) {
+                    return '标题至少得5个字符啊';
+                }
+            }
+            , pass: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格'
+            ]
+            , content: function (value) {
+                renderArr.forEach(function (v, i) {
+                    if (v.type == 'editor') {
+                        layedit.sync(i);
+                    }
+                });
+                //layedit.sync(editIndex);
+            }
+        });
+
+        //监听指定开关
+        form.on('switch(switchTest)', function (data) {
+            layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+                offset: '6px'
+            });
+            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
+        form.on('radio(lost_contact)', function (data) {
+            if (data.value == 1) {
+                jq('#lost_contact_time').removeClass('layui-hide');
+            } else {
+                jq('#lost_contact_time').addClass('layui-hide');
+            }
+        })
+
+        //监听提交
+        form.on('submit(*)', function (data) {
+            console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            let url = self.location.href;
+            jq.post(url, data.field, function (res) {
+                console.log(res);
+                if (res.code != 1) {
+                    return layer.msg(res.msg);
+                } else {
+                    layer.msg(res.msg);
+                    setTimeout(function () {
+                        window.history.go(-1)
+                    }, 1000);
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //表单初始赋值
+        form.val('example', {
+            "username": "贤心" // "name": "value"
+            , "password": "123456"
+            , "interest": 1
+            , "like[write]": true //复选框选中状态
+            , "close": true //开关状态
+            , "sex": "女"
+            , "desc": "我爱 layui"
+        });
+
+        //多图片上传
+        upload.render({
+            elem: '#test2'
+            , url: '/upload/'
+            , multiple: true
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#demo2').append('<img src="' + result + '" alt="' + file.name + '" class="layui-upload-img">')
+                });
+            }
+            , done: function (res) {
+                //上传完毕
+            }
+        });
+
+        var i = jq('.dep-item').length;
+        jq('#addDepBtn').click(function () {
+            console.log('addDepBtn');
+            i++;
+            console.log(i);
+            // var html = `<div class="layui-form-item dep-item">
+            //                 <label class="layui-form-label">所属组织${i}</label>
+            //                 <div class="layui-input-inline" style="width: 300px;">
+            //                     <select name="department[${i}][dep_id]">
+            //                         {volist name="dep_options" id="vv"}
+            //                         <option value="{$key}" {$vv.disabled?'disabled':''}>{:isset($vv.title)?$vv.title:$vv}</option>
+            //                         {/volist}
+            //                     </select>
+            //                 </div>
+            //
+            //                <label class="layui-form-label" style="width: 30px;">职务</label>
+            //                 <div class="layui-input-inline">
+            //                     <select name="department[${i}][level_id]">
+            //                         {volist name="level_options" id="vo"}
+            //                         <option value="{$key}">{$vo}</option>
+            //                         {/volist}
+            //                     </select>
+            //                 </div>
+            //                 <a href="javascript:void(0);" class="layui-btn del-dep-btn layui-btn-primary">移除</a>
+            //             </div>`;
+            var html = '<div class="layui-form-item dep-item">'+
+                            '<label class="layui-form-label">所属组织'+i+'</label>'+
+                            '<div class="layui-input-inline" style="width: 300px;">'+
+                                '<select name="department['+i+'][dep_id]">'+
+                                    {volist name="dep_options" id="vv"}
+                                    '<option value="{$key}" {$vv.disabled?'disabled':''}>{:isset($vv.title)?$vv.title:$vv}</option>'+
+                                    {/volist}
+                                '</select>'+
+                            '</div>'+
+                           '<label class="layui-form-label" style="width: 30px;">职务</label>'+
+                            '<div class="layui-input-inline">'+
+                                '<select name="department['+i+'][level_id]">'+
+                                    {volist name="level_options" id="vo"}
+                                    '<option value="{$key}">{$vo}</option>'+
+                                    {/volist}
+                                '</select>'+
+                            '</div>'+
+                            '<a href="javascript:void(0);" class="layui-btn del-dep-btn layui-btn-primary">移除</a>'+
+                        '</div>';
+            jq('#addDepBtnItem').before(html);
+            form.render('select');
+        });
+
+        jq('body').on('click', '.del-dep-btn', function () {
+            console.log('del-dep-btn')
+            jq(this).closest('.dep-item').remove();
+        });
+
+    });
+</script>
+{/block}

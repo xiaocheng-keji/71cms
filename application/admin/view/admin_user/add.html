@@ -1,0 +1,91 @@
+{extend name="base" /}
+{block name="css"}
+<style>
+    .layui-form-label {
+        width: 100px;
+    }
+    .layui-input-block {
+        margin-left: 130px;
+    }
+    .require-text {
+        color:#DC524B;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>添加管理员</legend>
+    </fieldset>
+    <form class="layui-form"  data-url="{:url('admin/admin_user/save')}"  localtion-url="{:url('admin_user/index')}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                用户名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" value="" required lay-verify="required" placeholder="请输入用户名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" name="password" value="" required lay-verify="required" placeholder="请输入密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                重复密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" name="confirm_password" value="" required lay-verify="required" placeholder="请再次输入密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                状态
+            </label>
+            <div class="layui-input-inline">
+                <input type="radio" name="status" value="1" title="启用" checked="checked">
+                <input type="radio" name="status" value="0" title="禁用">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                所属权限组
+            </label>
+            <div class="layui-input-inline">
+                <select name="group_id" lay-verify="required">
+                    {foreach name="auth_group_list" item="vo"}
+                    <option value="{$vo.id}">{$vo.title}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">立即提交</button>
+            </div>
+        </div>
+        <!-- <div class="btable-paged" >
+			<div class="layui-main">
+                <div class="formbtngroup">
+                    <button  class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">添加</button>
+                    <button onclick="history.go(-1);" class="layui-btn layui-btn-primary layui-btn-sm">返回</button>
+                </div>
+            </div>
+        </div> -->
+    </form>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/formadd.js"></script>
+{/block}

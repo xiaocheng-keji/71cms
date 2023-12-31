@@ -1,0 +1,403 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+	.layui-upload-img {
+		width: 92px;
+		height: 92px;
+		margin: 0 10px 10px 0;
+	}
+
+	.layui-form-label {
+		width: 100px;
+		padding: 10px 15px 7px;
+	}
+
+	.layui-input-block {
+		margin-left: 130px;
+	}
+	.require-text {
+		color:#DC524B;
+	}
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+	<!-- layui-btn-sm -->
+	<button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>组织变动</legend>
+	</fieldset>
+
+	<form class="layui-form" action="">
+		<script>
+			let renderArr = [];
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				党组织全称            </label>
+			<div class="layui-input-inline">
+				<input type="text" name="nickname" placeholder="" lay-verify="required" disabled
+					   value="{$data.name}"  class="layui-input"
+				>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">
+				<span class="require-text">*</span>
+				变动类型            </label>
+			<div class="layui-input-block">
+				<input type="radio" name="change_type" value="1" title="升级" lay-filter="change_type" checked>
+				<input type="radio" name="change_type" value="2" title="合并" lay-filter="change_type">
+				<input type="radio" name="change_type" value="3" title="迁移" lay-filter="change_type">
+				<input type="radio" name="change_type" value="4" title="删除" lay-filter="change_type">
+			</div>
+		</div>
+		<div class="change_type_box" id="change_type1">
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					党组织类别            </label>
+				<div class="layui-input-inline">
+					<select name="type" >
+						{volist name="type_options" id="vv"}
+						<option value="{$key}"
+								{$vv.disabled?'disabled':''}
+						{if $data.type==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+						{/volist}
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					说明            </label>
+				<div class="layui-input-inline">
+				</div>
+				<div class="layui-form-mid layui-word-aux">更改党组织类别，当前党组织的组织架构不变<br>
+					党委：不可升级；<br>
+					党组：可升级为党委；<br>
+					党总支部：可升级为党委；<br>
+					党支部：可升级为党总支部；<br>
+					联合党支部：可升级为党总支部；<br>
+					党小组：不可升级；</div>
+			</div>
+		</div>
+		<div class="change_type_box layui-hide" id="change_type2">
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					目标组织          </label>
+				<div class="layui-input-inline">
+					<select name="merger_target_id" >
+						{volist name="dep_options_merge" id="vv"}
+						<option value="{$key}"
+								{$vv.disabled?'disabled':''}
+						{if $data.parent_id==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+						{/volist}
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					说明            </label>
+				<div class="layui-input-inline">
+				</div>
+				<div class="layui-form-mid layui-word-aux">只能合并两个相同组织类别的组织，不同党组织类别的组织不可进行合并。<br>
+					当前党组织合并至目标党组织内，其下级党组织及党员自动调整至目标组织下。</div>
+			</div>
+		</div>
+		<div class="change_type_box layui-hide" id="change_type3">
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					目标组织          </label>
+				<div class="layui-input-inline">
+					<select name="transfer_target_id" >
+						{volist name="dep_options_transfer" id="vv"}
+						<option value="{$key}"
+								{$vv.disabled?'disabled':''}
+						{if $data.parent_id==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+						{/volist}
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">
+					<span class="require-text">*</span>
+					说明            </label>
+				<div class="layui-input-inline">
+				</div>
+				<div class="layui-form-mid layui-word-aux">党委：可迁移至党委；<br>
+					党组：可迁移至党委、党总支部、联合党支部；<br>
+					党总支部：可迁移至党委；<br>
+					联合党支部：可迁移至党委、党总支部；<br>
+					党支部：可迁移至党委、党总支部；<br>
+					党小组：可迁移至党总支部、联合党支部、党支部、<br>
+					迁移后，当前党组织将迁移到目标组织下，其下级组织及党员调整至目标组</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="*">立即提交</button>
+				<!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+			</div>
+		</div>
+	</form>
+</div>
+
+</div>
+
+
+
+
+
+<script>
+	layui.use(['form', 'layedit', 'laydate', 'jquery', 'upload'], function () {
+		var form = layui.form
+				, layer = layui.layer
+				, layedit = layui.layedit
+				, laydate = layui.laydate
+				, jq = layui.jquery
+				, upload = layui.upload;
+
+		//创建编辑器
+		let uploadInst = [];
+		renderArr.forEach(function (v, i) {
+			if (v.type == 'editor') {
+				//编辑器
+				renderArr[i].editIndex = layedit.build(v.id, {
+					uploadImage: {
+						url: '/Admin/Upload/layedit_upimage',
+						type: 'post'
+					}
+				});
+			} else if (v.type == 'date') {
+				console.log(v)
+				//日期
+				laydate.render({
+					elem: v.id
+				});
+			} else if (v.type == 'datetime') {
+				console.log(v)
+				//日期
+				laydate.render({
+					elem: v.id,
+					type: 'datetime'
+				});
+			} else if (v.type == 'image') {
+				//单图片上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upimage'
+					, before: function (obj) {
+						//预读本地文件示例，不支持ie8
+						obj.preview(function (index, file, result) {
+							jq(v.imgId).attr('src', result); //图片链接（base64）
+						});
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path);
+						jq(v.imgId).attr('src', res.path).show();
+						jq(v.aId).attr('href', res.path);
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+						demoText.find('.demo-reload').on('click', function () {
+							uploadInst[i].upload();
+						});
+					}
+				});
+			} else if (v.type == 'excel') {
+				//excel上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upExcel'
+					, accept: 'file'
+					, exts: 'xls|xlsx'
+					, before: function (obj) {
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path)
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+					}
+				});
+			} else if (v.type == 'file') {
+				//excel上传
+				uploadInst[i] = upload.render({
+					elem: v.btnId
+					, url: '/Admin/Upload/upfile'
+					, accept: 'file'
+					// , exts: '.'
+					, before: function (obj) {
+					}
+					, done: function (res) {
+						//如果上传失败
+						if (res.code != 200) {
+							return layer.msg(res.msg);
+						}
+						//上传成功
+						jq(v.inputId).val(res.path);
+						jq(v.openId).attr('href', res.path)
+					}
+					, error: function () {
+						//演示失败状态，并实现重传
+						var demoText = jq(v.textId);
+						demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+					}
+				});
+			}
+		});
+		console.log('renderArr', renderArr)
+		//自定义验证规则
+		form.verify({
+			title: function (value) {
+				if (value.length < 5) {
+					return '标题至少得5个字符啊';
+				}
+			}
+			, pass: [
+				/^[\S]{6,12}$/
+				, '密码必须6到12位，且不能出现空格'
+			]
+			, content: function (value) {
+				renderArr.forEach(function (v, i) {
+					if (v.type == 'editor') {
+						layedit.sync(i);
+					}
+				});
+				//layedit.sync(editIndex);
+			}
+			, train: function (value) {
+				if (value == '') {
+					return '培养联系人不能为空';
+				}
+			}
+		});
+
+		//监听指定开关
+		form.on('switch(switchTest)', function (data) {
+			layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+				offset: '6px'
+			});
+			layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+		});
+
+
+		form.on('radio(change_type)', function (data) {
+			jq('.change_type_box').addClass('layui-hide');
+			jq('#change_type'+data.value).removeClass('layui-hide');
+		});
+
+		//监听提交
+		form.on('submit(*)', function (data) {
+			console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+			console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+			console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+			let loading = layer.load(2, {
+				shade: [0.2, '#000']
+			});
+			let url = self.location.href;
+			if(data.field.change_type === '4'){
+                layer.confirm('确定删除此组织吗?',{icon: 3, title:'删除提示'}, function (index) {
+                    jq.post(url, data.field, function (res) {
+                        console.log(res);
+                        layer.close(loading);
+                        if (res.code != 1) {
+                            return layer.msg(res.msg);
+                        } else {
+                            layer.msg(res.msg);
+                            setTimeout(function () {
+                                window.history.go(-1)
+                            }, 1000);
+                        }
+                    }).error(function () {
+                        layer.close(loading);
+                        layer.msg('服务器错误！');
+                    });
+                }, function(){
+                    layer.close(loading);
+                });
+			} else {
+				jq.post(url, data.field, function (res) {
+					console.log(res);
+					layer.close(loading);
+					if (res.code != 1) {
+						return layer.msg(res.msg);
+					} else {
+						layer.msg(res.msg);
+						setTimeout(function () {
+							window.history.go(-1)
+						}, 1000);
+					}
+				}).error(function () {
+					layer.close(loading);
+					layer.msg('服务器错误！');
+				});
+			}
+            return false;
+		});
+
+
+
+		//多图片上传
+		upload.render({
+			elem: '#test2'
+			, url: '/upload/'
+			, multiple: true
+			, before: function (obj) {
+				//预读本地文件示例，不支持ie8
+				obj.preview(function (index, file, result) {
+					$('#demo2').append('<img src="' + result + '" alt="' + file.name + '" class="layui-upload-img">')
+				});
+			}
+			, done: function (res) {
+				//上传完毕
+			}
+		});
+
+		jq('#choiceTrain').click(function () {
+			let url = "{:url('user/getDepUserList', array('scene'=>'user', 'checkbar'=>false))}";
+			layer.open({
+				type: 2,
+				title: false,
+				area: ['700px', '90%'],
+				content: url,
+				btn: ['确认', '取消'],
+				yes: function(index, layero){
+					let childWin = jq('#layui-layer-iframe'+index)[0].contentWindow;
+					let data = childWin.get_selected_data();
+					// recorderId = data.user.indexOf(data.tags[0]);
+					// jq("input[name='train']").val(data.tags[0]);
+					// jq("input[name='train_uid']").val(recorderId);
+					recorderId = data.user.indexOf(data.tags[0]);
+					jq("input[name='train']").val(data.user[0].name);
+					jq("input[name='train_uid']").val(data.user[0].id);
+					layer.close(index);
+				}
+			});
+		});
+
+	});
+</script>
+<script type="text/javascript" src="/js/delelement.js"></script>
+
+{/block}

@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+
+#不显示index.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?/$1 [QSA,PT,L]
+
+</IfModule>
+
+#nginx伪静态
+# location / {
+#   if (!-e $request_filename) {
+#   rewrite  ^(.*)$  /index.php?s=/$1  last;
+#   break;
+#    }
+# }

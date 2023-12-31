@@ -1,0 +1,256 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/dtree.css">
+<link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/font/dtreefont.css">
+<style>
+    #main{
+        margin:10px;
+    }
+    #tree{
+    }
+    #content{
+        border-left:1px solid #d9d9d9;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>添加目标用户</legend>
+    </fieldset>
+    <form class="layui-form form-container">
+        <div class="layui-form-item">
+            <label class="layui-form-label">目标用户</label>
+            <div class="layui-input-block" style="display:flex;">
+                <div class="tags" id="tags" style="width: 80%;margin: 0px;">
+                    <input type="text" name="nickname" id="inputTags" class="layui-input" placeholder="请选择目标用户（无目标用户时默认为全员可见）" autocomplete="off" />
+                </div>
+                <button type="button" id="appoint" class="layui-btn layui-btn-sm" style="margin: 5px 10px;">添加人员</button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block" style="display:flex;">
+                <button type="button" id="submit" class="layui-btn layui-btn-sm" style="margin: 0px 10px;">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    let cid =  '{$cid}';
+    layui.extend({
+        inputTags: '/plugins/layui/inputTags/inputTags',
+        dtree: '/plugins/layui/layui_ext/dtree/dtree'   // {/}的意思即代表采用自有路径，即不跟随 base 路径
+    }).use(['dtree','layer','jquery','inputTags','layer'], function(){
+        let $ = layui.jquery;
+        let layer = layui.layer;
+
+        let selected_appoint_user = []
+            ,selected_appoint_group = []
+            ,tags = []
+            ,inputTags = layui.inputTags;
+
+
+
+        let inputTagsData = {
+            elem:'#inputTags',
+            aldaBtn: true,
+            count: 9999,
+            done: function(value){
+                //console.log(value);
+            },
+            remove: function (value) {
+                del_selected_data(value);
+            }
+        };
+		let updateTags = {:json_encode(array_values($tag))};
+		selected_appoint_user = {:json_encode($user)};
+		selected_appoint_group = {:json_encode($group)};
+         inputTagsData.content = [];
+		if (updateTags != '' && updateTags != null) {
+			updateTags.forEach(function (v, i) {
+				obj = {
+					id:i,
+					name:v,
+					type:'group'
+				}
+			    inputTagsData.content.push(obj);
+			 });
+			   //      selected_appoint_user.forEach(function (v, i) {
+			   //          inputTagsData.content.push(v);
+						// console.log(v)
+			   //      });
+		    // inputTagsData.content = [];
+		    // updateTags.forEach(function (v,i) {
+		    //     inputTagsData.content.push(v);
+		    // });
+		    // tags = updateTags;
+		}
+		  var TagsObj = inputTags.render(inputTagsData);
+  //       // inputTagsData.content = [];
+  //       selected_appoint_group.forEach(function (v, i) {
+  //                   inputTagsData.content.push(v);
+  //               });
+  //               selected_appoint_user.forEach(function (v, i) {
+  //                   inputTagsData.content.push(v);
+  //               });
+  //       var TagsObj = inputTags.render(inputTagsData);
+  //       // let updateTags = {:json_encode($meetingInfo.tags)};
+        // if (updateTags != '' && updateTags != null) {
+        //     inputTagsData.content = [];
+        //     updateTags.forEach(function (v,i) {
+        //         inputTagsData.content.push(v);
+        //     });
+        // 	tags = updateTags;
+        // }
+		// let updateTags = {:json_encode(array_values($tag))};
+		// selected_appoint_user = {:json_encode($user)};
+		// selected_appoint_group = {:json_encode($group)};
+		// if (updateTags != '' && updateTags != null) {
+		//     inputTagsData.content = [];
+		//     updateTags.forEach(function (v,i) {
+		//         inputTagsData.content.push(v);
+		//     });
+		//     tags = updateTags;
+		// }
+
+
+
+
+        // inputTagsData.content = [];
+        // selected_appoint_group.forEach(function (v, i) {
+        //             inputTagsData.content.push(v);
+        //         });
+        //         selected_appoint_user.forEach(function (v, i) {
+        //             inputTagsData.content.push(v);
+        //         });
+        // var TagsObj = inputTags.render(inputTagsData);
+
+
+        $('#appoint').click(function(){
+            let url = "{:url('user/getDepUserList', array('checkbar'=>true, 'disToSub'=>true))}";
+            layer.open({
+                type: 2,
+                title: false,
+                area: ['700px', '90%'],
+                content: url,
+                btn: ['确认', '取消'],
+                yes: function(index, layero){
+                    let childWin = $('#layui-layer-iframe'+index)[0].contentWindow;
+                    let data = childWin.get_selected_data();
+                    console.log(data);
+                    let user = data.user;
+                    let group = data.group;
+                    let tags_arr = data.tags;
+					
+					user.forEach(function (item, index) {
+					    selected_appoint_user.push(item);
+						tags.push(item.name)
+					    TagsObj.addTag(item);
+						console.log()
+					});
+					group.forEach(function (item, index) {
+					    selected_appoint_group.push(item);
+						console.log(item)
+						tags.push(item.name)
+					    TagsObj.addTag(item);
+					});
+                    // for (let u in user) {
+                    //     if (user[u] != '') {
+                    //         selected_appoint_user[u] = user[u];
+                    //     }
+                    // }
+                    // for (let g in group) {
+                    //     if (group[g] != '') {
+                    //         selected_appoint_group[g] = group[g];
+                    //     }
+                    // }
+                    // for (let i in tags_arr) {
+                    //     tags.push(tags_arr[i]);
+                    //     TagsObj.addTag(tags_arr[i]);
+                    // }
+                    layer.close(index);
+                }
+            });
+        });
+
+        let index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+        $('#submit').click(function(){
+            let uid = []
+			for (var i = 0; i < selected_appoint_user.length; i++) {
+				uid.push(selected_appoint_user[i].id)
+			}
+            let gid  = []
+			for (var i = 0; i < selected_appoint_group.length; i++) {
+				gid.push(selected_appoint_group[i].id)
+			}
+			console.log(uid,gid)
+            $.post('/admin/paid/change_target',{uid,cid,gid},(res)=>{
+                if(res.status==1){
+                    layer.msg(res.msg,{icon:1});
+                    window.location.href = "{:url('video_type')}";
+                }else{
+                    layer.msg(res.msg,{icon:2});
+                }
+            })
+        });
+
+        function del_selected_data (param) {
+			// console.log(param)
+			// console.log(selected_appoint_group)
+			// console.log(selected_appoint_user)
+			if(!selected_appoint_group.length){
+				var a = selected_appoint_group
+				var b= selected_appoint_user
+				selected_appoint_group = []
+				selected_appoint_user =[]
+				for(let i  in a){
+					obj = {
+						id:i,
+						name:a[i],
+						type:'group'
+					}
+					selected_appoint_group.push(obj)
+				}
+				console.log(param)
+				selected_appoint_group = selected_appoint_group.filter(res => {
+				    return  res.name != param.name ;
+				});
+				for(let i  in b){
+					obj = {
+						id:i,
+						name:b[i],
+						type:'user'
+					}
+					selected_appoint_user.push(obj)
+				}
+				selected_appoint_user = selected_appoint_user.filter(res => {
+				    // return res.id != param.id || res.name != param.name || res.type != param.type;
+					 return  res.name != param.name ;
+				});
+				console.log(selected_appoint_group)
+				console.log(selected_appoint_user)
+			}
+           else{
+			   selected_appoint_group = selected_appoint_group.filter(res => {
+			       return  res.name != param.name ;
+			   });
+			   
+			   selected_appoint_user = selected_appoint_user.filter(res => {
+			       // return res.id != param.id || res.name != param.name || res.type != param.type;
+				    return  res.name != param.name ;
+			   });
+			   console.log(selected_appoint_group)
+			   			console.log(selected_appoint_user)
+		   }
+		 
+        }
+
+
+    });
+</script>
+{/block}

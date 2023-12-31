@@ -1,0 +1,697 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+    .layui-upload-img {
+        width: 92px;
+        height: 92px;
+        margin: 0 10px 10px 0;
+    }
+     .layui-upload-img {
+         width: 92px;
+         height: 92px;
+         margin: 0 10px 10px 0;
+     }
+
+    .layui-form-label {
+        width: 100px;
+        padding: 10px 15px 7px;
+    }
+
+    .layui-input-block {
+        margin-left: 130px;
+    }
+    .require-text {
+        color:#DC524B;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <!-- layui-btn-sm -->
+    <button class="layui-btn layui-btn-sm in-layer-hide" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title in-layer-hide" style="margin-top: 20px;">
+        <legend>党组织信息</legend>
+    </fieldset>
+
+    <form class="layui-form" action="" autocomplete="off">
+        <script>
+            let renderArr = [];
+        </script>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                上级组织            </label>
+            <div class="layui-input-inline">
+                <select name="parent_id" >
+                    {volist name="dep_options" id="vv"}
+                    <option value="{$key}"
+                            {$vv.disabled?'disabled':''}
+                    {if $data['parent_id']==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                党组织全称 </label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" placeholder=""
+                       value="{$data.name}" class="layui-input"
+                       lay-verify="required">
+
+            </div>
+            <div class="layui-form-mid layui-word-aux">在组织架构上显示的名字</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                党组织简称 </label>
+            <div class="layui-input-inline">
+                <input type="text" name="short_name" placeholder=""
+                       value="{$data.short_name}" class="layui-input"
+                       lay-verify="required">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                成立时间 </label>
+            <div class="layui-input-inline">
+                <input type="text" name="createtime" placeholder="" readonly
+                       value="{if !is_null($data.createtime)}{$data.createtime|date='Y-m-d'}{/if}" class="layui-input" id="LAY_date10">
+            </div>
+        </div>
+        <script>
+            renderArr.push({type: 'date', id: '#LAY_date10', range: ''});
+        </script>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                党组织类别            </label>
+            <div class="layui-input-inline">
+                <select name="type" lay-filter="type">
+                    {volist name="type_options" id="vv"}
+                    <option value="{$key}"
+                            {$vv.disabled?'disabled':''}
+                    {if $data['type']==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                党组织所在单位情况            </label>
+            <div class="layui-input-inline">
+                <select name="belong_work_unit_type" >
+                    {volist name="belong_work_unit_type_column" id="vv"}
+                    <option value="{$key}"
+                            {$vv.disabled?'disabled':''}
+                    {if $data['belong_work_unit_type']==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                党组织简介 </label>
+            <div class="layui-input-block">
+                <textarea name="introduce" lay-verify="content" placeholder="" class="layui-textarea"
+                          style="max-width: 380px;">{$data.introduce}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                联系地址 </label>
+            <div class="layui-input-block">
+                <textarea name="address" lay-verify="content" placeholder="" class="layui-textarea"
+                          style="max-width: 380px;">{$data.address}</textarea>
+            </div>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title in-layer-hide" style="margin-top: 20px;">
+            <legend>单位信息</legend>
+        </fieldset>
+        {volist name="work_unit_arr" id="work_unit"}
+        {php}$work_unit_i++;{/php}
+        <div class="layui-form-item work-unit-item">
+            <label class="layui-form-label">
+                <span class="require-text"></span>
+                单位名称            </label>
+            <div class="layui-input-inline">
+                <input type="text" name="work_unit[{$work_unit_i}][name]" placeholder="如需删除请留空"
+                       value="{$work_unit.name}"  class="layui-input">
+
+            </div>
+
+            <label class="layui-form-label">
+                <span class="require-text"></span>
+                单位类别            </label>
+            <div class="layui-input-inline">
+                <select name="work_unit[{$work_unit_i}][type]" >
+                    {volist name="work_unit_type_column" id="vv"}
+                    <option value="{$key}" {$vv.disabled?'disabled':''}
+                    {if $work_unit['type']==$key} selected {/if}
+                    >{:isset($vv.title)?$vv.title:$vv}</option>
+                    {/volist}
+                </select>
+            </div>
+
+            <label class="layui-form-label" style="width: 150px;">
+                <span class="require-text"></span>
+                单位建立党组织情况            </label>
+            <div class="layui-input-inline">
+                <select name="work_unit[{$work_unit_i}][build_type]" >
+                    {volist name="work_unit_build_type_column" id="vv"}
+                    <option value="{$key}" {$vv.disabled?'disabled':''}
+                    {if $work_unit['build_type']==$key} selected {/if}
+                    >{:isset($vv.title)?$vv.title:$vv}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        {/volist}
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">-->
+<!--                <span class="require-text">*</span>-->
+<!--                单位名称            </label>-->
+<!--            <div class="layui-input-inline">-->
+<!--                <input type="text" name="work_unit_name" placeholder=""-->
+<!--                       value=""  class="layui-input"-->
+<!--                       lay-verify="required"                 >-->
+
+<!--            </div>-->
+
+<!--            <label class="layui-form-label">-->
+<!--                <span class="require-text">*</span>-->
+<!--                单位类别            </label>-->
+<!--            <div class="layui-input-inline">-->
+<!--                <select name="work_unit_type" >-->
+<!--                    <option value="1"-->
+<!--                    > 城市街道 </option>-->
+<!--                </select>-->
+<!--            </div>-->
+
+<!--            <label class="layui-form-label" style="width: 150px;">-->
+<!--                <span class="require-text">*</span>-->
+<!--                单位建立党组织情况            </label>-->
+<!--            <div class="layui-input-inline">-->
+<!--                <select name="work_unit_build_type" >-->
+<!--                    <option value="1"-->
+<!--                    > 单独建立基层党组织的 </option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="layui-form-item layui-hide" id="addWorkUnitBtnItem">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                添加单位信息
+            </label>
+            <div class="layui-input-inline" style="width: auto;">
+                <a href="javascript:void(0);" title="增加单位信息" id="addWorkUnitBtn" class="layui-btn">添加</a>
+            </div>
+            <div class="layui-form-mid layui-word-aux">最少添加一个单位信息</div>
+        </div>
+        <fieldset class="layui-elem-field layui-field-title in-layer-hide" style="margin-top: 20px;">
+            <legend>其他信息</legend>
+        </fieldset>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                是否显示            </label>
+            <div class="layui-input-block">
+                <input type="radio" name="show" value="1" title="是" {if $data.show==1}checked{/if}>
+                <input type="radio" name="show" value="0" title="否" {if $data.show==0}checked{/if}
+                >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <span class="require-text">*</span>
+                排序            </label>
+            <div class="layui-input-inline">
+                <input type="number" name="sort" placeholder=""
+                       value="{$data.sort}"  class="layui-input"
+                       lay-verify="number"                 >
+            </div>
+        </div>
+
+        {if !empty($data.attachment)}
+        {foreach $data.attachment as $ak => $attachment}
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                附件{$ak+1}
+            </label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline" style="width: 300px">
+                    <input type="text" style="width: 300px" name="attachment[]" placeholder="请选择Word、Excel、PDF或图片文件" value="{$attachment}" class="layui-input" id="input{$ak}">
+                </div>
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-sm" id="layui-btn{$ak}">上传文件</button><input class="layui-upload-file" type="file" accept="" name="file">
+                    <div class="layui-upload-list">
+                        <p id="text{$ak}"></p>
+                    </div>
+                    <a href="{$attachment}" id="open{$ak}" target="_blank">查看</a>
+                    <div class="layui-progress" style="display: none" lay-showpercent="yes" lay-filter="progress{$ak}" id="progress{$ak}">
+                        <div class="layui-progress-bar layui-bg-green" lay-percent="0%" style="width: 0%;"><span class="layui-progress-text">0%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            renderArr.push({
+                type: 'file',
+                btnId: '#layui-btn{$ak}',
+                textId: '#text{$ak}',
+                inputId: '#input{$ak}',
+                aId: '#layui-upload-a{$ak}',
+                progressId: '#progress{$ak}',
+                progressLayFilter: 'progress{$ak}',
+            });
+        </script>
+        {/foreach}
+        <?php $attachment_count = count($data['attachment']); ?>
+        {else}
+        <?php $attachment_count = 0; ?>
+        {/if}
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                附件{$attachment_count+1}
+            </label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline" style="width: 300px">
+                    <input type="text" style="width: 300px" name="attachment[]" placeholder="请选择Word、Excel、PDF或图片文件" value="" class="layui-input" id="input{$attachment_count}">
+                </div>
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-sm" id="layui-btn{$attachment_count}">上传文件</button><input class="layui-upload-file" type="file" accept="" name="file">
+                    <div class="layui-upload-list">
+                        <p id="text1"></p>
+                    </div>
+                    <a class="" href="" id="open{$attachment_count}" target="_blank">查看</a>
+                    <div class="layui-progress" style="display: none" lay-showpercent="yes" lay-filter="progress{$attachment_count}" id="progress{$attachment_count}">
+                        <div class="layui-progress-bar layui-bg-green" lay-percent="0%" style="width: 0%;"><span class="layui-progress-text">0%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            renderArr.push({
+                type: 'file',
+                btnId: '#layui-btn{$attachment_count}',
+                textId: '#text{$attachment_count}',
+                inputId: '#input{$attachment_count}',
+                openId: '#open{$attachment_count}',
+                aId: '#layui-upload-a{$attachment_count}',
+                progressId: '#progress{$attachment_count}',
+                progressLayFilter: 'progress{$attachment_count}',
+            });
+        </script>
+        <div id="upload-div"></div>
+
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">-->
+<!--                附件            </label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <div class="layui-input-inline">-->
+<!--                    <input type="text" name="fieldset2" placeholder=""-->
+<!--                           value=""  class="layui-input" id="input4">-->
+<!--                </div>-->
+<!--                <div class="layui-upload">-->
+<!--                    <button type="button" class="layui-btn layui-btn-sm" id="layui-btn4">上传文件</button>-->
+<!--                    <div class="layui-upload-list">-->
+<!--                        <p id="text4"></p>-->
+<!--                    </div>-->
+<!--                    <a href="" id="open4" target="_blank">查看</a>-->
+<!--                    <div class="layui-progress" style="display: none" lay-showPercent="yes" lay-filter="progress4" id="progress4">-->
+<!--                        <div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <script>-->
+<!--            renderArr.push({-->
+<!--                type: 'file',-->
+<!--                btnId: '#layui-btn4',-->
+<!--                textId: '#text4',-->
+<!--                inputId: '#input4',-->
+<!--                openId: '#open4',-->
+<!--                aId: '#layui-upload-a4',-->
+<!--                progressId: '#progress4',-->
+<!--                progressLayFilter: 'progress4',-->
+<!--            });-->
+<!--        </script>-->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="*">立即提交</button>
+                <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+            </div>
+        </div>
+    </form>
+</div>
+
+</div>
+
+
+
+
+
+<script>
+    console.log('parent.modelHelperList', parent.modelHelperList)
+    layui.use(['form', 'layedit', 'laydate', 'jquery', 'upload', 'element'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , jq = layui.jquery
+            , element = layui.element
+            , upload = layui.upload;
+
+        if(parent && parent.modelHelperList===true){
+            jq('.in-layer-hide').hide();
+        }
+        //创建编辑器
+        let uploadInst = [];
+        renderArr.forEach(function (v, i) {
+            if (v.type == 'editor') {
+                //编辑器
+                renderArr[i].editIndex = layedit.build(v.id, {
+                    uploadImage: {
+                        url: '/Admin/Upload/layedit_upimage',
+                        type: 'post'
+                    }
+                });
+            } else if (v.type == 'date') {
+                console.log(v)
+                //日期
+                laydate.render({
+                    elem: v.id
+                    , range: v.range
+                });
+            } else if (v.type == 'datetime') {
+                console.log(v)
+                //日期
+                laydate.render({
+                    elem: v.id
+                    , type: 'datetime'
+                    , range: v.range
+                });
+            } else if (v.type == 'image') {
+                //单图片上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upimage'
+                    , progress: function(n){
+                        var percent = n + '%' //获取进度百分比
+                        element.progress(v.progressLayFilter, percent);
+                    }
+                    , before: function (obj) {
+                        jq(v.progressId).show();
+                        element.progress(v.progressLayFilter, 0);
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function (index, file, result) {
+                            jq(v.imgId).attr('src', result); //图片链接（base64）
+                        });
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            jq(v.progressId).hide();
+                            element.progress(v.progressLayFilter, 0);
+                            return layer.msg(res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path);
+                        jq(v.imgId).attr('src', res.path).show();
+                        jq(v.aId).attr('href', res.path);
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                        demoText.find('.demo-reload').on('click', function () {
+                            uploadInst[i].upload();
+                        });
+                    }
+                });
+            } else if (v.type == 'excel') {
+                //excel上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upExcel'
+                    , accept: 'file'
+                    , exts: 'xls|xlsx'
+                    , progress: function(n){
+                        var percent = n + '%' //获取进度百分比
+                        element.progress(v.progressLayFilter, percent);
+                    }
+                    , before: function (obj) {
+                        jq(v.progressId).show();
+                        element.progress(v.progressLayFilter, 0);
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg(res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path)
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                    }
+                });
+            } else if (v.type == 'file') {
+                uploadInst[i] = renderUpload(v);
+                // //excel上传
+                // uploadInst[i] = upload.render({
+                //     elem: v.btnId
+                //     , url: '/Admin/Upload/upfile'
+                //     , accept: 'file'
+                //     // , exts: '.'
+                //     , progress: function(n){
+                //         var percent = n + '%' //获取进度百分比
+                //         element.progress(v.progressLayFilter, percent);
+                //     }
+                //     , before: function (obj) {
+                //         jq(v.progressId).show();
+                //         element.progress(v.progressLayFilter, 0);
+                //     }
+                //     , done: function (res) {
+                //         //如果上传失败
+                //         if (res.code != 200) {
+                //             return layer.msg(res.msg);
+                //         }
+                //         //上传成功
+                //         jq(v.inputId).val(res.path);
+                //         jq(v.openId).attr('href', res.path)
+                //     }
+                //     , error: function () {
+                //         //演示失败状态，并实现重传
+                //         var demoText = jq(v.textId);
+                //         demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                //     }
+                // });
+            }
+        });
+        console.log('renderArr', renderArr)
+        //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length < 5) {
+                    return '标题至少得5个字符啊';
+                }
+            }
+            , pass: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格'
+            ]
+            , content: function (value) {
+                renderArr.forEach(function (v, i) {
+                    if (v.type == 'editor') {
+                        layedit.sync(i);
+                    }
+                });
+                //layedit.sync(editIndex);
+            }
+        });
+
+        //监听指定开关
+        form.on('switch(switchTest)', function (data) {
+            layer.msg('开关checked：' + (this.checked ? 'true' : 'false'), {
+                offset: '6px'
+            });
+            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
+        //监听提交
+        form.on('submit(*)', function (data) {
+            console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+            console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            let loading = layer.load(2, {
+                shade: [0.2, '#000']
+            });
+            let url = self.location.href;
+            jq.post(url, data.field, function (res) {
+                console.log(res);
+                layer.close(loading);
+                if (res.code != 1) {
+                    return layer.msg(res.msg);
+                } else {
+                    layer.msg(res.msg);
+                    setTimeout(function () {
+                        if(parent && parent.modelHelperList===true){
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index);
+                            parent.layui.table && typeof parent.layui.table.reload == 'function' && parent.layui.table.reload('testReload');
+                            typeof parent.frameSubmitCloseCallback == 'function' && parent.frameSubmitCloseCallback();
+                        } else {
+                            history.back();
+                        }
+                    }, 1000);
+                }
+            }).error(function () {
+                layer.close(loading);
+                layer.msg('服务器错误！');
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //表单初始赋值
+        form.val('example', {
+            "username": "贤心" // "name": "value"
+            , "password": "123456"
+            , "interest": 1
+            , "like[write]": true //复选框选中状态
+            , "close": true //开关状态
+            , "sex": "女"
+            , "desc": "我爱 layui"
+        });
+
+        {if !empty($data.attachment)}
+        let uploadIndex = {:count($data.attachment)}+1;
+        {else}
+        let uploadIndex = 1;
+        {/if}
+
+        function renderUpload(v){
+            upload.render({
+                elem: v.btnId
+                , url: '/Admin/Upload/upfile'
+                , accept: 'file'
+                // , exts: '.'
+                , progress: function(n){
+                    var percent = n + '%' //获取进度百分比
+                    element.progress(v.progressLayFilter, percent);
+                }
+                , before: function (obj) {
+                    jq(v.progressId).show();
+                    element.progress(v.progressLayFilter, 0);
+                }
+                , done: function (res) {
+                    //如果上传失败
+                    if (res.code != 200) {
+                        return layer.msg(res.msg);
+                    }
+                    //上传成功
+                    console.log('v.openId', v.openId)
+                    var val = jq(v.inputId).val();
+                    console.log('val.length', val.length)
+                    jq(v.inputId).val(res.path);
+                    jq(v.openId).attr('href', res.path);
+                    if (val.length > 0) {
+                        return true;
+                    }
+                    uploadIndex = uploadIndex + 1;
+                    let html = `
+                    <div class="layui-form-item">
+\t\t\t<label class="layui-form-label">
+\t\t\t\t附件${uploadIndex}
+\t\t\t</label>
+\t\t\t<div class="layui-input-block">
+\t\t\t\t<div class="layui-input-inline" style="width: 300px">
+\t\t\t\t\t<input type="text" style="width: 300px" name="attachment[]" placeholder="请选择Word、Excel、PDF或图片文件" value="" class="layui-input" id="input${uploadIndex}">
+\t\t\t\t</div>
+\t\t\t\t<div class="layui-upload">
+\t\t\t\t\t<button type="button" class="layui-btn layui-btn-sm" id="layui-btn${uploadIndex}">上传文件</button><input class="layui-upload-file" type="file" accept="" name="file">
+\t\t\t\t\t<div class="layui-upload-list">
+\t\t\t\t\t\t<p id="text${uploadIndex}"></p>
+\t\t\t\t\t</div>
+<a class="" href="" id="open${uploadIndex}" target="_blank">查看</a>
+\t\t\t\t\t<div class="layui-progress" style="display: none" lay-showpercent="yes" lay-filter="progress${uploadIndex}" id="progress${uploadIndex}">
+\t\t\t\t\t\t<div class="layui-progress-bar layui-bg-green" lay-percent="0%" style="width: 0%;"><span class="layui-progress-text">0%</span></div>
+\t\t\t\t\t</div>
+\t\t\t\t</div>
+\t\t\t</div>
+\t\t</div>`
+                    jq('#upload-div').before(html);
+                    renderUpload({
+                        type: 'file',
+                        btnId: '#layui-btn'+uploadIndex,
+                        textId: '#text'+uploadIndex,
+                        inputId: '#input'+uploadIndex,
+                        openId: '#open'+uploadIndex,
+                        aId: '#layui-upload-a'+uploadIndex,
+                        progressId: '#progress'+uploadIndex,
+                        progressLayFilter: 'progress'+uploadIndex,
+                    });
+                }
+                , error: function () {
+                    //演示失败状态，并实现重传
+                    var demoText = jq(v.textId);
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                }
+            });
+        }
+
+        form.on('select(type)', function (data) {
+            console.log('select(type) data', data)
+            if (data.value == '632') {
+                jq('#addWorkUnitBtnItem').removeClass('layui-hide');
+            } else {
+                jq('#addWorkUnitBtnItem').addClass('layui-hide');
+                jq('.work-unit-item').not(":first").remove();
+            }
+        })
+
+        var i = jq('.work-unit-item').length;
+        jq('#addWorkUnitBtn').click(function () {
+            console.log('xx');
+            i++;
+            console.log(i);
+            var html = '<div class="layui-form-item work-unit-item">'+
+                '<label class="layui-form-label"><span class="require-text"></span>单位名称'+i+'</label>'+
+                '<div class="layui-input-inline"><input type="text" name="work_unit['+i+'][name]" placeholder="" value="" class="layui-input"></div>'+
+                '<label class="layui-form-label">单位类别</label>'+
+                '<div class="layui-input-inline">'+
+                '<select name="work_unit['+i+'][type]">'+
+                {volist name="work_unit_type_column" id="vv"}
+                '<option value="{$key}" {$vv.disabled?'disabled':''}>{:isset($vv.title)?$vv.title:$vv}</option>'+
+                {/volist}
+                '</select>'+
+                '</div>'+
+                '<label class="layui-form-label" style="width: 150px;">单位建立党组织情况</label>'+
+                '<div class="layui-input-inline">'+
+                '<select name="work_unit['+i+'}][build_type]">'+
+                {volist name="work_unit_build_type_column" id="vo"}
+                '<option value="{$key}">{$vo}</option>'+
+                {/volist}
+                '</select>'+
+                '</div>'+
+                '<a href="javascript:void(0);" class="layui-btn del-work-unit-btn layui-btn-primary">移除</a>'+
+                '</div>';
+            jq('#addWorkUnitBtnItem').before(html);
+            form.render('select');
+        });
+
+        jq('body').on('click', '.del-work-unit-btn', function () {
+            console.log('del-dep-btn')
+            jq(this).closest('.work-unit-item').remove();
+        });
+    });
+</script>
+<script type="text/javascript" src="/js/delelement.js"></script>
+{/block}

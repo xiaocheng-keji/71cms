@@ -1,0 +1,326 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+    .rwo_space_around {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .row_space_between {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .row_row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .portrait {
+        /*display: flex;*/
+        /*flex-direction: column;*/
+        /*justify-content: flex-start;*/
+    }
+
+    .meeting {
+        padding: 0px 30px;
+    }
+
+    .meeting_time {
+        margin-top: 20px;
+    }
+
+    .outline {
+        padding: 0px 30px;
+    }
+
+    .outline_title {
+        font-size: 20px;
+        margin-bottom: 20px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .outline_content {
+        font-size: 15px;
+    }
+
+    .outline_img {
+        width: 100%;
+        height: auto;
+        margin-top: 20px;
+    }
+
+    .user {
+        padding: 10px 30px;
+        line-height: 50px;
+        height: 50px;
+        font-size: 14px;
+        /*margin-bottom: 20px;*/
+        /*border: 1px solid #000;*/
+        border-bottom: 1px solid #eee;
+    }
+
+    .user:last-child {
+        /*border: 1px solid #000;*/
+        border-bottom: none;
+    }
+
+    .user img {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+    }
+
+    .user text {
+        margin: 0px 10px;
+        display: inline-block;
+        min-width: 70px;
+    }
+
+    .printing {
+        position: fixed;
+        right: 20px;
+    }
+
+    @media print {
+        .back-btn,.printing,.down_btn_a {
+            display: none;
+        }
+    }
+
+    .meeting_row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        padding: 5px;
+        line-height: 1.5;
+    }
+
+    .meeting_row .field_title {
+        text-align-last: justify;
+        text-align: justify;
+        text-justify: distribute-all-lines;
+        flex-shrink: 0;
+        flex-basis: 90px;
+        width: 90px;
+    }
+
+    .meeting_row .field_val {
+        flex-shrink: 1;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="portrait layui-field-box">
+    <div>
+        <button onclick="history.go(-1);" style="margin-right: 20px;" class="back-btn layui-btn layui-btn-sm">返回
+        </button>
+        <button class="layui-btn layui-btn-sm printing" onclick="window.print();">打印</button>
+    </div>
+    <div class="portrait">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 20px 0px 10px;">
+            <legend>{if $meeting.meeting_type == 3}活动{else /}会议{/if}详情</legend>
+        </fieldset>
+        <div class="portrait meeting">
+            <div class="outline_title">
+                {$meeting.theme}
+            </div>
+            <div class="meeting_row">
+                <div class="field_title">
+                    {if $meeting.meeting_type == 3}活动{else /}会议{/if}时间：
+                </div>
+                <div class="field_val">
+                    {$meeting.start_time|date="Y-m-d H:i"}&nbsp;-&nbsp;{$meeting.end_time|date="Y-m-d H:i"}
+                </div>
+            </div>
+            <div class="meeting_row">
+                <div class="field_title">
+                    {if $meeting.meeting_type == 3}活动{else /}会议{/if}地点：
+                </div>
+                <div class="field_val">
+                    {$meeting.place}
+                </div>
+            </div>
+            <div class="meeting_row">
+                <div class="field_title">
+                    主持人：
+                </div>
+                <div class="field_val">
+                    {$meeting.compere}
+                </div>
+            </div>
+            <div class="meeting_row">
+                <div class="field_title">
+                    记录人：
+                </div>
+                <div class="field_val">
+                    {$meeting.recorder}
+                </div>
+            </div>
+            <div class="meeting_row">
+                <div class="field_title">
+                    {if $meeting.meeting_type == 3}活动{else /}会议{/if}内容：
+                </div>
+                <div class="field_val">
+                    <?php echo htmlspecialchars_decode($meeting['content']); ?>
+                </div>
+            </div>
+            {if $meeting.sign_status==1}
+            <div class="meeting_row">
+                <div class="field_title">签到二维码：</div>
+                <div class="field_val">
+                    <div style="display: inline-block;vertical-align: top;text-align: center;">
+                        <img src="{$meeting.code_url}">
+                        <br><a class="down_btn_a" href="{$meeting.code_url}">下载后打印</a>
+                    </div>
+                </div>
+            </div>
+            {/if}
+        </div>
+    </div>
+    {if $meeting_rec != null}
+    <div class="portrait">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>{if $meeting.meeting_type == 3}活动{else /}会议{/if}记录</legend>
+        </fieldset>
+        <div class="portrait outline">
+            <div class="outline_title">{$meeting_rec.theme}</div>
+            <p class="outline_content">{$meeting_rec.content|raw|htmlspecialchars_decode|filter_xss}</p>
+            {if $meeting_rec.imgs != ''}
+            <div>
+                {volist name="meeting_rec.imgs" id="vo"}
+                <img class="outline_img" src="{$vo}" alt="" style="width: auto;max-height: 300px;">
+                {/volist}
+            </div>
+            {/if}
+        </div>
+    </div>
+    {/if}
+    {if !empty($userList)}
+    <div class="portrait">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>参与详情</legend>
+        </fieldset>
+        <table class="layui-table" lay-skin="nob">
+            <colgroup>
+                <col width="250">
+                {if $meeting.sign_status == 1}
+                <col width="250">
+                {/if}
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>姓名</th>
+                {if $meeting.sign_status == 1}
+                <th>签到时间</th>
+                {/if}
+                <th>心得</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="userList" id="vo"}
+            <tr>
+                <td class="user">
+                    <img src="{$vo.head_pic}" alt="">
+                    <text>{$vo.nickname}</text>
+                </td>
+                {if $meeting.sign_status == 1}
+                <td>
+                    {if $meeting.start_time > time()}
+                    未开始
+                    {else}
+                    {$sign_status[$vo.sign_status]}
+                    {if $vo.sign_time>0}
+                    {:date('Y-m-d H:i', $vo.sign_time)}
+                    {/if}
+                    {/if}
+                </td>
+                {/if}
+                <td>{$vo.study_rec}</td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+    {/if}
+</div>
+
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.11.3.min.js"></script>
+{/block}
+{block name="script"}
+<script>
+    //判断是否为Trident内核浏览器(IE等)函数
+    function browserIsIe() {
+        if (!!window.ActiveXObject || "ActiveXObject" in window) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //创建iframe并赋值的函数,传入参数为图片的src属性值.
+    function createIframe(imgSrc) {
+        //如果隐藏的iframe不存在则创建
+        if ($("#IframeReportImg").length === 0) {
+            $('<iframe style="display:none;" id="IframeReportImg" name="IframeReportImg" onload="downloadImg();" width="0" height="0" src="about:blank"></iframe>').appendTo("body");
+        }
+        //iframe的src属性如不指向图片地址,则手动修改,加载图片
+        if ($('#IframeReportImg').attr("src") != imgSrc) {
+            $('#IframeReportImg').attr("src", imgSrc);
+        } else {
+            //如指向图片地址,直接调用下载方法
+            downloadImg();
+        }
+    }
+
+    //下载图片的函数
+    function downloadImg() {
+        //iframe的src属性不为空,调用execCommand(),保存图片
+        if ($('#IframeReportImg').src != "about:blank") {
+            window.frames["IframeReportImg"].document.execCommand("SaveAs");
+        }
+    }
+
+    //接下来进行事件绑定
+    var aBtn = $(".down_btn_a");
+    if (browserIsIe()) {
+        //是ie等,绑定事件
+        aBtn.on("click", function () {
+            var imgSrc = $(this).siblings("img").attr("src");
+            //调用创建iframe的函数
+            createIframe(imgSrc);
+        });
+    } else {
+        aBtn.each(function (i, v) {
+            //支持download,添加属性.
+            var imgSrc = $(v).siblings("img").attr("src");
+            $(v).attr("download", '{$meeting.theme}-签到二维码');
+            $(v).attr("href", imgSrc);
+        })
+    }
+
+    function onlineMeeting(){
+        var meeting_id = '{$meeting.id}';
+        //新窗口打开
+        window.open("{:Url('meeting/onlineMeeting')}?id="+meeting_id);
+        return false
+        layui.use('layer', function(){
+            //弹出即全屏
+            var index = layer.open({
+                title: '在线会议',
+                type: 2,
+                content: "{:url('meeting/onlineMeeting')}?id=" + meeting_id,
+                area: ['600px', '600px'],
+                // maxmin: true
+            });
+            layer.full(index);
+        });
+    }
+</script>
+{/block}

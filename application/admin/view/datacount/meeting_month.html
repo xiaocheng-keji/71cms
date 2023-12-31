@@ -1,0 +1,64 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+{/block}
+{block name="body"}
+<div class="admin-main layui-form">
+    <div class="layui-field-box">
+        <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+        <table class="layui-table admin-table">
+            <thead>
+            <tr>
+                <th align="">会议主题</th>
+                <th align="center">栏目</th>
+                <th align="center">会议地点</th>
+                <th align="center">会议状态</th>
+                <th align="center">会议时间</th>
+                <th align="center">添加时间</th>
+                <th align="center">实到人数</th>
+                <th align="center">缺少人数</th>
+                <th align="center">请假人数</th>
+                <th align="center">基本操作</th>
+            </tr>
+            </thead>
+            <tbody id="content">
+            {volist name="list" id="vo"}
+            <tr>
+                <td>{$vo.theme}</td>
+                <td>{$vo.cat_name}</td>
+                <td>{$vo.place}</td>
+                <td>
+                	{if $vo.start_time > time()}
+                		未开始
+					{elseif ($vo.start_time < time()) AND ($vo.end_time > time()) /}
+                		进行中
+                	{else}
+						已结束
+					{/if}
+                </td>
+                <td><span style="white-space: nowrap;">{$vo.start_time|date='Y-m-d H:i'}&nbsp;</span><br>-&nbsp;<br><span style="white-space: nowrap;">{$vo.end_time|date='Y-m-d H:i'}</span></td>
+                <td>{$vo.add_time|date='Y-m-d H:i'}</td>
+                <td>{$vo.reach}</td>
+                <td>{$vo.absent}</td>
+                <td>{$vo.leave}</td>
+                <td>
+                    <a href="{:url('admin/meeting/detail',['id'=>$vo['id'], 'dep_id'=>$dep_id])}" class="layui-btn layui-btn-normal layui-btn-xs">详细</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <!-- <button onclick="history.go(-1);" style="float:right;" class="layui-btn layui-btn-primary layui-btn-sm">返回</button> -->
+    </div>
+</div>
+{/block}
+{block name="page"}
+<div class="btable-paged">
+    <div class="layui-main">
+        {$list->render()|raw}
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+{/block}

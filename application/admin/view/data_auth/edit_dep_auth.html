@@ -1,0 +1,20 @@
+{extend name="base" /}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>勾选可浏览的组织，如不勾选，所有组织都可浏览</legend>
+    </fieldset>
+    {include file="public/dtree" scene="dataAuth" /}
+    <input type="hidden" name="table_id" value="{$table_id}">
+    <input type="hidden" name="table_name" value="{$table_name}">
+</div>
+{/block}
+{block name="js"}
+<script>
+    layui.use('layer', function () {
+        var layer = layui.layer, jq = layui.jquery;
+        jq('#demoTree').removeClass('dtree');
+    });
+</script>
+{/block}

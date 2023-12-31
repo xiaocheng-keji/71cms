@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>智慧党建系统后台管理</title>
+    <link rel="stylesheet" href="__PUBLIC__/plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="__PUBLIC__/css/main.css" media="all"/>
+
+    <link rel="stylesheet" href="__PUBLIC__/css/common.css">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="renderer" content="webkit" />
+
+    <link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/dtree.css">
+    <link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/font/dtreefont.css">
+    <link rel="stylesheet" href="__PUBLIC__/css/form.css">
+    <link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dropdown/dropdown.css">
+    <style>
+        .layui-form-select .layui-input{
+            height: 30px;
+        }
+    </style>
+    {$style|raw|default=''}
+
+    <!--[if lt IE 9]>
+    <script src="__PUBLIC__/css/html5shiv.min.js"></script>
+    <script src="__PUBLIC__/css/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="__PUBLIC__/plugins/layui/layui.js"></script>
+    <script type="text/javascript">
+        "use strict";
+    </script>
+</head>
+<body>
+
+<!--主体-->
+<div style="margin-bottom:0px;">
+<div class="admin-main layui-form layui-field-box">
+
+    <div style="text-align: center">
+    {if $showBackBtn == true}
+        <button class="layui-btn layui-btn-sm  am-margin-bottom-sm" style="float: left; " id="backBtn" onclick="window.history.go(-1);">返回</button>
+        <legend style="font-size: medium">{$title}</legend>
+        <br>
+    <fieldset class="layui-elem-field" style="border-width:1px 0 0" id="title">
+    </fieldset>
+
+    {/if}
+    </div>
+
+    {if !empty($tips)}
+    <blockquote class="layui-elem-quote layui-text">
+        {volist name="tips" id="vo"}
+        {$vo|raw}
+        {/volist}
+    </blockquote>
+    {/if}
+    <form id="search_form" class="layui-form layui-clear " action="" autocomplete="off">
+        {volist name="top_btn" id="vo"}
+        <a class="layui-btn  layui-btn-sm" href="{$vo.href}" target="{$vo.target}">{$vo.title}</a>
+        {/volist}
+        <div class="" style="float: right;">
+            <script>
+                let renderArr = [];
+            </script>
+            {volist name="search_fields" id="vo"}
+            {switch vo.type}
+                {case text}
+                <div class="layui-inline">
+                    <input type="text" name="{$vo.field}" autocomplete="off" lay-verify="" placeholder="{if !empty($vo.placeholder)}{$vo.placeholder}{else}请输入{$vo.title}关键词{/if}"
+                           value="{$vo.value}" {$vo.attr|raw} class="layui-input"  style="height: 30px;">
+                </div>
+                {/case}
+                {case date}
+                <div class="layui-inline">
+                    <input type="text" name="{$vo.field}" placeholder="{$vo.placeholder}" readonly
+                           value="{$vo.value}" {$vo.attr|raw} class="layui-input layui-btn-sm" id="LAY_date{$i}" style="height: 30px;">
+                </div>
+                <script>
+                    renderArr.push({type: 'date', id: '#LAY_date{$i}', range: '{$vo.range|default=false}'});
+                </script>
+                {/case}
+                {case switchbtn}
+                <div class="layui-inline">
+                    <input type="checkbox" name="{$vo.field}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="switchshow"  value="{$vo.value}" {php}echo $vo['value']==1 ? 'checked' : '';{/php}>
+                </div>
+                {/case}
+                {case value="hidden"}
+                <input type="hidden" name="{$vo.field}" value="{$vo.value}"/>
+                {/case}
+                {case select}
+                <div class="layui-inline" >
+                    <select name="{$vo.field}">
+                        {volist name="vo.options" id="vv"}
+                        <option value="{$key}"
+                                {$vv.disabled?'disabled':''}
+                            {if $vo['value']==$key} selected {/if}> {:isset($vv.title)?$vv.title:$vv} </option>
+                        {/volist}
+                    </select>
+                </div>
+                {/case}
+            {/switch}
+            {/volist}
+            {if count($search_fields) >0}
+            <button id="search_btn" class="layui-btn layui-btn-sm" data-type="reload">搜索</button>
+            {/if}
+        </div>
+    </form>
+    <div class="layui-clear">
+        <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="toolbarExport">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="exportData">导出选中的</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="dropdown">
+        <div class="urp-dropdown urp-dropdown-table">
+            <button class="layui-btn layui-btn-primary layui-btn-xs urp-dropdown-btn">
+                操作<i class="layui-icon layui-icon-down"></i>
+            </button>
+        </div>
+    </script>
+
+    {volist name="row_btn" id="rbtn"}
+        <script type="text/html" id="{$key}">
+            {volist name="rbtn" id="vo"}
+                {if $vo.type == 'btn'}
+                    {{#  if( {$vo.opt|raw} ){ }}
+                        {if stripos($vo.href,'delete')!=false}
+                              <a {$vo.attr|raw} class="layui-btn {$vo.class|raw} layui-btn-danger layui-btn-xs" data-delete-href="{$vo.href}" lay-event="delete" data-ext="{$vo.ext_param|raw}">删除</a>
+                        {elseif $vo.open_type=='layer'}
+                              <a {$vo.attr|raw} class="layui-btn {$vo.class|raw} layui-btn-xs" data-href="{$vo.href}{$vo.ext_param}" data-ext="{$vo.ext_param|raw}" lay-event="layer">{$vo.title}</a>
+                        {elseif stripos($vo.href,'update')!= false}
+                              <a {$vo.attr|raw}  href="javascript:;" class="layui-btn {$vo.class|raw} layui-btn-xs" data-ext="{$vo.ext_param|raw}" data-href="{$vo.href}{$vo.ext_param}" lay-event="updateRow">{$vo.title}</a>
+                        {else}
+                              <a {$vo.attr|raw} class="layui-btn {$vo.class|raw} layui-btn-xs" data-ext="{$vo.ext_param|raw}" data-href="{$vo.href}{$vo.ext_param}" lay-event="clickRowBtn">{$vo.title}</a>
+                        {/if}
+                    {{#  } }}
+                {elseif $vo.type == 'checkbox'}
+                     {{#  if({$vo.opt|raw}){ }}
+                         <input {$vo.attr|raw} type="checkbox"  lay-skin="switch" name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="switchshow"  data-url="{$vo.href|raw}"   data-id="{{  {$vo.id|raw} }}"  value="{$vo.value|raw}" checked />
+                     {{#  } else { }}
+                         <input {$vo.attr|raw} type="checkbox" lay-skin="switch"  name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="switchshow"   data-url="{$vo.href|raw}"  data-id="{{  {$vo.id|raw} }}"  value="{$vo.value|raw}"  />
+                     {{#  } }}
+                {elseif $vo.type == 'checkbox-hook'}
+                    {{#  if({$vo.opt|raw}) { }}
+                        <input {$vo.attr|raw} type="checkbox"  lay-skin="primary" name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="test"  data-url="{$vo.href|raw}"   data-id="{$vo.id|raw}"  checked
+                               value="{$vo.value[1]|raw}"
+                        />
+                        {$vo.title|raw}
+                    {{#  } else { }}
+                        <input {$vo.attr|raw} type="checkbox" lay-skin="primary"  name="{$vo.name|raw}" lay-text="{$vo.title|raw}" lay-filter="test"   data-url="{$vo.href|raw}"  data-id="{$vo.id|raw}"
+                               value="{$vo.value[0]|raw}"
+                        />
+                        {$vo.title|raw}
+                    {{#  } }}
+                {/if}
+
+            {/volist}
+        </script>
+    {/volist}
+</div>
+</div>
+<script>
+    var modelHelperList = true;
+
+    function isNotNull(str){
+        reutrn ( !(null == str) && !(str == undefined) )
+    }
+
+    function changeURLArg(url,arg,arg_val){
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+    }
+
+    layui.config({
+        base: '/plugins/layui/layui_ext/' //配置 layui 第三方扩展组件存放的基础目录
+    }).extend({
+        dropdown: 'dropdown/dropdown' //以 regionSelect 组件为例，定义该组件模块名
+    }).use(['table', 'jquery','form','layer', 'laydate', 'dropdown'], function () {
+        var table = layui.table
+            , jq = layui.jquery
+            , layer = layui.layer
+            , laydate = layui.laydate
+            , dropdown = layui.dropdown
+            , currPage = 1
+            , form = layui.form;
+
+        //回车搜索
+        jq(window).keydown(function(e){
+            if(e.keyCode==13){
+                jq('#search_btn').click();
+            }
+        });
+
+        jq('a[target="layer"]').click(function(){
+            let url = jq(this).attr('href');
+            let title = jq(this).text();
+            if(url) {
+                layer.open({
+                    title: title,
+                    type: 2,
+                    area: ['90%', '90%'],
+                    shadeClose: true,
+                    shade: 0.3,
+                    maxmin: true, //开启最大化最小化按钮
+                    content: url //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                });
+                return false;
+            }
+        });
+
+        let url = self.location.href;
+
+        var search_form = jq('#search_form').serializeArray();
+        // var tWhere = {};
+        // jq.each(search_form, function () {
+        //     tWhere[this.name] = this.value;
+        // });
+        let tableData = {
+            elem: '#demo'
+            // ,where:tWhere
+            , url: url
+            ,method: '{$method}'
+            // , defaultToolbar: []
+            , title: '{$title}'
+            , toolbar: '{$toolbar_id|default=""}'
+            , cellMinWidth: 80
+            , cols: {$cols|raw}
+            , page: JSON.parse('{$page|raw}')
+            , limit: {$limit}
+            , response: {
+                statusCode: 1
+            }
+            ,data:jq('#search_form').serializeArray()
+            ,id: 'testReload',
+            done: function (res, curr, count) {
+                console.log('res', res)
+                currPage = curr;
+                if (res.data.length == 0 && currPage > 1) {
+                    //当前页数据为空自动切到前一页
+                    active['reload'] ? active['reload'].call(this, currPage - 1) : '';
+                }
+                var param = jq.extend({page: currPage, limit: this.limit}, this.where);
+                var url = location.href;
+                jq.each(param, function (key, value) {
+                    url = changeURLArg(url, key, value);
+                });
+                window.history.replaceState({}, "", url);
+            }
+        };
+        
+        let page_where = {:json_encode($page_where)};
+        if (page_where != null && page_where != '') {
+            tableData.where = page_where;
+        }
+
+        form.on('checkbox(test)',function(obj){
+            var  td  = jq(this).parents('td')[0];
+            var  tr  = jq(this).parents('tr')[0];
+            var index = tr.getAttribute('data-index');
+            var name  =  td.getAttribute('data-field');
+            //当前行获取他的父级Index
+            //改变父级Index 的cache 值
+            var data = jq(obj.elem);
+            var check = obj.elem.checked;
+            if(check){
+                data.val(2);
+                obj.value = 2;
+                table.cache.testReload[index][name] = 2 ;
+            }else{
+                data.val(0);
+                obj.value = 0;
+                table.cache.testReload[index][name] =  0 ;
+            }
+        });
+
+        //渲染表格
+        table.render(tableData);
+
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+                case 'exportData':
+                    //导出数据
+                    var arr = checkStatus.data;
+                    if(arr.length == 0){
+                        layer.alert('请先选中', {icon: 2, time: 3000});
+                        return false;
+                    }
+                    var arg = [];
+                    for (var index in arr){
+                        arg.push(arr[index].id);
+                        console.log(arr);
+
+                    }
+                    // layer.alert(JSON.stringify(arg));
+                    var body = jq(document.body),
+                        form = jq("<form method='post' target='_blank'></form>"),
+                        input;
+                    form.attr({"action":'{:url("export")}'});
+                    jq.each(arg,function(key,value){
+                        input = jq("<input type='hidden'>");
+                        input.attr({"name":'id[]'});
+                        input.val(value);
+                        form.append(input);
+                    });
+
+                    form.appendTo(document.body);
+                    form.submit();
+                    document.body.removeChild(form[0]);
+            };
+        });
+
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除该条数据吗?',{icon: 3, title:'删除提示'}, function (index) {
+                    var url = jq(obj.tr[0].innerHTML).find('a[data-delete-href]').data('deleteHref');
+                    jq.post(url, {id: data.id}, function (res) {
+                        if (res.code != 1) {
+                            return layer.alert(res.msg, {icon: 2, time: res.wait*1000});
+                        } else {
+                            layer.msg(res.msg);
+                            setTimeout(function () {
+                                obj.del();
+                                layer.close(index);
+                                if(tableData.page!=false){
+                                    active['reload'] ? active['reload'].call(this, currPage) : '';
+                                }
+                            }, 300);
+                        }
+                    });
+                });
+            }else if(obj.event==='updateRow'){
+                //更新此行信息
+                jq.post(jq(this).data('href'), data, function (res) {
+                    layer.msg(res.msg, {icon: 1, time: res.wait*1000});
+                    setTimeout(function () {
+                        if(undefined != res.href &&null!=res.href && ""!= res.href ){
+                            window.location.href = res.href;
+                        } else if(res.code == 1 ){
+                            window.location.reload();
+                        }
+                    }, 300);
+                });
+            }
+            else if (obj.event === 'edit') {
+                window.location.href = "{:url('edit')}" + '?id=' + data.id;
+            } else if(obj.event === 'row') {
+            } else if(obj.event === 'layer') {
+                var url = jq(this).data('href');
+                // window.location.href = url;
+                // return true;//功能还没做完，加上改动太多，先使用window.location.href打开
+                if(url) {
+                    var title = jq(this).text();
+                    layer.open({
+                        title: title,
+                        type: 2,
+                        area: ['90%', '90%'],
+                        shadeClose: true,
+                        shade: 0.3,
+                        maxmin: true, //开启最大化最小化按钮
+                        content: url //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                    });
+                    return false;
+                }
+            } else {
+                var url = jq(this).data('href');
+                window.location.href = url;
+            }
+        });
+
+        //监听单元格编辑
+        table.on('edit(test)', function (obj) {
+            loading = layer.load(2, {
+                shade: [0.2,'#000']
+            });
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            /*layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);*/
+            jq.post("{:url('updateField')}", {id: data.id, field: field, value: value}, function (res) {
+                layer.close(loading);
+                if (res.code != 1) {
+                    return layer.msg(res.msg);
+                } else {
+                    layer.msg(res.msg);
+                }
+            }).fail(function() {
+                layer.close(loading);
+                layer.msg('操作失败', {icon: 2, time: 3000});
+            });;
+        });
+
+        var active = {
+            reload: function (page) {
+                page = page || 1;
+                var search_form = jq('#search_form').serializeArray();
+                var where = {};
+                jq.each(search_form, function () {
+                    where[this.name] = this.value;
+                });
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: page //重新从第 1 页开始
+                    }
+                    , where: where
+                });
+            }
+        };
+
+        //创建编辑器
+        let uploadInst = [];
+        renderArr.forEach(function (v, i) {
+            if (v.type == 'editor') {
+                //编辑器
+                renderArr[i].editIndex = layedit.build(v.id, {
+                    uploadImage: "{url: '/Admin/Upload/layedit_upimage', type: 'post'}"
+                });
+            } else if (v.type == 'date') {
+                //日期
+                laydate.render({
+                    elem: v.id
+                    ,range: v.range
+                });
+            } else if (v.type == 'datetime') {
+                //日期
+                laydate.render({
+                    elem: v.id,
+                    type: 'datetime'
+                });
+            }else if (v.type == 'time') {
+                //时间
+                laydate.render({
+                    elem: v.id,
+                    type: 'time'
+                });
+            }
+            else if (v.type == 'image') {
+                //单图片上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upimage'
+                    , before: function (obj) {
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function (index, file, result) {
+                            jq(v.imgId).attr('src', result); //图片链接（base64）
+                        });
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg(res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path);
+                        jq(v.imgId).attr('src', res.path).show();
+                        jq(v.aId).attr('href', res.path);
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                        demoText.find('.demo-reload').on('click', function () {
+                            uploadInst[i].upload();
+                        });
+                    }
+                });
+            } else if (v.type == 'excel') {
+                //excel上传
+                uploadInst[i] = upload.render({
+                    elem: v.btnId
+                    , url: '/Admin/Upload/upExcel'
+                    , accept: 'file'
+                    , exts: 'xls|xlsx'
+                    , before: function (obj) {
+                    }
+                    , done: function (res) {
+                        //如果上传失败
+                        if (res.code != 200) {
+                            return layer.msg(res.msg);
+                        }
+                        //上传成功
+                        jq(v.inputId).val(res.path)
+                    }
+                    , error: function () {
+                        //演示失败状态，并实现重传
+                        var demoText = jq(v.textId);
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-sm layui-btn-xs demo-reload">重试</a>');
+                    }
+                });
+            }
+        });
+
+        jq('#search_btn').on('click', function () {
+            var type = jq(this).data('type');
+            active[type] ? active[type].call(this) : '';
+            return false;
+        });
+
+
+        //搜索滑动按钮
+        var status=0;
+        form.on('switch(switchshow)', function(data){
+
+            loading = layer.load(2, {
+                shade: [0.2,'#000']
+            });
+
+            if(data.elem.checked){
+                status=1;
+            }else{
+                status=0;
+            }
+            var url  =  data.elem.getAttribute("data-url")+ "?name="+ data.elem.name + "&status="+status +'&id='+data.elem.getAttribute("data-id");
+
+            jq.get(url,function(res){
+                layer.close(loading);
+                if(res.code != 1){
+                    //失败
+                    data.elem.checked = !data.elem.checked;
+                    form.render('checkbox');
+                    layer.msg(res.msg, {icon: 2, time: 3000});
+                } else {
+                    layer.msg(res.msg, {icon: 1, time: 1000});
+                }
+            }).fail(function() {
+                layer.close(loading);
+                data.elem.checked = !data.elem.checked;
+                form.render('checkbox');
+                layer.msg('操作失败', {icon: 2, time: 3000});
+            });
+            return false;
+        });
+
+    });  // end layui use
+
+    function formatTime(obj) {
+        return formatUnixtimestamp(obj);
+    }
+
+    function formatUnixtimestamp(obj) {
+        if(obj == undefined || '' == obj || null == obj){
+            return '';
+        }
+        var obj = new Date(obj * 1000);
+        var year = 1900 + obj.getYear();
+        var month = "0" + (obj.getMonth() + 1);
+        var date = "0" + obj.getDate();
+        var hour = "0" + obj.getHours();
+        var minute = "0" + obj.getMinutes();
+        var second = "0" + obj.getSeconds();
+        return year + "-" + month.substring(month.length - 2, month.length) + "-" + date.substring(date.length - 2, date.length)
+            + " " + hour.substring(hour.length - 2, hour.length) + ":"
+            + minute.substring(minute.length - 2, minute.length) + ":"
+            + second.substring(second.length - 2, second.length);
+    }
+
+</script>
+</body>
+</html>

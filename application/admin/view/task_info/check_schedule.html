@@ -1,0 +1,300 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<style>
+    .rwo_space_around {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .row_space_between {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .row_row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .portrait {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meeting {
+        padding: 0px 30px;
+    }
+
+    .meeting_time {
+        margin-top: 20px;
+    }
+
+    .outline {
+        padding: 0px 30px;
+    }
+
+    .outline_title {
+        font-size: 20px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .outline_content {
+        font-size: 15px;
+    }
+
+    .outline_img {
+        width: 100%;
+        height: auto;
+        margin-top: 20px;
+    }
+
+    .user {
+        padding: 10px 30px;
+        line-height: 50px;
+        height: 50px;
+        font-size: 14px;
+        /*margin-bottom: 20px;*/
+        /*border: 1px solid #000;*/
+        border-bottom: 1px solid #eee;
+    }
+
+    .user:last-child {
+        /*border: 1px solid #000;*/
+        border-bottom: none;
+    }
+
+    .user img {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+    }
+
+    .user text {
+        margin: 0px 10px;
+        display: inline-block;
+        min-width: 70px;
+    }
+
+    .printing {
+        position: fixed;
+        right: 20px;
+    }
+
+    @media print {
+        .back-btn,.printing,.down_btn_a {
+            display: none;
+        }
+    }
+
+    .meeting_row {
+        display: flex;
+        flex-direction: row;
+        padding: 5px;
+		line-height: 1.5;
+    }
+
+    .meeting_row .field_title {
+        text-align-last: justify;
+        text-align: justify;
+        text-justify: distribute-all-lines;
+        /*border: 1px solid red;*/
+        width: 90px;
+    }
+
+    .meeting_row .field_val {
+        flex: 1;
+    }
+     .file-icon {
+         width: 34px;
+         height: 40px;
+     }
+
+    .file-name {
+        word-wrap: normal;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    body .layui-upload-file {
+        display: none;
+    }
+    .attchment-item{
+        overflow: hidden;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #e6e6e6;
+        padding-bottom: 5px;
+    }
+    .attchment-item:last-child{
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="portrait layui-field-box">
+    <div>
+        <button onclick="history.go(-1);" style="margin-right: 20px;" class="back-btn layui-btn layui-btn-sm">返回
+        </button>
+        <button class="layui-btn layui-btn-sm printing" onclick="window.print();">打印</button>
+    </div>
+    {foreach name="dataArr"  item="data"}
+    <div class="portrait">
+        <div class="portrait meeting">
+            <div class="outline_title" style="">
+                已确认：{$data.status2_count}，未确认：{$data.status1_count}
+            </div>
+        </div>
+    </div>
+
+
+
+    {if !empty($data.resultList)}
+    <div class="portrait">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>{$data.taskListInfo.name}详情</legend>
+        </fieldset>
+        <table class="layui-table" lay-skin="line" lay-size="lg" >
+            <thead>
+                <tr>
+                    <th>姓名</th>
+                    <th>状态</th>
+                    <th>确认时间</th>
+                    <th>确认人</th>
+                    <th>材料</th>
+                </tr>
+            </thead>
+            <tbody>
+            {volist name="data.resultList" id="vo"}
+            <tr>
+                <td class="user">
+                    <img src="{$vo.user.head_pic}" alt="">
+                    <text>{$vo.user.nickname}</text>
+                </td>
+                <td>
+                    {if $vo.is_res==1}
+                        待确认
+                    {elseif $vo.is_res==2}
+                        已确认
+                    {/if}
+                </td>
+                <td>
+                    {if $vo.update_time>0&&$vo.is_res==2}
+                    {:date('Y-m-d H:i', $vo.update_time)}
+                    {else}
+                    -
+                    {/if}
+                </td>
+                <td>
+                    <div class="am-text-center">{$vo.fuid_name}</div>
+                </td>
+                <td>
+                    {if empty($vo.userAttachmentList)}
+                    <div class="am-text-center">未上传</div>
+                    {/if}
+                    <ul>
+                    {foreach $vo.userAttachmentList as $ak => $attachment}
+                    <li class="attchment-item">
+                        <a target="_blank" href="{$attachment.savepath}" data-id="{$attachment.id}">
+                            <div style="float: left;margin-right: 10px;">
+                                {if in_array($attachment.ext,['xls','xlsx'])}
+                                <img class="file-icon" src="__PUBLIC__/image/files/xls.png">
+                                {elseif in_array($attachment.ext,['doc','docx'])}
+                                <img class="file-icon" src="__PUBLIC__/image/files/doc.png">
+                                {elseif in_array($attachment.ext,['png'])}
+                                <img class="file-icon" src="__PUBLIC__/image/files/image.png">
+                                {elseif in_array($attachment.ext,['txt'])}
+                                <img class="file-icon" src="__PUBLIC__/image/files/txt.png">
+                                {elseif in_array($attachment.ext,['pdf'])}
+                                <img class="file-icon" src="__PUBLIC__/image/files/pdf.png">
+                                {elseif in_array($attachment.ext,['flv','mp4','avi','3gp', 'mpeg'])}
+                                <img class="file-icon" src="__PUBLIC__/image/files/video.png">
+                                {elseif in_array($attachment.ext,['jpeg','jpg','gif','png'])}
+                                <img class="file-icon" src="{$attachment.savepath}">
+                                {else}
+                                <img class="file-icon" src="__PUBLIC__/image/files/other.png">
+                                {/if}
+                            </div>
+                            <div style="padding-right: 10px;height: 40px;display: flex;justify-content: center;flex-direction: column;">
+                                <div class="file-name">{$attachment.name}</div>
+                                <div>{:format_bytes($attachment.size)}</div>
+                            </div>
+                        </a>
+                    </li>
+                    {/foreach}
+                    </ul>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+    {/if}
+
+
+    {/foreach}
+
+</div>
+
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.11.3.min.js"></script>
+{/block}
+{block name="script"}
+<script>
+    //判断是否为Trident内核浏览器(IE等)函数
+    function browserIsIe() {
+        if (!!window.ActiveXObject || "ActiveXObject" in window) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //创建iframe并赋值的函数,传入参数为图片的src属性值.
+    function createIframe(imgSrc) {
+        //如果隐藏的iframe不存在则创建
+        if ($("#IframeReportImg").length === 0) {
+            $('<iframe style="display:none;" id="IframeReportImg" name="IframeReportImg" onload="downloadImg();" width="0" height="0" src="about:blank"></iframe>').appendTo("body");
+        }
+        //iframe的src属性如不指向图片地址,则手动修改,加载图片
+        if ($('#IframeReportImg').attr("src") != imgSrc) {
+            $('#IframeReportImg').attr("src", imgSrc);
+        } else {
+            //如指向图片地址,直接调用下载方法
+            downloadImg();
+        }
+    }
+
+    //下载图片的函数
+    function downloadImg() {
+        //iframe的src属性不为空,调用execCommand(),保存图片
+        if ($('#IframeReportImg').src != "about:blank") {
+            window.frames["IframeReportImg"].document.execCommand("SaveAs");
+        }
+    }
+
+    //接下来进行事件绑定
+    var aBtn = $(".down_btn_a");
+    if (browserIsIe()) {
+        //是ie等,绑定事件
+        aBtn.on("click", function () {
+            var imgSrc = $(this).siblings("img").attr("src");
+            //调用创建iframe的函数
+            createIframe(imgSrc);
+        });
+    } else {
+        aBtn.each(function (i, v) {
+            //支持download,添加属性.
+            var imgSrc = $(v).siblings("img").attr("src");
+            $(v).attr("download", '{$meeting.theme}-签到二维码');
+            $(v).attr("href", imgSrc);
+        })
+    }
+</script>
+{/block}

@@ -1,0 +1,10 @@
+/.idea
+/.vscode
+*.log
+.env
+.DS_Store
+data/
+uploads/
+runtime/
+public/crontab.sh
+public/install/install.lock

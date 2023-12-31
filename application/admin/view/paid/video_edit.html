@@ -1,0 +1,343 @@
+{extend name="base"/}
+{block name="css"}
+<style>
+    .layui-btn-sm{
+        margin-top: 4px;
+    }
+</style>
+{/block}
+{block name="body"}
+<!--tab标签-->
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/plugins/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/plugins/ueditor/ueditor.all.min.js"></script>
+<!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
+<div class="admin-main  layui-field-box layui-form">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class=" layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>编辑</legend>
+    </fieldset>
+    <form class="layui-form form-container" enctype="multipart/form-data"  data-url="{:url('admin/paid/video_update')}"  localtion-url="{:url('paid/video_list')}">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">*&nbsp;</text>文件标题</label>
+            <div class="layui-input-inline">
+                <input type="text" name="vname" value="{$res.vname}" required lay-verify="required" placeholder="（必填）请输入标题" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">*&nbsp;</text>文件分类</label>
+            <div class="layui-input-inline">
+                <select name="tid" id="tid" lay-verify="required" lay-filter="tid">
+                    {volist name="type" id="vo"}
+                    <option value="{$vo.id}" {eq name="res.tid" value="$vo.id"}selected{/eq}>{$vo.typename}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">*&nbsp;</text>课程</label>
+            <div class="layui-input-inline">
+                <select name="cid" id="cid" lay-verify="required">
+                    <option value="">请选择</option>
+                    {volist name="type2" id="vo"}
+                    <option value="{$vo.id}" {eq name="res.cid" value="$vo.id"}selected{/eq}>{$vo.typename}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">* &nbsp;</text>作者</label>
+            <div class="layui-input-inline">
+                <input type="text" name="upload_name" value="{$res.upload_name}" required lay-verify="required" placeholder="（必填）请输入作者" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">*&nbsp;</text>展示图</label>
+            <div class="layui-input-inline">
+                <input type="file" id="up_pic" accept="image/*"  name="vimg" style="display:none;">
+                <button type="button" id="up_pic_btn" class="layui-btn layui-btn-sm">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+            </div>
+            <div class="layui-form-mid layui-word-aux layui-input-inline">建议上传分辨率为640*360</div>
+        </div>
+        <div class="layui-form-item">
+            <!--上传图片进度条-->
+            <div class="layui-progress" lay-filter="pic_progress" id="pic_progress" lay-showPercent="yes" style="margin:10px;display:none;">
+                <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+            </div>
+            <div class="layui-input-block">
+                <img id="showimg" onerror="this.src='/images/study_default.png'" src="{$res.vimg_all}" width="320" height="180" alt="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">文件上传</label>
+            <div class="layui-input-inline">
+                <input type="file" id="up_video" accept="video/mp4,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf" style="display:none">
+                {if $res.src}
+                <button type="button" id="btn_video" class="layui-btn layui-btn-sm" {if $token}onclick="F_Open_dialog(1)"{/if}>
+                    <i class="layui-icon">&#xe67c;</i>
+                    点击重新上传
+                </button>
+                {else/}
+                <button type="button" id="btn_video" class="layui-btn layui-btn-sm" {if $token}onclick="F_Open_dialog(1)"{/if}>
+                    <i class="layui-icon">&#xe67c;</i>
+                    上传文件
+                </button>
+                {/if}
+            </div>
+            <div class="layui-form-mid layui-word-aux">仅支持上传mp4、word、excel、ppt、pdf后缀格式文件</div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <!--上传文件进度条-->
+                <div class="layui-progress" lay-filter="file_progress" id="file_progress" lay-showPercent="yes" style="margin:10px;display:none;">
+                    <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+                </div>
+                <span id="showFile">
+                    {switch $res.ext}
+                        {case .mp4|''}
+                            <div>
+                                <video id="video" src="{$res.src_all}" width="320" height="180" controls preload></video>
+                            </div>
+                        {/case}
+                        {case .pdf}
+                            <button type="button" class="layui-btn layui-btn-sm" id="check_file" data-url="<?php echo $res['src_all']; ?>">点击查看</button>
+                        {/case}
+                        {default /}
+                            <button type="button" class="layui-btn layui-btn-sm" id="check_file" data-url="https://view.officeapps.live.com/op/view.aspx?src=<?php echo $res['src_all']; ?>">点击查看</button>
+                    {/switch}
+                </span>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">* &nbsp;</text>内容</label>
+            <div class="layui-input-block">
+                <script id="vcontent" name="vcontent" type="text/plain">{$res.vcontent|raw|default=''}</script>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">*&nbsp;</text>积分</label>
+            <div class="layui-input-inline">
+                <input type="number" name="integral" onkeyup="this.value=this.value.replace(/[^0-9-]+/,'0');" value="{$res.integral}" required lay-verify="required" placeholder="填写积分" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-inline">
+                <input type="number" name="sort" onkeyup="this.value=this.value.replace(/[^0-9-]+/,'0');" value="{$res.sort|default=0}" required lay-verify="required" placeholder="序号越高越往后" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">数字越小排序越前(最小值为0)</div>
+        </div>
+        <input type="hidden" id="src" name="src" value="{$res.src}">
+        <input type="hidden" id="vimg" name="vimg" value="{$res.vimg}">
+        <input type="hidden" name="id" value="{$res.id}">
+        <input type="hidden" name="ext" id="ext" value="{$res.ext}">
+        <input type="hidden" name="duration" value="{$res.duration|default=0}">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">立即提交</button>
+                <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/formadd.js"></script>
+<script src="__PUBLIC__/js/qiniu.min.js"></script>
+<script src="__PUBLIC__/myjs/qiniu.js"></script>
+
+
+<script>
+    var up_pic = document.getElementById('up_pic');
+    var up_video = document.getElementById('up_video');
+    var cancel = document.getElementById('btn_cancel');
+    var extValue = document.getElementById('ext');
+    var token = '{$token}';
+
+    var qiniuPic,qiniuVideo;
+
+
+    function F_Open_dialog(flag=0){
+        up_video.click()
+    }
+
+    layui.extend({
+        chunkUpload:'/myjs/chunkUpload'
+    }).use(['layer','jquery','form','layer', 'upload','chunkUpload','element'],function(){
+        let form = layui.form;
+        let jq = layui.jquery;
+        let layer = layui.layer;
+        let upload = layui.upload ;
+        let chunk = layui.chunkUpload;
+        let element = layui.element;
+
+
+        //编辑器
+        var ue = UE.getEditor('vcontent', {
+            initialFrameHeight: 400,
+        });
+
+        jq('body').on('click','#check_file',function(res){
+            layer.open({
+                title:'文件查看',
+                type:2,
+                content:jq(this).data('url'),
+                area:['100%','100%']
+            });
+        });
+
+        form.on('select(tid)',function(data){
+            jq.post('/admin/paid/add_course',{tid:data.value},(res)=>{
+                jq('#cid').html('<option value="">请选择</option>');
+                if(res.code==200){
+                    for(let i in res.data){
+                        jq('#cid').append(
+                            `<option value="${res.data[i].id}">${res.data[i].typename}</option>`
+                        );
+                    }
+                }
+                form.render('select');
+            });
+        });
+
+        //单图片上传
+        let up_pic_index = upload.render({
+            elem: '#up_pic_btn'
+            , url: '/Admin/Upload/upimage'
+            ,accept:'images'
+            ,acceptMime:'image/*'
+            , before: function (obj) {
+                layer.load(1);
+                element.progress('pic_progress', '0%');
+                jq('#pic_progress').css('display','block');
+            }
+            ,progress:(n)=>{
+                var percent = n + '%'; //获取进度百分比
+                element.progress('pic_progress', percent); //可配合 layui 进度条元素使用
+            }
+            , done: function (res) {
+                layer.closeAll('loading');
+                //如果上传失败
+                if (res.code != 200) {
+                    return layer.msg(res.msg);
+                }
+                //上传成功
+                document.getElementById('showimg').setAttribute('src',res.path);
+                document.getElementById('showimg').setAttribute('height','180px');
+                document.getElementById('showimg').setAttribute('width','320px');
+                document.getElementById('vimg').value = res.path;
+            }
+            , error: function (index,e) {
+                //演示失败状态，并实现重传
+                layer.closeAll('loading');
+                layer.msg('上传出错，请重新上传');
+            }
+        });
+
+        {if $token}
+            up_video.onchange = function(){
+                var file = this.files[0];
+                up_video.value = '';
+                var index = file.name.lastIndexOf(".");
+                var ext = file.name.substr(index);
+                var key = 'video/'+(Math.random()*10000000).toString(16).substr(0,4)+(new Date()).getTime()+Math.random().toString().substr(2,5)+ext;
+                extValue.value = ext;
+                qiniuVideo = new Qiniu(key,token,{},{});
+
+                element.progress('file_progress', '0%');
+                jq('#file_progress').css('display','block');
+
+                qiniuVideo.upload(file,{
+                    next:function(res){
+                        var percent = Math.floor(res.total.percent)+'%';
+                        element.progress('file_progress', percent); //可配合 layui 进度条元素使用
+                    },
+                    error:function(err){
+                        layer.alert('上传出错', {
+                            icon: 2,
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                    },
+                    complete:function(res){
+                        document.getElementById('btn_video').innerHTML = '上传成功';
+                        if(ext=='.mp4'||''){
+                            document.getElementById('showFile').innerHTML = `<video id="video" src="{$url}${res.key}" width="320" height="180" controls preload></video>`;
+                            jq('#video').get(0).addEventListener('loadedmetadata', function(e) {
+                                let duration = jq(this).get(0).duration;
+                                jq('input[name="duration"]').val(Math.ceil(duration));
+                            });
+                        }else if(ext=='.pdf'){
+                            let check_url = `${res.key}`;
+                            document.getElementById('showFile').innerHTML = `<button type="button" id="check_file" data-url="${check_url}" class="layui-btn layui-btn-sm">点击查看</button>`;
+                            jq('input[name="duration"]').val(0);
+                        }else{
+                            let check_url = `https://view.officeapps.live.com/op/view.aspx?src={$url}${res.key}`;
+                            document.getElementById('showFile').innerHTML = `<button type="button" id="check_file" data-url="${check_url}" class="layui-btn layui-btn-sm">点击查看</button>`;
+                            jq('input[name="duration"]').val(0);
+                        }
+
+                        document.getElementById('src').value = res.key;
+                    }
+                });
+            };
+        {else/}
+            chunk.render({
+                element:'#btn_video',
+                url:'/admin/upload/upchunk',
+                acceptMime: 'video/mp4,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf',
+                before:function(){
+                    element.progress('file_progress', '0%');
+                    jq('#file_progress').css('display','block');
+                },
+                progress:function(value){
+                    var percent = value + '%' //获取进度百分比
+                    element.progress('file_progress', percent); //可配合 layui 进度条元素使用
+                },
+                success:(res)=>{
+                    //如果上传失败
+                    if (res.code != 200) {
+                        return layer.alert(res.msg, {
+                            icon: 2,
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                    }
+                    //上传成功
+                    document.getElementById('btn_video').innerHTML = '上传成功';
+                    var index = res.path.lastIndexOf(".");
+                    var ext = res.path.substr(index);
+                    extValue.value = ext;
+                    if(ext=='.mp4'||''){
+                        document.getElementById('showFile').innerHTML = `<video id="video" src="${res.headpath}" width="320" height="180" controls preload></video>`;
+                        jq('#video').get(0).addEventListener('loadedmetadata', function(e) {
+                            let duration = jq(this).get(0).duration;
+                            jq('input[name="duration"]').val(Math.ceil(duration));
+                        });
+                    }else if(ext=='.pdf'){
+                        let check_url = `${res.headpath}`;
+                        document.getElementById('showFile').innerHTML = `<button type="button" id="check_file" data-url="${check_url}" class="layui-btn">点击查看</button>`;
+                        jq('input[name="duration"]').val(0);
+                    }else{
+                        let check_url = `https://view.officeapps.live.com/op/view.aspx?src=${res.headpath}`;
+                        document.getElementById('showFile').innerHTML = `<button type="button" id="check_file" data-url="${check_url}" class="layui-btn">点击查看</button>`;
+                        jq('input[name="duration"]').val(0);
+                    }
+                    document.getElementById('src').value = res.path;
+                },
+                fail:(err)=>{
+                    layer.alert('上传出错', {
+                        icon: 2,
+                        skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                    })
+                }
+            });
+        {/if}
+
+    });
+</script>
+{/block}

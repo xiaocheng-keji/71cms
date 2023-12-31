@@ -1,0 +1,90 @@
+{extend name="base" /}
+{block name="body"}
+<div class="tpt—index fly-panel fly-panel-user">
+    <blockquote style="padding: 10px;border-left: 5px solid #d81e06;" class="layui-elem-quote">系统信息：</blockquote>
+    <table width="100%">
+        <tr>
+            <td width="110px">程序版本</td>
+            <td>71CMS创先云智慧党建系统 {$system_version} ，<a href="javascript:;" data-url="{:url('index/update')}" id="update"
+                                                  style="color:#FF5722;"
+                                                  target="_blank">升级最新版本</a></td>
+        </tr>
+        <tr>
+            <td>服务器类型</td>
+            <td>{:php_uname('s')}</td>
+        </tr>
+        <tr>
+            <td>PHP版本</td>
+            <td>{:PHP_VERSION}</td>
+        </tr>
+        <tr>
+            <td>Zend版本</td>
+            <td>{:Zend_Version()}</td>
+        </tr>
+        <tr>
+            <td>服务器解译引擎</td>
+            <td>{:$_SERVER['SERVER_SOFTWARE']}</td>
+        </tr>
+        <tr>
+            <td>服务器语言</td>
+            <td>{:$_SERVER['HTTP_ACCEPT_LANGUAGE']}</td>
+        </tr>
+        <tr>
+            <td>服务器Web端口</td>
+            <td>{:$_SERVER['SERVER_PORT']}</td>
+        </tr>
+    </table>
+    <blockquote style="padding: 10px;border-left: 5px solid #d81e06;" class="layui-elem-quote">开发团队：</blockquote>
+    <table width="100%">
+        <tr>
+            <td width="110px">开发团队</td>
+            <td>71CMS开发团队</td>
+        </tr>
+        <tr>
+            <td width="110px">版权所有</td>
+            <td>南宁小橙科技有限公司</td>
+        </tr>
+    </table>
+</div>
+<a class="flex flex-direction align-center" href="http://www.71cms.net" target="_blank">
+    <img src="http://server.71cms.net/image/logo.png" class="support-logo">
+    <span class="support-text">创先云党建</span>
+</a>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['layer', 'jquery'], function () {
+        var jq = layui.jquery;
+
+        jq('#update').click(function () {
+            var url = jq(this).data('url');
+            jq.getJSON(url, function (data) {
+                loading = layer.load(2, {
+                    shade: [0.2, '#000']
+                });
+
+                if (data.code === 200) {
+                    layer.close(loading);
+                    if (data.need_update === 1) {
+                        // 弹窗询问是否更新
+                        layer.confirm(data.msg, {
+                            btn: ['去更新', '取消'] //按钮
+                        }, function () {
+                            window.open(data.data.update_url + '&site=' + encodeURIComponent(window.location.host + window.location.port));
+                        }, function () {
+                            layer.closeAll();
+                        });
+                    } else {
+                        layer.msg(data.msg, {icon: 1, anim: 0, time: 1000});
+                    }
+                } else {
+                    layer.close(loading);
+                    layer.msg(data.msg, {icon: 2, anim: 6, time: 1000});
+                }
+            });
+            return false;
+        });
+
+    })
+</script>
+{/block}

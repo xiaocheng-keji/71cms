@@ -1,0 +1,83 @@
+{extend name="base"/}
+
+{block name="body"}
+<!--tab标签-->
+<div class="admin-main  layui-field-box layui-form">
+    <button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        {if $pid>0}
+            <legend>添加子课程</legend>
+        {else/}
+             <legend>添加课程</legend>
+        {/if}
+    </fieldset>
+    <form class="layui-form"  data-url="{:url('admin/paid/type_save')}"  localtion-url="{:url('paid/video_type')}" >
+        <div class="layui-form-item">
+
+            <label class="layui-form-label"><text style="color:red;">* &nbsp;</text>父级</label>
+            <div class="layui-input-inline">
+                <select name="pid" id="" >
+                    {if $pid>0}
+
+                    {else/}
+                        <option value="0">根目录</option>
+                    {/if}
+
+                    {volist name="type" id="vo"}
+                        {if condition="$vo.pid eq 0"}
+                            {if $pid>0}
+                                {eq name="$pid" value="$vo.id" }
+                                    <option value="{$vo.id}" {eq name="$pid" value="$vo.id" }selected{/eq}>{if condition="$vo.pid gt 0"}&nbsp;&nbsp;&nbsp;&nbsp;|--{/if}{$vo.typename}</option>
+                                {/eq}
+                            {else/}
+
+                                <option value="{$vo.id}" {eq name="$pid" value="$vo.id" }selected{/eq}>{if condition="$vo.pid gt 0"}&nbsp;&nbsp;&nbsp;&nbsp;|--{/if}{$vo.typename}</option>
+                            {/if}
+
+                        {/if}
+                    {/volist}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">* &nbsp;</text>名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="typename" value="" required lay-verify="required" placeholder="（必填）请输入名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><text style="color:red;">* &nbsp;</text>排序</label>
+            <div class="layui-input-inline">
+                <input type="number" name="sort" onkeyup="this.value=this.value.replace(/[^0-9-]+/,'0');" value="0" required lay-verify="required" placeholder="数字越小排序越前(最小值为0)" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">&nbsp;数字越小排序越前(最小值为0)</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="status" value="1" title="开启" checked="checked">
+                <input type="radio" name="status" value="0" title="关闭">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">立即提交</button>
+                <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+            </div>
+        </div>
+        <!--<div class="btable-paged" >-->
+            <!--<div class="layui-main">-->
+                <!--<div class="formbtngroup">-->
+                    <!--<button  class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formadd">添加</button>-->
+                    <!--<button onclick="history.go(-1);" class="layui-btn layui-btn-primary layui-btn-sm">返回</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    </form>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/formadd.js"></script>
+{/block}

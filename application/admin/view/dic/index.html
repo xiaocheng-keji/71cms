@@ -1,0 +1,266 @@
+{extend name="base" /}
+{block name="css"}
+<style>
+    .target_ul {
+        margin-top: 10px;
+    }
+
+    .target_ul li {
+        border: 1px solid #f2f2f2;
+        text-align: center;
+        padding: 0 20px;
+        line-height: 45px;
+        height: 45px;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .target_ul .active {
+        box-sizing: border-box;
+        border-left: 2px solid red;
+        background: #ffddd6;
+        color: red;
+        font-weight: bold;
+    }
+
+    .menu {
+        display: none;
+        position: absolute;;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        top: 12px;
+        background: url('/images/xiala.png') no-repeat center center;
+        background-size: 20px 20px;
+    }
+
+    .contextmenu {
+        display: none;
+        position: absolute;
+        width: 150px;
+        background: #fff;
+        border: 1px solid #adabab;
+        border-radius: 5px;
+        overflow: hidden;
+        z-index: 99;
+    }
+
+    .contextmenu li {
+        border-left: 3px solid transparent;
+        transition: ease 0.3s;
+        border-bottom: 1px solid #adabab;
+    }
+
+    .contextmenu li:hover {
+        background: #ffddd6;
+        border-left: 3px solid #16aed6;
+    }
+
+    .contextmenu li a {
+        display: block;
+        padding: 10px;
+        color: #000000;
+        text-decoration: none;
+        transition: ease 0.3s;
+    }
+
+    .contextmenu li:hover a {
+        color: #FF0000;
+    }
+
+    .layui-btn-xs {
+        font-size: 14px;
+    }
+
+    .layui-container {
+        width: auto;
+    }
+
+    .layui-col-sm3 {
+        width: 24%;
+        margin-right: 10px;
+    }
+
+</style>
+{/block}
+
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+    <div style="display:flex;justify-content:space-between;">
+        <button class="layui-btn  layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>数据字典</legend>
+    </fieldset>
+    <div class="layui-container">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-sm2">
+                <div class="layui-card">
+                    <div class="layui-card-body" style="padding-left:0;padding-right: 0;text-align: center">
+                        <ul class="target_ul">
+                            {volist name="dic_type" id="vo" key="k"}
+                            <li class="{if $k-1==0}active{/if}" data-id="{$vo.id}" title="{$vo.name}">{$vo.name}
+                                <div class="menu"></div>
+                            </li>
+                            {/volist}
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm10">
+                <script id="top" type="text/html">
+                    <button class="layui-btn layui-btn-sm" lay-event="add_2">新建内容</button>
+                </script>
+                <script id="action" type="text/html">
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+                <div id="table" lay-filter="table"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+
+{block name="js"}
+<script>
+    layui.use(['table', 'form', 'laydate', 'layer', 'jquery','form'], function () {
+        //组件
+        let table = layui.table;
+        let layer = layui.layer;
+        let $ = layui.jquery;
+        let form = layui.form;
+
+        let current_id = $('.active').data('id');
+        let current_one;
+
+        //二级指标表格渲染（标题、发布人、发布时间、阅读状态、操作）
+
+        let tableIns = table.render({
+            elem: '#table'
+            , url: '/admin/dic/index' //数据接口
+            , toolbar: '#top'
+            , page: true
+            , where: {type_id: current_id}
+            , defaultToolbar: ''
+            , title: '数据字典列表'
+            , cols: [[
+                {field: 'value', title: '字典值'}
+                , {field: 'text', title: '字典内容'}
+                ,{title:'状态',templet:function(d){
+                        if(d.status==1){
+                            return '<span style="color:green;">开启</span>';
+                        }else{
+                            return '<span style="color:red;">关闭</span>';
+                        }
+                    }}
+                , {field: 'sort', title: '排序'}
+                , {title: '操作', toolbar: '#action'}
+            ]],
+            done: function (res, curr, count) {
+            }
+        });
+
+        // var  id  =  "{$id}";
+        // if(id != null  && id!=undefined  && id!=''){
+        //     // alert(123 + id);
+        //     // template_handle('edit', id);
+        //     $(this).data('id');
+        // }
+
+
+        //头部添加二级指标
+        table.on('toolbar(table)', function (obj) {
+            let event = obj.event;
+            switch (event) {
+                case 'add_2':
+                    template_handle('add',current_id);
+                    break;
+            }
+        });
+
+        form.on('switch',function(data){
+            let id = $(this).data('id');
+            // $.post('/admin/dic/changeStatus',{data});
+        });
+
+        //二级指标操作事件
+        table.on('tool(table)', function (obj) {
+            let event = obj.event;
+            switch (event) {
+                case 'edit':
+                    template_handle('edit', obj.data.id);
+                    break;
+                case 'del':
+                    // return;
+                    layer.confirm('删除后不可恢复，确定删除吗？', {
+                        btn: ['确定删除', '取消'] //按钮
+                    }, function () {
+                        layer.closeAll();
+                        let id = obj.data.id;
+                        $.post('/admin/dic/delete', {id}, (res) => {
+                            if (res.code == 1) {
+                                layer.msg(res.msg, {icon: 1});
+                                tableReload();
+                            } else {
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        });
+
+                    });
+                    break;
+            }
+        });
+
+
+        //单击左键
+        $('.target_ul').on('click', 'li', function () {
+            $('li').removeClass('active');
+            $(this).addClass('active');
+            current_id = $(this).data('id');
+            current_one = $(this);
+            tableIns.reload({where: {type_id: current_id},page:{curr:1}});
+        });
+
+
+        //添加二级指标的弹窗
+        function template_handle(type = 'add', id = '') {
+            if (type == 'add') {
+                layer.open({
+                    title: '添加数据字典',
+                    type: 2,
+                    area: ['500px', '400px'],
+                    content: '/admin/dic/add/type_id/'+id
+                });
+            } else if (type == 'edit') {
+                layer.open({
+                    title: '修改数据字典',
+                    type: 2,
+                    area: ['500px', '400px'],
+                    content: `/admin/dic/edit/id/${id}`
+                });
+            }
+        }
+
+        window.tableReload = function () {
+            tableIns.reload({where: {type_id: current_id}});
+        };
+
+        var  id  =  "{$id}";
+        if(current_id != id && id != null  && id!=undefined  && id!=''){
+            $("li[data-id='"+id+"']").click();
+        }
+
+        var  tips  =  "{$tips}";
+        if( tips != null  && tips!=undefined  && tips!=''){
+            layer.msg(tips);
+        }
+    });
+</script>
+{/block}

@@ -1,0 +1,50 @@
+body{
+    /*background: #ececec;*/
+}
+.main>div{
+    background:white;
+}
+.am-header-default {
+    background-color: #dd5147;
+}
+.button-color{
+    color: #fff;
+    background-color: red;
+    border-color: red;
+}
+.am-titlebar-default .am-titlebar-title{
+    color: #232323;
+}
+.am-titlebar-default .am-titlebar-title:before{
+    border-left:3px solid red;
+}
+.am-titlebar-default a {
+    color: #232323;
+}
+.top{
+    margin:20px;
+    box-shadow:0 0 10px #bbb;
+    border-radius:5px;
+    padding:20px;
+}
+.top .left{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    overflow:hidden;
+    border:1px solid red;
+    margin-right:20px;
+}
+.top .nickname{
+    font-weight:bold;
+}
+.my-course{
+    box-shadow:0 0 10px #bbb;
+    margin:0 20px;
+    border-radius:5px;
+}
+.video-type{
+    margin:20px;
+    box-shadow:0 0 10px #bbb;
+    border-radius:5px;
+}

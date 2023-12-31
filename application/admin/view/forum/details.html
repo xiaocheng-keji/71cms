@@ -1,0 +1,64 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+{/block}
+{block name="body"}
+<div class="admin-main layui-form layui-field-box">
+	<button class="layui-btn layui-btn-sm" onclick="window.history.go(-1);">返回</button>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>详情</legend>
+	</fieldset>
+	<form class="layui-form" action="">
+		<script>
+			let renderArr = [];
+		</script>
+		<div class="layui-form-item">
+			<label class="layui-form-label">标题</label>
+			<div class="layui-input-block">
+				<input type="text" name="title" lay-verify="required" placeholder="请输入标题" value="{$post.title}" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">版块</label>
+			<div class="layui-input-block">
+				<input type="text" name="forum_name" lay-verify="required" placeholder="请输入标题" value="{$post.forum_name}" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">添加时间</label>
+			<div class="layui-input-block">
+				<input type="text" name="add_time" lay-verify="required" placeholder="请输入标题" value="{$post.add_time|date='Y年m月d日 H时i分'}" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux"></div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">提议</label>
+			<div class="layui-input-block">
+				<textarea class="layui-textarea layui-hide" name="content" lay-verify="content" placeholder="" id="LAY_editor">{$post.content|raw}</textarea>
+			</div>
+		</div>
+	</form>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__PUBLIC__/js/delelement.js"></script>
+<script>
+	layui.use(['form', 'jquery', 'layedit'], function () {
+		var jq = layui.jquery
+		, form = layui.form
+		, layedit = layui.layedit;
+
+		var editor_i = layedit.build('LAY_editor', {
+			uploadImage: { url: '/Admin/Upload/layedit_upimage', type: 'post' }
+		});
+		//自定义验证规则
+	    form.verify({
+	    	content: function (value) {
+	        	layedit.sync(editor_i);
+	        }
+	    });
+	});
+</script>
+{/block}

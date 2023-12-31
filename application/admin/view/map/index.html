@@ -1,0 +1,155 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" href="__PUBLIC__/css/form.css">
+<link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+<style>
+    html,body{
+        display:flex;
+        height:100%;
+        width:100%;
+    }
+    body>div{
+        width:100%;
+        /*height:100%;*/
+    }
+    #container{
+        height:100%;
+        width:100%;
+    }
+</style>
+{/block}
+
+
+{block name="body"}
+<div id="container" tabindex="0"></div>
+<div class="input-card" style="width:24rem;">
+    <h4>设置地图当前行政区</h4>
+    <div class="input-item">
+        <input id='city-name' placeholder="查询地址" type="text" style="margin-right:1rem;">
+        <button class="btn" id="query">去指定城市</button>
+    </div>
+    <div class="input-item">
+        <input id='address' placeholder="自定义地址" type="text" style="margin-right:1rem;">
+        <input id="latitude" type="hidden" name="latitude">
+        <input id="longitude" type="hidden" name="longitude">
+        <button class="btn" id="sure">确定提交</button>
+    </div>
+</div>
+{/block}
+
+
+
+{block name="js"}
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=90facb72aad738c7514c0fe0fcae77ea&plugin=AMap.Geocoder"></script>
+<script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+<script type="text/javascript">
+
+    layui.use(['jquery'],function(){
+        let $ = layui.jquery;
+
+        $('#sure').click(function(){
+            let place = $('#address').val();
+            let latitude = $('#latitude').val();
+            let longitude = $('#longitude').val();
+            parent.setPlace(place,latitude,longitude);
+
+            let index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        });
+    });
+
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    let latitude = getQueryVariable('latitude');
+    let longitude = getQueryVariable('longitude');
+    let place = decodeURI(getQueryVariable('address'));
+
+    // document.getElementById('latitude').value = latitude;
+    // document.getElementById('longitude').value = longitude;
+    // document.getElementById('address').value = place;
+
+    let center = [longitude,latitude];
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center: center,
+        zoom:10
+    });
+
+    var m1 = new AMap.Marker({
+        position: center,
+        icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png"
+    });
+    map.add(m1);
+
+    regeoCode(center,'init');
+    m1.setLabel({
+        offset: new AMap.Pixel(20, 20),
+        content: place
+    });
+
+    var _onClick = function(e) {
+        regeoCode(e.lnglat);
+        map.clearMap();
+        //创建marker
+        let marker = new AMap.Marker({
+            position: e.lnglat,
+            icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
+            map: map,
+        });
+        marker.setLabel({
+            offset: new AMap.Pixel(20, 20),
+            content: document.getElementById('address').value
+        });
+    };
+    clickListener = AMap.event.addListener(map, "click", _onClick);
+
+    document.querySelector('#query').onclick = gotoCity;
+
+    function gotoCity(e){
+        var val = document.querySelector('#city-name').value; //可以是cityname、adcode、citycode
+        if (!val) {
+            val = "北京市";
+        }
+        map.setCity(val);
+        log.info(`已跳转至${val}`,100000000);
+    }
+
+
+    var geocoder,marker;
+    function regeoCode(lnglat,type="") {
+        if(!geocoder){
+            geocoder = new AMap.Geocoder();
+        }
+        geocoder.getAddress(lnglat, function(status, result) {
+            console.log(lnglat);
+            if (status === 'complete'&&result.regeocode) {
+                var address = result.regeocode.formattedAddress;
+                if(type=="init"){
+                    document.getElementById('address').value = place;
+                    document.getElementById('longitude').value = lnglat[0];
+                    document.getElementById('latitude').value = lnglat[1];
+                }else{
+                    document.getElementById('address').value = address;
+                    document.getElementById('longitude').value = lnglat.lng;
+                    document.getElementById('latitude').value = lnglat.lat;
+                }
+
+
+
+            }else{
+                log.error('根据经纬度查询地址失败')
+            }
+        });
+    }
+</script>
+{/block}
+
