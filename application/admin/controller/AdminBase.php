@@ -38,12 +38,10 @@ class AdminBase extends Controller
         $this->assign('system_version', $system_version);
 
         if (is_null(session('admin_name'))) {
-            // 判断来路 如果没有来路就直接跳转到登录页
-            if ($_SERVER["HTTP_REFERER"] == null) {
-                $referer = parse_url($_SERVER["HTTP_REFERER"]);
-                if ($referer['host'] != $_SERVER['SERVER_NAME']) {
-                    $this->redirect(url('login/index'));
-                }
+            // 判断来路 如果没有来路 或 进入后台首页的 就跳转到登录页
+            if ($_SERVER["HTTP_REFERER"] == null
+                || ($this->request->controller() == 'Index' && $this->request->action() == 'index')) {
+                $this->redirect(url('login/index'));
             }
             $this->error('登录超时，请重新登录', url('login/index'), 1,1);
         }
