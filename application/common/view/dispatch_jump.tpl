@@ -6,7 +6,7 @@
     <title>跳转提示</title>
     <style type="text/css">
         *{ padding: 0; margin: 0; }
-        body{ background: #fff;  background: url(__PUBLIC__/images/error.jpg) no-repeat; font-family: "Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif; color: #ffffff; font-size: 16px; }
+        body{ background: #fff;  background: url(__PUBLIC__/image/error.jpg) no-repeat; font-family: "Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif; color: #ffffff; font-size: 16px; }
         .system-message{ padding: 24px 48px; }
         .system-message h1{ font-size: 100px; font-weight: normal; line-height: 120px; margin-bottom: 12px; }
         .system-message .jump{ padding-top: 10px; }

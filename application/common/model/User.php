@@ -67,7 +67,7 @@ class User extends ModelBasic
 
     protected function setHeadpicAttr($vluae)
     {
-        return $vluae ?? '/images/head_pic.png';
+        return $vluae ?? '/image/head_pic.png';
     }
 
     protected function setPasswordAttr($password)

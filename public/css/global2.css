@@ -593,5 +593,5 @@ display: none;
 
 
 .trading-classify{position:absolute;}
-.trading-classify a{width: 58px; height: 26px; line-height: 26px; font-size: 14px; color: #333333; border:1px solid #eaeaea; margin-left: -1px; float: left; background: #fff; background:#fff url(../../../../images/sort-arrow.png) no-repeat 41px 0; text-indent: 9px;}
+.trading-classify a{width: 58px; height: 26px; line-height: 26px; font-size: 14px; color: #333333; border:1px solid #eaeaea; margin-left: -1px; float: left; background: #fff; background:#fff url(../../../../image/sort-arrow.png) no-repeat 41px 0; text-indent: 9px;}
 .trading-classify a.active{background-position: 41px -26px;}
