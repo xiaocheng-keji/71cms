@@ -59,7 +59,7 @@ class TalkRec extends AdminBase
             ->addField('记录人', 'recorder')
             ->addField('摘要', 'abstract')
             ->addField('应到人数', 'people_num')
-            ->addField('添加时间', 'create_time', 'datetime', ['templet' => ModelHelper::transformUnixTime("create_time"), 'width' => 160])
+            ->addField('添加时间', 'create_time', 'datetime', ['width' => 160])
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo',

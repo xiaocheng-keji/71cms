@@ -22,6 +22,13 @@ class Message extends Model
     {
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'uid', 'id')
+            ->field(['id', 'nickname', 'head_pic'])
+            ->bind(['nickname', 'head_pic']);
+    }
+
 	/**
 	 * 创建时间
 	 * @return bool|string

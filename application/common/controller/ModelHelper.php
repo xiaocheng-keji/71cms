@@ -480,14 +480,6 @@ class ModelHelper
         return $where;
     }
 
-    //废弃 请在模型中设置
-    static function transformUnixTime($field)
-    {
-        //TODO 需要成加载模块的方式
-//        return '<div>{{ layui.laytpl.toDateString(d.'.$field.') }}</div>';
-        return '<div>{{formatTime(d[\'' . $field . '\']) }}</div>';
-    }
-
     static function getValueByField($name, $array)
     {
         $keys = explode('[', str_replace(']', '', $name)); // 将名称拆分成键名数组

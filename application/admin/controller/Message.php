@@ -33,11 +33,13 @@ class Message extends AdminBase
 
         if (\think\facade\Request::isAjax()) {
             $count = $this->message_model->order('time desc')->count();
-            $list = $this->message_model->order('time desc')->page(input('page', 1), input('limit', 10))->select();
+            $list = $this->message_model->with('user')
+                ->order('time desc')
+                ->page(input('page', 1), input('limit', 10))
+                ->select();
             foreach ($list as $k => &$v) {
                 $time = friendlyDate($v['time']);
                 $v['times'] = $time;
-                $v['uid'] = getusernamebyid($v['uid']);
                 if ($v['type'] == 1) {
                     $v['type'] = '系统消息';
                 } else if ($v['type'] == 3) {
@@ -53,7 +55,7 @@ class Message extends AdminBase
         $modelHelper
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
             ->addField('时间', 'times', 'text')
-            ->addField('接收人', 'uid', 'text')
+            ->addField('接收人', 'nickname', 'text')
             ->addField('类型', 'type', 'text')
             ->addField('内容', 'content', 'text')
             ->addRowBtn('编辑', Url('add'))
