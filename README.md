@@ -30,6 +30,7 @@ Nignx/Apache
 PHP 7.1 ~ 7.4 
 MySQL 5.7
 ```
+[帮助文档](https://doc.71cms.net/)
 
 ###  系统演示
 
@@ -49,6 +50,7 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 密码：123456
 
 ---
+
 ###  功能
 
 | 功能    | 说明                    |
@@ -64,16 +66,28 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 ---
 
 ###  界面展示
-管理端
+管理端  
 ![输入图片说明](public/image/readme/admin-ui2.png)
 ![输入图片说明](public/image/readme/admin-ui3.png)
 ![输入图片说明](public/image/readme/admin-ui5.png)
 
-移动端
-
+移动端  
 ![输入图片说明](public/image/readme//ui1.png)
 ![输入图片说明](public/image/readme/ui2.png)
 ![输入图片说明](public/image/readme/ui5.png)
+---
+###  软件证书
+![输入图片说明](public/image/readme/gsjs.png)
+![输入图片说明](public/image/readme/rjzs.jpg)
+---
+###  商业用途
+如果您想基于党建系统进行定制开发，我们提供有偿定制服务支持！
+其他合作模式不限，欢迎来撩！  
+官网地址：https://www.71cms.net  
+联系微信客专业解答
+
+![输入图片说明](public/image/readme/wechat_qrcode.jpg)
+
 ---
 ###  特别鸣谢
 排名不分先后，感谢这些软件的开发者：ThinkPHP、Layui、VUE、MySQL、uni-app、ECharts等
