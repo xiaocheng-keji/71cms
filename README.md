@@ -73,7 +73,7 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 ![输入图片说明](public/image/readme/admin-ui5.png)
 #### 移动端  
 ![输入图片说明](public/image/readme//ui1.png)
-![输入图片说明](public/image/readme/ui2.png)
+![输入图片说明](public/image/readme/ui2-2.png)
 ![输入图片说明](public/image/readme/ui5.png)
 ---
 ###  软件证书
