@@ -29,7 +29,7 @@
 		</blockquote>
 	{/if}
 
-	<form class="layui-form" action="{:Url('addTask')}">
+	<form class="layui-form" action="{:url('addTask')}">
         <input type="hidden"  id="id"  name="id" value="{$data.id}">
         <input type="hidden"   id="info_id"  name="info_id"   value="{$data.info_id}">
 		<script>
@@ -665,7 +665,7 @@
 					layer.msg(res.msg);
 					var isUp = {if empty($isUpLevel)}""{else}{$isUpLevel}{/if};
 					if(task_type ==1 && isUp ){
-						window.location.href = "{:Url('detail',['id'=>$data['info_id'],'task_type'=>1])}";
+						window.location.href = "{:url('detail',['id'=>$data['info_id'],'task_type'=>1])}";
 					}else{
 						setTimeout(function () {
 							window.history.go(-1);

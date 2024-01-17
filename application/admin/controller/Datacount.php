@@ -193,7 +193,7 @@ class Datacount extends AdminBase
             ->addField('地点', 'place', 'text')
             ->addField('状态', 'status', 'text', ['width' => 80])
             ->addField('开始时间', 'start_time', 'text', ['hide' => true])
-            ->addRowBtn('详情', Url('meeting/detail'), 'barDemo', ['field' => 'start_time', 'operator' => '\<', 'value' => time()], 'btn-warm', '', ['open_type' => 'layer'])
+            ->addRowBtn('详情', url('meeting/detail'), 'barDemo', ['field' => 'start_time', 'operator' => '\<', 'value' => time()], 'btn-warm', '', ['open_type' => 'layer'])
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo',

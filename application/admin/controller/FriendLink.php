@@ -49,7 +49,7 @@ class FriendLink extends AdminBase
 
         $modelHelper = new ModelHelper();
         $modelHelper
-            ->addTopBtn('添加链接', Url('add'))
+            ->addTopBtn('添加链接', url('add'))
             ->addTips('点击排序的序号可编辑排序，数字越小排序越靠前')
             ->addField('ID', 'id', 'text', ['width' => 70, 'align' => 'center', 'sort' => false])
             ->addField('名称', 'name', 'text', ['width' => 200])
@@ -63,7 +63,7 @@ class FriendLink extends AdminBase
             ])->addField('操作', 'status', 'templet', [
                 'width' => 120,
                 'templet' => '<div>
-                                <a class="layui-btn layui-btn-info layui-btn-xs" data-href="/admin/friend_link/add?id={{= d.id }}" data-ext="?id={{= d.id }}" lay-event="' . Url('add') . '?id={{= d.id }}">编辑</a>
+                                <a class="layui-btn layui-btn-info layui-btn-xs" data-href="/admin/friend_link/add?id={{= d.id }}" data-ext="?id={{= d.id }}" lay-event="' . url('add') . '?id={{= d.id }}">编辑</a>
                                 {{#  if(d.tpl_id == null){ }}
                                         <a class="layui-btn layui-btn-warm layui-btn-xs" data-ext="?id={{= d.id }}" data-delete-href="' . url('delete') . '" lay-event="delete">删除</a>
                                 {{#  } }}

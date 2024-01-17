@@ -308,7 +308,7 @@
     function onlineMeeting(){
         var meeting_id = '{$meeting.id}';
         //新窗口打开
-        window.open("{:Url('meeting/onlineMeeting')}?id="+meeting_id);
+        window.open("{:url('meeting/onlineMeeting')}?id="+meeting_id);
         return false
         layui.use('layer', function(){
             //弹出即全屏

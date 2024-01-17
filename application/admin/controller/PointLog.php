@@ -55,7 +55,7 @@ class PointLog extends AdminBase
             ->addTips('目前积分：' . $userInfo['point'] . '。 ')
             ->addTips('搜索框无关键词时，按回车键或单击搜索，即可显示积分列表')
             ->addTopBtn('返回', 'javascript:history.go(-1);')
-            ->addTopBtn('修改 ' . $userInfo['nickname'] . ' 的积分', Url('User/editPoint', ['user_id' => $user_id]))
+            ->addTopBtn('修改 ' . $userInfo['nickname'] . ' 的积分', url('User/editPoint', ['user_id' => $user_id]))
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
             ->addField('积分', 'points', 'number', ['width' => 80])
             ->addField('描述', 'desc', 'textarea')

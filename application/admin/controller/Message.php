@@ -58,8 +58,8 @@ class Message extends AdminBase
             ->addField('接收人', 'nickname', 'text')
             ->addField('类型', 'type', 'text')
             ->addField('内容', 'content', 'text')
-            ->addRowBtn('编辑', Url('add'))
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('编辑', url('add'))
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo'

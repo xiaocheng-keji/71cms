@@ -88,7 +88,7 @@ class Banner extends AdminBase
             ])->addField('操作', 'status', 'templet', [
                 'width' => 120,
                 'templet' => '<div>
-                                <a class="layui-btn layui-btn-info layui-btn-xs" data-href="/admin/banner/add?id={{= d.id }}" data-ext="?id={{= d.id }}" lay-event="' . Url('add') . '?id={{= d.id }}">编辑</a>
+                                <a class="layui-btn layui-btn-info layui-btn-xs" data-href="/admin/banner/add?id={{= d.id }}" data-ext="?id={{= d.id }}" lay-event="' . url('add') . '?id={{= d.id }}">编辑</a>
                                 {{#  if(d.tpl_id == null){ }}
                                         <a class="layui-btn layui-btn-warm layui-btn-xs" data-ext="?id={{= d.id }}" data-delete-href="' . url('delete') . '" lay-event="delete">删除</a>
                                 {{#  } }}

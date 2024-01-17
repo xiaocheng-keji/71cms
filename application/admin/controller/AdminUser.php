@@ -71,7 +71,7 @@ class AdminUser extends AdminBase
         }
 
         $modelHelper
-            ->addTopBtn('添加管理员', Url('add'))
+            ->addTopBtn('添加管理员', url('add'))
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
             ->addField('用户名', 'username', 'text')
             ->addField('权限组', 'auth_group', 'text')
@@ -84,9 +84,8 @@ class AdminUser extends AdminBase
             ->addField('创建时间', 'add_time', 'text')
             ->addField('最后登录时间', 'last_login_time', 'text')
             ->addField('最后登录IP', 'last_login_ip', 'text')
-//            ->addRowBtn('数据管理权限', Url('editDepAuth'), 'barDemo', null, 'btn-warm')
-            ->addRowBtn('编辑', Url('edit'))
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('编辑', url('edit'))
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo',

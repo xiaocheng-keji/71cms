@@ -56,7 +56,7 @@ class ForumForum extends AdminBase
         }
 
         $modelHelper
-            ->addTopBtn('添加版块', Url('add'))
+            ->addTopBtn('添加版块', url('add'))
             ->addTips('排序规则：数字越小排序越前')
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
             ->addField('板块名称', 'forum_name', 'text')
@@ -66,8 +66,8 @@ class ForumForum extends AdminBase
                 'toolbar' => '#barDemo1'
             ])
             ->addField('排序', 'sort_order', 'text', ['edit' => 'text'])
-            ->addRowBtn('编辑', Url('edit'))
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('编辑', url('edit'))
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo'

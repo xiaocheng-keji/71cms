@@ -69,8 +69,8 @@ class Forum extends AdminBase
             // ->addField('帖子内容', 'content', 'text')
             ->addField('所属栏目', 'forum_name', 'text')
             ->addField('添加时间', 'add_time', 'text')
-            ->addRowBtn('详情', Url('details'), 'barDemo', null, 'btn-warm', 'btn')
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('详情', url('details'), 'barDemo', null, 'btn-warm', 'btn')
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'width' => 120,
                 'fixed' => 'right',

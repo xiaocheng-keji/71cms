@@ -35,7 +35,7 @@
 
         dtree.render({
             elem: "#demoTree1",  //绑定元素
-            url: "{:Url('getJson',['id'=>$id])}",  //异步接口
+            url: "{:url('getJson',['id'=>$id])}",  //异步接口
             dataStyle: "layuiStyle",
             dataFormat: "list",  //配置data的风格为list
             type: "all",

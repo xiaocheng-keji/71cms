@@ -74,8 +74,8 @@ class DevelopUser extends AdminBase
         $taskListInfo = TaskList::order('id asc')->find();
 
         $modelHelper
-            ->addTopBtn('新建入党申请', Url('edit'))
-            ->addTopBtn('导出全部数据', Url('export'))
+            ->addTopBtn('新建入党申请', url('edit'))
+            ->addTopBtn('导出全部数据', url('export'))
             ->addField('xx', 'id', 'checkbox', ['fixed' => 'left'])
             ->setToolbarId('#toolbarExport')
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
@@ -84,15 +84,15 @@ class DevelopUser extends AdminBase
             ->addField('入党申请时间', 'apply_time', 'date');
         /*if (!empty($taskListInfo)) {
             $modelHelper
-                ->addRowBtn('发展任务', Url('TaskInfo/detail', ['task_type' => TaskList::$TASK_TYPE_DEVELOP]), 'barDemo', null, 'btn-warm');
+                ->addRowBtn('发展任务', url('TaskInfo/detail', ['task_type' => TaskList::$TASK_TYPE_DEVELOP]), 'barDemo', null, 'btn-warm');
         } else {
             $modelHelper
-                ->addRowBtn('发展任务', Url('TaskInfo/detail', ['task_type' => TaskList::$TASK_TYPE_DEVELOP]), 'barDemo', null, 'btn-warm');
+                ->addRowBtn('发展任务', url('TaskInfo/detail', ['task_type' => TaskList::$TASK_TYPE_DEVELOP]), 'barDemo', null, 'btn-warm');
         }*/
 
         $modelHelper
-            ->addRowBtn('编辑', Url('edit'))
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('编辑', url('edit'))
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo',

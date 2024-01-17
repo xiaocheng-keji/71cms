@@ -54,7 +54,7 @@ class AuthGroup extends AdminBase
         }
 
         $modelHelper
-            ->addTopBtn('添加权限组', Url('add'))
+            ->addTopBtn('添加权限组', url('add'))
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
             ->addField('名称', 'title', 'text')
             ->addRowBtnEx('启用|禁用', url('updatestatus'), ['htmlID' => 'barDemo1', 'type' => 'checkbox', 'id' => 'id', 'name' => 'status', 'opt' => ['field' => 'status', 'operator' => '==', 'value' => 1]])

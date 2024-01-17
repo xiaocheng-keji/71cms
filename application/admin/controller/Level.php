@@ -59,14 +59,14 @@ class Level extends AdminBase
         }
 
         $this->modelHelper
-            ->addTopBtn('添加职务', Url('edit'))
+            ->addTopBtn('添加职务', url('edit'))
             ->addField('ID', 'id', 'text', ['width' => 80, 'align' => 'center', 'sort' => false])
             ->addField('职务名称', 'name', 'text')
             ->addField('职务描述', 'describe', 'textarea')
             ->addField('类型', 'type', 'select')
             ->addField('排序', 'sort', 'text', ['edit' => 'text'])
-            ->addRowBtn('编辑', Url('edit'))
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('编辑', url('edit'))
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo'

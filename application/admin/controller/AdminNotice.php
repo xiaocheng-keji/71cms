@@ -61,7 +61,7 @@ class AdminNotice extends AdminBase
             ->addField('内容', 'content', 'text')
             ->addField('时间', 'create_time', 'text', ['width' => 170])
             ->addField('状态', 'status', 'text', ['width' => 70])
-            ->addRowBtn('已读', Url('read'))
+            ->addRowBtn('已读', url('read'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'fixed' => 'right',
                 'toolbar' => '#barDemo',

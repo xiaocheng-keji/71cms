@@ -113,13 +113,9 @@ class AdminBase extends Controller
         //获取系统菜单和用户自己添加的菜单 并根据租户的配置显示不显示
         $auth_rule_list = Db::name('auth_rule')
             ->alias('a')
-            ->leftJoin('auth_rule_conf b', 'a.id=b.a_id ')
             ->where('a.status', 1)
-            ->where(function ($query) {
-                $query->where('b.status', 1)->whereOr('b.status', 'null');
-            })
-            ->orderRaw('IF(b.sort is null,a.sort,b.sort) ASC')
-            ->order(['b.sort' => 'ASC', 'a.sort' => 'ASC', 'a.id' => 'ASC'])
+            ->order('a.sort', 'asc')
+            ->order('a.id', 'asc')
             ->field('a.*')
             ->select();
         foreach ($auth_rule_list as $value) {

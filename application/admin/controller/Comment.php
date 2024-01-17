@@ -72,7 +72,7 @@ class Comment extends AdminBase
             ->addField('所属帖子', 'title', 'text')
             ->addField('评论人', 'nickname', 'text')
             ->addField('评论时间', 'add_time', 'text')
-            ->addRowBtn('删除', Url('delete'))
+            ->addRowBtn('删除', url('delete'))
             ->addField('操作', 'toolbar', 'toolbar', [
                 'width' => 80,
                 'fixed' => 'right',
