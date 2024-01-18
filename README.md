@@ -68,23 +68,26 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 ###  界面展示
 
 #### 管理端  
-![输入图片说明](public/image/readme/admin-ui2.png)
-![输入图片说明](public/image/readme/admin-ui3.png)
-![输入图片说明](public/image/readme/admin-ui5.png)
+![组织管理](public/image/readme/admin-ui2.png)
+![人员管理](public/image/readme/admin-ui3.png)
+![数据统计](public/image/readme/admin-ui5.png)
 #### 移动端  
-![输入图片说明](public/image/readme//ui1.png)
-![输入图片说明](public/image/readme/ui2-2.png)
-![输入图片说明](public/image/readme/ui5.png)
+![务截图](public/image/readme//ui1.png)
+![学习页面截图](public/image/readme/ui2-3.png)
+![我的页面截图](public/image/readme/ui5.png)
 ---
 ###  软件证书
-![输入图片说明](public/image/readme/gsjs.png)
-![输入图片说明](public/image/readme/rjzs.jpg)
+![小橙科技有限公司介绍](public/image/readme/gsjs.png)
+![创先云软著](public/image/readme/rjzs.jpg)
 ---
 ###  商业用途
 如果您想基于党建系统进行定制开发，我们提供有偿定制服务支持！
 其他合作模式不限，欢迎来撩！  
 官网地址：https://www.71cms.net  
 联系微信客专业解答
+
+如果您需要Java版本的相关资源、技术支持或定制开发服务，欢迎随时与我联系。我将竭诚为您提供专业的帮助和解决方案  
+
 
 ![输入图片说明](public/image/readme/wechat_qrcode.jpg)
 

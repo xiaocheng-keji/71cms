@@ -116,25 +116,6 @@ function getbaseurl()
     return $baseUrl;
 }
 
-function getusernamebyid($uid)
-{
-    if ($uid == 0) {
-        return '所有人';
-    } else {
-        $children = Db::name('user')->where(['id' => $uid])->find();
-        if (empty($children)) {
-
-            $children = Db::name('admin_user')->where(['id' => $uid])->find();
-            return $children['username'];
-        } else {
-            return $children['username'];
-        }
-
-    }
-
-
-}
-
 function friendlyDate($sTime, $type = 'normal', $alt = 'false')
 {
     if (!$sTime)

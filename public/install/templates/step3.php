@@ -143,7 +143,7 @@
             }, function (res) {
                 console.log('post', res)
                 if (res.status != 1) {
-                    layer.msg(res.msg, {icon: 2,})
+                    layer.alert(res.msg)
                 }
             })
         });

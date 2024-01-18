@@ -138,7 +138,7 @@ switch ($step) {
                 $version = mysqli_get_server_info($conn);
                 if ($version >= 5.7) {
                     if (strstr($result[0], 'STRICT_TRANS_TABLES') || strstr($result[0], 'STRICT_ALL_TABLES') || strstr($result[0], 'TRADITIONAL') || strstr($result[0], 'ANSI'))
-                        returnJson(-1, 'sql_mode error');
+                        returnJson(-1, '请修改数据库配置 sql_mode=NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION');
                 }
                 $result = mysqli_query($conn, "select count(table_name) as c from information_schema.`TABLES` where table_schema='$dbname'");
                 $result = $result->fetch_array();
