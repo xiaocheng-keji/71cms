@@ -164,7 +164,11 @@ class Upload extends Model
         $name = input('name');
 
         //获取拓展名
-        $ext = trim(strrchr($name, '.'),'.');
+        $ext = strtolower(trim(strrchr($name, '.'),'.'));
+        $ext_arr = ['jpg', 'jpeg', 'png', 'gif', 'xls', 'xlsx', 'doc', 'docx', 'pdf', 'psd', 'mp4'];
+        if (!in_array($ext, $ext_arr)) {
+            return array('code' => 0, 'msg' => '文件类型错误');
+        }
 
         //临时文件名
         $tmp_name = md5(input('token')).'.'.$ext;

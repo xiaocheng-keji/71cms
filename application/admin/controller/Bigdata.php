@@ -134,6 +134,16 @@ class Bigdata
 			// }
 		public function getWeather($url)
 		{
+            // 定义白名单URL
+            $allowedUrls = [
+                'https://wis.qq.com/weather/common',
+                // 可以添加其他允许的URL
+            ];
+
+            // 检查URL是否在白名单中
+            if (!in_array($url, $allowedUrls)) {
+                jsonReturn(-1, '不允许的 URL');
+            }
 			$curl = curl_init(); // 启动一个CURL会话
 			curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // 对认证证书来源的检查

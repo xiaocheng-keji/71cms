@@ -19,7 +19,7 @@ use think\Exception;
  * https://www.71cms.net/
  * @package app\admin\controller
  */
-class Upload extends Controller
+class Upload extends Base
 {
     function initialize()
     {
