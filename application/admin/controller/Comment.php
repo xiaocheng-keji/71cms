@@ -40,7 +40,7 @@ class Comment extends AdminBase
             ->setTitle('list test')
             ->addSearchField('所属帖子', 'title', 'text', ['exp' => 'LIKE']);
 
-        if (input('page', 0) > 0) {
+        if ($this->request->isAjax()) {
             $where = $modelHelper->getSearchWhere();
             $where[] = ['c.deleted', '=', 0];
             $where[] = ['f.deleted', '=', 0];

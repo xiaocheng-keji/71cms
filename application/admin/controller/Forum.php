@@ -40,9 +40,8 @@ class Forum extends AdminBase
             ->setTitle('list test')
             ->addSearchField('帖子标题', 'title', 'text', ['exp' => 'LIKE']);
 
-        if (input('page', 0) > 0) {
+        if ($this->request->isAjax()) {
             $where = $modelHelper->getSearchWhere();
-//            $where[] = ['f.deleted', '=', 0];
             $count = Db::name('forum_post')
                 ->alias('f')
                 ->join('forum_forum c', 'c.forum_id=f.forum_id')

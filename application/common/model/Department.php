@@ -13,6 +13,7 @@
 namespace app\common\model;
 
 use app\common\model\DepTeam as DepTeamModel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use think\Db;
 use think\Exception;
 use think\exception\DbException;
@@ -1081,7 +1082,7 @@ class Department extends ModelBasic
             }
 
             if ($createtime) {
-                $createtime = gmdate('Y-m-d H:i', \PHPExcel_Shared_Date::ExcelToPHP($createtime));
+                $createtime = gmdate('Y-m-d H:i', Date::excelToTimestamp($createtime));
                 $validate = Validate::isDate($createtime);
                 if ($validate !== true) {
                     $err_array[$k][] = '党组织成立时间格式不正确' . $createtime;

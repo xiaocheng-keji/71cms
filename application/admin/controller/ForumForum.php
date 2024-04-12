@@ -43,7 +43,7 @@ class ForumForum extends AdminBase
             ->setTitle('list test')
             ->addSearchField('名称', 'forum_name', 'text', ['exp' => 'LIKE']);
 
-        if (input('page', 0) > 0) {
+        if ($this->request->isAjax()) {
             $where = $modelHelper->getSearchWhere();
             $count = ForumForumModel::order('sort_order asc, forum_id desc')
                 ->where($where)

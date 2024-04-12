@@ -11,12 +11,13 @@
  */
 namespace app\admin\controller;
 
-use app\common\model\Department as DepModel;
 use app\common\controller\ModelHelper;
 use app\common\model\DicData;
+use app\common\model\TmpSession;
 use app\common\model\User as UserModel;
 use app\common\model\UserDep;
 use app\common\model\UserLevel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use think\Db;
 use think\facade\Env;
 
@@ -41,85 +42,58 @@ class User extends AdminBase
      * @param int $page
      * @return mixed
      */
-    public function index($keyword = '', $page = 1, $dep_id = '', $dep_name = '')
+    public function index($keyword = '', $dep_id = '', $dep_name = '')
     {
-        $map = [];
-        if ($dep_id != '' && $dep_name) {
-            session('dep_id', $dep_id);
-            session('dep_name', $dep_name);
-            if ($dep_id > 0) {
-                $userDep = new UserDep();
-                //查询组织下所有子组织的用户
-                $dep_ids = DepModel::getSubDep($dep_id);
-                $user_ids = $userDep->where('dep_id', 'in', $dep_ids)->column('user_id');
-                $map[] = ['a.id', 'in', $user_ids];
-                $map[] = ['b.dep_id', 'in', $dep_ids];
-            }
-        } else {
-            $dd = '';
-            if (session('dep_id') != '' && session('dep_name') != '' && $dd) {
-                $dep_name = session('dep_name');
-                $dep_id = session('dep_id');
-                if ($dep_id > 0) {
-                    $userDep = new UserDep();
-                    $user_ids = $userDep->where('dep_id', '=', $dep_id)->column('user_id');
-
-                    $map[] = ['a.id', 'in', array_unique($user_ids)];
-                }
-            } else {
-                $dep_name = '全部';
-                //如果是超级管理员可以显示没有在支部里的
-                if ($this->admin_user['is_super'] != 1) {
-                    $userDep = new UserDep();
-                    $user_ids = $userDep->where('dep_id', 'in', array_keys(session('dep_auth')))->column('user_id');
-                    $map[] = ['a.id', 'in', array_unique($user_ids)];
-                }
-                session('dep_id', null);
-                session('dep_name', null);
-            }
+        $where = [];
+        $where[] = ['a.people_type', 'in', [1, 2]];
+        if ($dep_id) {
+            $where[] = ['b.dep_id', '=', $dep_id];
         }
+        $people_type = input('people_type', 0);
+        if ($people_type) {
+            $where[] = ['a.people_type', '=', $people_type];
+        }
+        if (!TmpSession::isSuper()) {
+            $where[] = ['b.dep_id', 'in', TmpSession::getDepAuth()];
+        }
+        $dep_title = $dep_name;
         if ($keyword) {
-            $dep_name .= ' 关键词“' . $keyword . '”';
-            session('userkeyword', $keyword);
-            $map[] = ['a.nickname|a.mobile|a.email', 'like', "%{$keyword}%", 'or'];
-        } else {
-            if (session('userkeyword') != '' && $page > 1) {
-                $dep_name .= ' 关键词“' . session('userkeyword') . '”';
-                $map[] = ['a.nickname|a.mobile|a.email', 'like', "%" . session('userkeyword') . "%", 'or'];
-            } else {
-                session('userkeyword', null);
-            }
+            $dep_title .= ' 关键词“' . $keyword . '”';
+            $where[] = ['a.nickname|a.mobile|a.idcard', 'like', "%{$keyword}%", 'or'];
         }
         $count = Db::name('user')
             ->alias('a')
-            ->where($map)
             ->leftJoin('user_dep b', 'a.id=b.user_id')
-            ->group('b.user_id')
+            ->where($where)
+            ->group('a.id')
             ->count();
-        $dep_name .= '（共' . $count . '人）';
-        $order_by = input('order_by', 'a.id');
+
+        $order_by = input('order_by', 'a.sort');
         $sort = input('sort', 'DESC');
 
-        $user_list = Db::name('user')
-            ->alias('a')
-            ->where($map)
-            ->leftJoin('user_dep b', 'a.id=b.user_id')
-            ->leftJoin('user_level c', 'c.id=b.level_id')
-            ->group('b.user_id')
-            ->order($order_by, $sort)
-            ->field('a.*,c.name as level_name')
-            ->page(input('page', 1), input('limit', 10))
-            ->select();
-        if (Env::get('demo')) {
-            // 演示站 把手机号中间隐藏
-            foreach ($user_list as $k => $v) {
-                $user_list[$k]['mobile'] = substr_replace($v['mobile'], '****', 3, 4);
-            }
-        }
         if ($this->request->isAjax()) {
+            $user_list = Db::name('user')
+                ->alias('a')
+                ->leftJoin('user_dep b', 'a.id=b.user_id')
+                ->leftJoin('user_level c', 'c.id=b.level_id')
+                ->where($where)
+                ->order($order_by, $sort)
+                ->group('a.id')
+                ->field('a.*')
+                ->field('c.name as level_name')
+                ->page(input('page', 1), input('limit', 10))
+                ->select();
+            if (Env::get('demo')) {
+                // 演示站 把手机号中间隐藏
+                foreach ($user_list as $k => $v) {
+                    $user_list[$k]['mobile'] = substr_replace($v['mobile'], '****', 3, 4);
+                }
+            }
             return json(['code' => 1, 'msg' => '', 'count' => $count, 'data' => $user_list]);
         }
-        return $this->fetch('index', ['user_list' => $user_list, 'keyword' => $keyword, 'dep_title' => $dep_name]);
+
+        $dep_title .= '（共' . $count . '人）';
+        return $this->fetch('index', ['keyword' => $keyword, 'dep_title' => $dep_title, 'dep_name' => $dep_name]);
     }
 
     /**
@@ -490,17 +464,17 @@ class User extends AdminBase
             $nation = trim($v[5]);//民族
             $birthday = trim($v[6]);//出生日期
             if (is_numeric($birthday)) {
-                $birthday = gmdate('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($birthday));
+                $birthday = gmdate('Y-m-d', Date::excelToTimestamp($birthday));
             }
             $education = trim($v[7]);//学历
             $people_type = trim($v[8]);//人员类别
             $join_time = trim($v[9]);// 加入党组织日期
             if (is_numeric($join_time)) {
-                $join_time = gmdate('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($join_time));
+                $join_time = gmdate('Y-m-d', Date::excelToTimestamp($join_time));
             }
             $become_time = trim($v[10]);//转为正式党员日期
             if (is_numeric($become_time)) {
-                $become_time = gmdate('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($become_time));
+                $become_time = gmdate('Y-m-d', Date::excelToTimestamp($become_time));
             }
             $job = trim($v[11]);//工作岗位
             $mobile = trim($v[12]);//手机号码
@@ -509,7 +483,7 @@ class User extends AdminBase
             $lost_contact = trim($v[15]);//是否失联党员
             $lost_contact_time = trim($v[16]);//失联日期
             if (is_numeric($lost_contact_time)) {
-                $lost_contact_time = gmdate('Y-m-d', \PHPExcel_Shared_Date::ExcelToPHP($lost_contact_time));
+                $lost_contact_time = gmdate('Y-m-d', Date::excelToTimestamp($lost_contact_time));
             }
 
             $has_user = UserModel::where('mobile', $mobile)->find();
@@ -518,7 +492,6 @@ class User extends AdminBase
                 continue;
             }
 
-            //部门
             $dep_id = \app\common\model\Department::where('name', $dep_name)->cache(60)->value('id');
             if (!$dep_id) {
                 Db::rollback();
