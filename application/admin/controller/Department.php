@@ -55,20 +55,20 @@ class Department extends AdminBase
                 ->where($where)
                 ->order('sort', 'asc')
                 ->order('id', 'asc')
-                ->field('id,name,parent_id,type,show,sort')
+                ->field('id, name, short_name, parent_id, type, show, sort')
                 ->select()
                 ->toArray();
             if (empty($where)) {
                 $Trees = new Tree();
-                $Trees->tree($department_level_list, 'id', 'parent_id', 'name');
+                $Trees->tree($department_level_list, 'id', 'parent_id', 'short_name');
                 $department_level_list = $Trees->getArray();
                 unset($department_level_list[0]);
             }
             $list = array_values($department_level_list);
             foreach ($list as $k => &$v) {
                 $sub_dep = DepModel::getSubDep([$v['id']]);
-                //党组织
-                $v['dep_count'] = count($sub_dep);
+                //党组织，不包括党小组
+                $v['dep_count'] = DepModel::where('type', '<>', DepModel::$type_squad)->count();
                 //党员
                 $v['user_count'] = (string)Db::name('user')
                     ->alias('a')
@@ -96,7 +96,8 @@ class Department extends AdminBase
         $modelHelper
             ->addTopBtn('添加组织', url('add'))
             ->addTips('点击排序的序号可编辑排序，数字越小排序越前')
-            ->addField('名称', 'name', 'text')
+            ->addField('简称', 'short_name', 'text', ['minWidth' => 200])
+            ->addField('全称', 'name', 'text', ['minWidth' => 300])
             ->addField('组织概况', 'info', 'text', ['width' => 350, 'templet' => '<div>
                                 <div class="layui-row">
                                     <div class="layui-col-xs4" title="统计当前党组织下组织数量
