@@ -391,14 +391,26 @@ class Department extends ModelBasic
      * @param int $level 限定返回的级数。为0时返回所有级数
      * @param int $show
      * @param boolean $disToSub true 将自己添加到子集里并在名称后面添加(单选/全选), false不添加到里面
+     * @param string $titleField
      * @return array
      */
-    public function dtreeList($id = 0, $subsetId = array(), $checked = array(), $level = 0, $show = 1, $disToSub = false)
+    public function dtreeList($id = 0, $subsetId = array(), $checked = array(), $level = 0, $show = 1, $disToSub = false, $titleField = '')
     {
         $where[] = ['parent_id', '=', $id];
         $where[] = ['show', '=', $show];
-//        if ($subsetId) $where[] = ['id', 'in', $subsetId];
-        $res = $this->where($where)->field('id, name as title, parent_id')->order('sort')->select();
+        $model = $this->where($where);
+        if ($titleField == 'short_name') {
+            $model->fieldRaw('short_name as title');
+        } elseif ($titleField == 'name') {
+            $model->fieldRaw('name as title');
+        } else {
+            $model->fieldRaw('IF(short_name="",name,short_name) as title');
+        }
+        $res = $model
+            ->field('id,parent_id,type')
+            ->order('sort', 'asc')
+            ->order('id', 'asc')
+            ->select();
         if (count($res) <= 0) {
             return null;
         }

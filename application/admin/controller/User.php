@@ -150,7 +150,7 @@ class User extends AdminBase
                 } else {
                     //过虑管理员不能管理的组织的id
                     foreach ($data['department'] as $k => $v) {
-                        if ($v['dep_id'] > 0 && !in_array($v['dep_id'], array_keys(session('dep_auth')))) {
+                        if ($v['dep_id'] > 0 && !in_array($v['dep_id'], TmpSession::getDepAuth())) {
                             $dep_name = \app\common\model\Department::where('id', $v['dep_id'])->value('name');
                             $this->error('您没有权限往' . $dep_name . '添加数据');
                         }
@@ -186,7 +186,7 @@ class User extends AdminBase
         $level_options = [0 => '无'] + UserLevel::column('name', 'id');
         $department_model = new \app\common\model\Department();
         //指定添加子级组织的时候不能选其他组织
-        $auth_dep_arr = array_keys(session('dep_auth'));
+        $auth_dep_arr = TmpSession::getDepAuth();
         $department_options = $department_model->optionsArr();
         foreach ($department_options as $k => $v) {
             $department_options[$k] = [
@@ -250,7 +250,7 @@ class User extends AdminBase
         $checked = [];
         $disToSub = input('disToSub', false);
         $department_model = new \app\common\model\Department();
-        $list = $department_model->dtreeList(0, array_keys(session('dep_auth')), $checked, 0, 1, $disToSub);
+        $list = $department_model->dtreeList(0, TmpSession::getDepAuth(), $checked, 0, 1, $disToSub);
         return json(array('status' => array('code' => 200, 'message' => '操作成功'), 'data' => $list));
     }
 
@@ -264,7 +264,7 @@ class User extends AdminBase
             return json(array('code' => 1, 'data' => ''));
         }
         $map[] = ['nickname|mobile', 'like', "%{$keyword}%", 'or'];
-        $map[] = ['b.dep_id', 'in', array_keys(session('dep_auth'))];
+        $map[] = ['b.dep_id', 'in', TmpSession::getDepAuth()];
         $count = Db::name('user')
             ->alias('a')
             ->join('user_dep b', 'a.id = b.user_id')
@@ -318,7 +318,7 @@ class User extends AdminBase
             $this->error('缺少参数');
         }
         //判断可以查看的组织权限
-        $dep_arr = array_keys(session('dep_auth'));
+        $dep_arr = TmpSession::getDepAuth();
         if (!in_array($dep_id, $dep_arr)) {
             $this->error('您没有查看此组织数据的权限');
         }
@@ -444,7 +444,7 @@ class User extends AdminBase
 
     private function doImportExcel($file)
     {
-        $dep_auth = array_keys(session('dep_auth'));
+        $dep_auth = TmpSession::getDepAuth();
         $arr = import_excel($file);
         if (!is_array($arr)) {
             $this->error('数据读取失败，请检查表格');
