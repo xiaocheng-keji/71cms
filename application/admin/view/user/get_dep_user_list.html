@@ -3,26 +3,26 @@
 <link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/dtree.css">
 <link rel="stylesheet" href="__PUBLIC__/plugins/layui/layui_ext/dtree/font/dtreefont.css">
 <style>
-    .choice-user-dvi {
+    .choice-user-div {
         display: flex;
         justify-content: flex-start;
         align-items: center;
         padding: 10px 20px;
     }
 
-    .choice-user-dvi:hover {
+    .choice-user-div:hover {
         cursor: pointer;
         background: #eee;
     }
 
-    .choice-user-dvi-img {
+    .choice-user-div-img {
         width: 30px;
         height: 30px;
         display: block;
         margin: 0 10px;
     }
 
-    .choice-user-dvi-text {
+    .choice-user-div-text {
         display: flex;
         align-items: center;
         font-size: 14px;
@@ -56,8 +56,7 @@
         <ul class="layui-tab-title">
             {switch $scene}
             {case all}
-            <li class="layui-this">组织</li>
-            <li>人员</li>
+            <li class="layui-this">人员</li>
             {/case}
             {case group}
             <li class="layui-this">组织</li>
@@ -72,11 +71,6 @@
             {switch $scene}
             {case all}
             <div class="layui-tab-item layui-show">
-                <div class="listBox">
-                    <ul id="demoTree" data-id="0"></ul>
-                </div>
-            </div>
-            <div class="layui-tab-item">
                 <div style="display: flex;flex-direction: row;">
                     <div class="listBox">
                         <ul id="userDepTree" style="width:70%;" data-id="0"></ul>
@@ -219,7 +213,7 @@
 
         let dataUrl = "{:url('user/departmentDtree', array('disToSub'=>$disToSub))}";
         console.log('dataUrl: ', dataUrl);
-        if ("{$scene}" == 'group' || "{$scene}" == 'all') {
+        if ("{$scene}" == 'group') {
             var DemoTree = dtree.render({
                 elem: "#demoTree",
                 width: "400",
@@ -321,7 +315,7 @@
             });
         });
 
-        jq('#personnel').on('click', '.choice-user-dvi', function (e) {
+        jq('#personnel').on('click', '.choice-user-div', function (e) {
             let obj = jq(this).find('input[type=checkbox]');
             let status = obj[0].checked;
             if(e.target.nodeName=='INPUT'){

@@ -8,3 +8,4 @@ uploads/
 runtime/
 public/crontab.sh
 public/install/install.lock
+public/ueditor/

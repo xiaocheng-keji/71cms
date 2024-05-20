@@ -1,10 +1,10 @@
 <div class="layui-column">
 	{if count($userList) > 0 }
 		{foreach $userList as $k => $v}
-		<div class="choice-user-dvi" id="userInfo{$v.id}" data-id="{$v.id}" data-nickname="{$v.nickname}">
+		<div class="choice-user-div" id="userInfo{$v.id}" data-id="{$v.id}" data-nickname="{$v.nickname}">
 			<input type="checkbox" id="selTotss{$v.id}" style="display: block" />
-			<img src="{$v.head_pic}" class="choice-user-dvi-img" alt="">
-			<text class="choice-user-dvi-text">{$v.nickname}</text>
+			<img src="{$v.head_pic}" class="choice-user-div-img" alt="">
+			<text class="choice-user-div-text">{$v.nickname}</text>
 		</div>
 		{/foreach}
 	{else /}
