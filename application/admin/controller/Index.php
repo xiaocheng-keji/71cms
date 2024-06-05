@@ -199,11 +199,6 @@ class Index extends AdminBase
         jsonReturn(1, '数据', ['numcount' => $party_count, 'depcount' => $department, 'male' => $male, 'female' => $female,
             'is_flow' => $is_flow, 'is_home' => $is_home, 'edu_junior' => $edu_junior, 'edu_middle' => $edu_middle, 'edu_college' => $edu_college,
             'edu_other' => $edu_other, 'age' => $age, 'useraddress' => $useraddress, 'citynum' => $citynum]);
-        // $this->assign('party_count', $party_count);
-        // $this->assign('department', $department);
-        // $this->assign('male_percent', sprintf("%.2f", $male == 0 ? 0 : $male / ($male + $female) * 100));
-        // $this->assign('female_percent', sprintf("%.2f", $female == 0 ? 0 : $female / ($male + $female) * 100));
-        // $this->assign('full', $full);
         return view();
     }
 
