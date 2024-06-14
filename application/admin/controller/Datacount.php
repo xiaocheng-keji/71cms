@@ -9,11 +9,14 @@
  * 任何企业和个人不允许对程序代码以任何形式任何目的再发布。
  * =========================================================
  */
+
 namespace app\admin\controller;
 
 use app\common\controller\ModelHelper;
 use app\common\model\Department as DepartmentModel;
 use app\common\model\DicData;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use think\Db;
 use app\common\model\TmpSession;
 
@@ -202,25 +205,6 @@ class Datacount extends AdminBase
         return $modelHelper->showList();
     }
 
-    public function meetingExport2()
-    {
-        $objExcel = new \PHPExcel();
-        $objExcel->getProperties();
-        $objExcel->getActiveSheet()->setCellValue('A1', '全部组织');
-        $objExcel->getActiveSheet()->setCellValue('B1', '会议总数');
-        $objExcel->getActiveSheet()->setCellValue('C1', '实到人数');
-        $objExcel->getActiveSheet()->setCellValue('D1', '缺席人数');
-        $objExcel->getActiveSheet()->setCellValue('E1', '请假人数');
-        // dump($objExcel);die;
-        // $callStartTime = microtime(true);
-        $PHPWriter = \PHPExcel_IOFactory::createWriter($objExcel, "Excel2007");
-        ob_end_clean(); // Added by me
-        ob_start(); // Added by me
-        header('Content-Disposition: attachment;filename="表单数据.xlsx"');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $PHPWriter->save("php://output"); //表示在$path路径下面生成demo.xlsx文件
-    }
-
     /**
      * 导出Excel
      *
@@ -261,23 +245,22 @@ class Datacount extends AdminBase
         $total['absent'] = Db::name('meeting_user')->where($count_where)->where('sign_status', 0)->count();
         $total['leave'] = Db::name('meeting_user')->where($count_where)->where('sign_status', 2)->count();
 
-        $objExcel = new \PHPExcel();
+        // 初始化 Spreadsheet 对象
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        $objExcel->getProperties();
-        $objExcel->getActiveSheet()->getDefaultStyle()->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        $objExcel->getActiveSheet()->getDefaultStyle()->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
-        $objExcel->setActiveSheetIndex(0);
-        $objExcel->getActiveSheet()->setCellValue('A1', $dep_id > 0 ? $dep_name : '全部组织');
-        $objExcel->getActiveSheet()->setCellValue('B1', '会议总数');
-        $objExcel->getActiveSheet()->setCellValue('C1', '实到人数');
-        $objExcel->getActiveSheet()->setCellValue('D1', '缺席人数');
-        $objExcel->getActiveSheet()->setCellValue('E1', '请假人数');
-        $objExcel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
+        // 设置单元格值
+        $sheet->setCellValue('A1', $dep_id > 0 ? $dep_name : '全部组织');
+        $sheet->setCellValue('B1', '会议总数');
+        $sheet->setCellValue('C1', '实到人数');
+        $sheet->setCellValue('D1', '缺席人数');
+        $sheet->setCellValue('E1', '请假人数');
+        $sheet->getColumnDimension('A')->setWidth(15);
+
         $j = 1;
         for ($i = $start_time; $i < $end_time; $i = strtotime(date('Y-m-d', $i) . " +1 month")) {
-            $objExcel->setActiveSheetIndex(0);
             $j++;
-            $end_i_time = strtotime(date('Y-m-d', $i) . " +1 month") - 1;
+            $end_i_time = strtotime(date('Y-m-d', $i) . " +1 month");
             $current_where_meeting = [
                 ['start_time', 'BETWEEN', [$i, $end_i_time]],
                 ['meeting_type', '=', 2],
@@ -295,17 +278,18 @@ class Datacount extends AdminBase
             $current_absent = Db::name('meeting_user')->where($current_count_where)->where('sign_status', 0)->count();
             $current_leave = Db::name('meeting_user')->where($current_count_where)->where('sign_status', 2)->count();
 
-            $objExcel->getActiveSheet()->setCellValue('A' . $j, date('Y年m月', $i))
+            $sheet->setCellValue('A' . $j, date('Y年m月', $i))
                 ->setCellValue('B' . $j, count($current_meeting))
                 ->setCellValue('C' . $j, $current_reach)
                 ->setCellValue('D' . $j, $current_absent)
                 ->setCellValue('E' . $j, $current_leave);
 
-            $objExcel->createSheet();
-            $objExcel->setActiveSheetIndex(($j - 1));
-            $objExcel->getActiveSheet()->setTitle(date('Y年m月', $i));
+            // 创建新的工作表并设置标题
+            $newSheet = $spreadsheet->createSheet();
+            $spreadsheet->setActiveSheetIndex($j - 1);
+            $newSheet->setTitle(date('Y年m月', $i));
 
-            $objExcel->getActiveSheet()->setCellValue('A1', '会议主题')
+            $newSheet->setCellValue('A1', '会议主题')
                 ->setCellValue('B1', '栏目')
                 ->setCellValue('C1', '会议地点')
                 ->setCellValue('D1', '会议状态')
@@ -336,9 +320,9 @@ class Datacount extends AdminBase
                 } else {
                     $meeting_info['meeting_status'] = '已结束';
                 }
-                $objExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
-                $objExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                $objExcel->getActiveSheet()->setCellValue('A' . $key, $meeting_info['theme'])
+                $newSheet->getColumnDimension('E')->setWidth(20);
+                $newSheet->getColumnDimension('F')->setWidth(20);
+                $newSheet->setCellValue('A' . $key, $meeting_info['theme'])
                     ->setCellValue('B' . $key, $meeting_info['cat_name'])
                     ->setCellValue('C' . $key, $meeting_info['place'])
                     ->setCellValue('D' . $key, $meeting_info['meeting_status'])
@@ -349,33 +333,30 @@ class Datacount extends AdminBase
                     ->setCellValue('I' . $key, $meeting_info['leave']);
             }
         }
-        $objExcel->setActiveSheetIndex(0);
+        // 在最后汇总行设置单元格值
         $j++;
-        $objExcel->getActiveSheet()->setCellValue('A' . $j, '总数')
+        $sheet->setCellValue('A' . $j, '总数')
             ->setCellValue('B' . $j, $total['meeting'])
             ->setCellValue('C' . $j, $total['reach'])
             ->setCellValue('D' . $j, $total['absent'])
             ->setCellValue('E' . $j, $total['leave']);
 
-        $objExcel->getActiveSheet()->setTitle('会议统计');
+        // 设置第一个工作表的标题
+        $spreadsheet->getSheet(0)->setTitle('会议统计');
 
-        $objWriter = \PHPExcel_IOFactory::createWriter($objExcel, "Excel2007");
-        $filename = '会议统计' . date('Y-m', $start_time) . '-' . date('Y-m', $end_time) . '.xlsx';
-        $filename = urlencode($filename);
-        ob_end_clean();
-        ob_start();
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); // 07Excel
-        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"'); // filename
-        header('Cache-Control: max-age=0'); // forbid cached
+        // 导出 Excel 文件
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . urlencode('会议统计' . date('Y-m', $start_time) . '-' . date('Y-m', $end_time) . '.xlsx') . '"');
+        header('Cache-Control: max-age=0');
         header('Pragma: public');
+
         try {
-            $objWriter->save('php://output');
-        } catch (Exception $e) {
-            dump($e);
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+        } catch (\Exception $e) {
+            echo '导出失败: ' . $e->getMessage();
         }
-
     }
-
 
     /**
      * 组织概况
