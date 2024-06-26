@@ -67,11 +67,11 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 
 ###  界面展示
 
-#### 管理端  
+#### 管理端
 ![组织管理](public/image/readme/admin-ui2.png)
 ![人员管理](public/image/readme/admin-ui3.png)
 ![数据统计](public/image/readme/admin-ui5.png)
-#### 移动端  
+#### 移动端
 ![务截图](public/image/readme//ui1.png)
 ![学习页面截图](public/image/readme/ui2-3.png)
 ![我的页面截图](public/image/readme/ui5.png)
@@ -86,10 +86,12 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 官网地址：https://www.71cms.net  
 联系微信客专业解答
 
-如果您需要Java版本的相关资源、技术支持或定制开发服务，欢迎随时与我联系。我将竭诚为您提供专业的帮助和解决方案  
+如果您需要Java版本的相关资源、技术支持或定制开发服务，欢迎随时与我联系。我将竭诚为您提供专业的帮助和解决方案
 
 
 ![输入图片说明](public/image/readme/wechat_qrcode.jpg)
+###   :fire:  :fire: :fire:  喜迎七一，现优惠价加微信获取商业授权并附赠手机端源码。:fire:  :fire: :fire:
+
 
 ---
 ###  特别鸣谢
@@ -103,8 +105,6 @@ H5端：http://demo.71cms.net/h5/ （移动端打开）
 2、商用必须取得版权所有者的授权。
 
 3、禁止将本项目的代码和资源进行任何形式的出售，产生的一切任何后果责任由侵权者自负。
-
-<font color=#FF0000 size=5>4、喜迎七一，现优惠价加微信获取商业授权并附赠手机端源码。</font>
 
 ---
 ###  版权信息
